@@ -80,6 +80,7 @@ namespace HDRDisplayCalibrate.Core
             string stage, IProgress<Progress> progress, CancellationToken ct, string stdin = null)
         {
             await Task.Run(SpotSession.WaitReleased);
+            if (tool is "dispread" or "dispcal" or "spotread" or "chartread") Instrument.Free();
             var psi = new ProcessStartInfo(Exe(tool))
             {
                 UseShellExecute = false, CreateNoWindow = true, WorkingDirectory = workDir,
@@ -88,7 +89,7 @@ namespace HDRDisplayCalibrate.Core
             };
             foreach (var a in args) psi.ArgumentList.Add(a);
             var all = new StringBuilder();
-            using var p = Process.Start(psi);
+            using var p = Process.Start(psi); ChildProcesses.Track(p);
             Log.Write($"> {tool} {string.Join(' ', psi.ArgumentList)}");
             if (stdin != null) p.StandardInput.Write(stdin);
             p.StandardInput.Close();
@@ -123,7 +124,7 @@ namespace HDRDisplayCalibrate.Core
         static string Usage(string tool)
         {
             var psi = new ProcessStartInfo(Exe(tool), "-?") { UseShellExecute = false, CreateNoWindow = true, RedirectStandardError = true, RedirectStandardOutput = true };
-            using var p = Process.Start(psi);
+            using var p = Process.Start(psi); ChildProcesses.Track(p);
             var t = p.StandardError.ReadToEnd() + p.StandardOutput.ReadToEnd();
             p.WaitForExit(15000);
             return t;
@@ -153,7 +154,7 @@ namespace HDRDisplayCalibrate.Core
         {
             var psi = new ProcessStartInfo(Exe("dispwin")) { UseShellExecute = false, CreateNoWindow = true, RedirectStandardError = true, RedirectStandardOutput = true };
             foreach (var a in args) psi.ArgumentList.Add(a);
-            using var p = Process.Start(psi); p.StandardError.ReadToEnd(); p.WaitForExit(30000);
+            using var p = Process.Start(psi); ChildProcesses.Track(p); p.StandardError.ReadToEnd(); p.WaitForExit(30000);
             return p.ExitCode;
         }
         public static void LutLinear(int display) => Dispwin($"-d{display}", "-c");

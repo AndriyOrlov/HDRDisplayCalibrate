@@ -7,6 +7,9 @@ namespace HDRDisplayCalibrate
 {
     public partial class App : Application
     {
+        // let a session that is still quitting leave the sensor cleanly (a crash is covered by the job object)
+        protected override void OnExit(ExitEventArgs e) { Core.SpotSession.WaitReleased(); base.OnExit(e); }
+
         [System.Runtime.InteropServices.DllImport("user32.dll")] static extern void keybd_event(byte vk, byte scan, uint flags, System.UIntPtr extra);
         protected override void OnStartup(StartupEventArgs e)
         {

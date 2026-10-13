@@ -3,6 +3,7 @@
 using System;
 using System.Diagnostics;
 using System.Globalization;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -48,6 +49,7 @@ namespace HDRDisplayCalibrate.Core
         public SpotSession(MeasureSetup m, string mode, bool fast = false)
         {
             _closing.Wait(4000);                        // the instrument can only be opened by one spotread
+            Instrument.Free();
             var psi = new ProcessStartInfo(Argyll.Exe("spotread"))
             {
                 UseShellExecute = false, CreateNoWindow = true,       // hidden console of its own: that is where keys go
@@ -58,7 +60,7 @@ namespace HDRDisplayCalibrate.Core
             if (mode == "-e") { psi.ArgumentList.Add("-y"); psi.ArgumentList.Add(m.DisplayType); }
             if (fast) { psi.ArgumentList.Add("-Y"); psi.ArgumentList.Add("A"); }
             if (!string.IsNullOrWhiteSpace(m.Correction)) { psi.ArgumentList.Add("-X"); psi.ArgumentList.Add(m.Correction); }
-            _p = Process.Start(psi);
+            _p = Process.Start(psi); ChildProcesses.Track(_p);
             // prompts end without a newline, so read characters, not lines
             async Task Pump(System.IO.StreamReader r)
             {
@@ -95,7 +97,12 @@ namespace HDRDisplayCalibrate.Core
                 ct.ThrowIfCancellationRequested();
                 var s = Snapshot();
                 if (s.Length > from) { var m = re.Match(s, from); if (m.Success) return s.Substring(from); }
-                if (_p.HasExited) throw new InvalidOperationException("spotread exited: " + s.Trim().Split('\n')[^1]);
+                if (_p.HasExited)
+                {
+                    var lines = s.Split('\n').Select(l => l.Trim()).Where(l => l.Length > 0).ToList();
+                    var why = lines.LastOrDefault(l => Regex.IsMatch(l, "rror|ailure|ailed")) ?? lines.LastOrDefault();
+                    throw new InvalidOperationException("spotread: " + why);
+                }
                 await Task.Delay(30, ct);
             }
             throw new TimeoutException("spotread did not answer");
