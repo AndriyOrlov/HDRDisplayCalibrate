@@ -7,6 +7,7 @@ namespace HDRDisplayCalibrate
 {
     public partial class App : Application
     {
+        [System.Runtime.InteropServices.DllImport("user32.dll")] static extern void keybd_event(byte vk, byte scan, uint flags, System.UIntPtr extra);
         protected override void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
@@ -41,6 +42,26 @@ namespace HDRDisplayCalibrate
                     }
                     catch (System.Exception ex) { sb.AppendLine(ex.ToString()); }
                     System.IO.File.WriteAllText(System.IO.Path.Combine(Core.Paths.Docs, "spot_test.txt"), sb.ToString());
+                    Shutdown();
+                });
+                return;
+            }
+            if (e.Args.Length > 0 && e.Args[0] == "--esc-test")
+            {
+                // live meter on page 1, then a real Esc key press from outside: how long until the job is gone
+                var mw = new MainWindow(1); mw.Show();
+                _ = Dispatcher.InvokeAsync(async () =>
+                {
+                    await System.Threading.Tasks.Task.Delay(2500);
+                    var live = (Pages.LivePage)mw.Host.Content;
+                    live.GetType().GetMethod("Toggle", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance).Invoke(live, null);
+                    await System.Threading.Tasks.Task.Delay(9000);
+                    var sw = System.Diagnostics.Stopwatch.StartNew();
+                    keybd_event(0x1B, 0, 0, System.UIntPtr.Zero); keybd_event(0x1B, 0, 2, System.UIntPtr.Zero);
+                    while (AppState.I.Job != null && sw.ElapsedMilliseconds < 10000) await System.Threading.Tasks.Task.Delay(20);
+                    long gone = sw.ElapsedMilliseconds;
+                    while (System.Diagnostics.Process.GetProcessesByName("spotread").Length > 0 && sw.ElapsedMilliseconds < 10000) await System.Threading.Tasks.Task.Delay(20);
+                    System.IO.File.WriteAllText(System.IO.Path.Combine(Core.Paths.Docs, "esc_test.txt"), $"job ended {gone} ms after Esc, spotread gone {sw.ElapsedMilliseconds} ms; status: {mw.StatusText.Text}");
                     Shutdown();
                 });
                 return;

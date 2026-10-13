@@ -52,6 +52,7 @@ namespace HDRDisplayCalibrate.Pages
             {
                 using var rd = new Jobs.LiveReader(fast: true);
                 var p = new[] { await rd.Read(1, 0, 0, ct), await rd.Read(0, 1, 0, ct), await rd.Read(0, 0, 1, ct), await rd.Read(1, 1, 1, ct) };
+                if (p.Take(3).Any(v => v.Y <= 0.05)) throw new Exception(S.T("A primary read as black: is the sensor on this monitor?", "Один з кольорів виміряно як чорний: датчик точно на цьому моніторі?"));
                 _prim = M3.FromColumns(p[0], p[1], p[2]);
                 _sub.Text = string.Join("   ", new[] { "R", "G", "B" }.Select((c, i) => { var (x, y) = p[i].Xy; return $"{c} {x:F4} {y:F4}"; })) +
                             $"   · white {p[3].Y:F1} cd/m², {Cm.Cct(p[3]):F0} K";
@@ -105,9 +106,11 @@ namespace HDRDisplayCalibrate.Pages
                 var t = Cm.XyToXyz(tx, ty, xyz.Y);
                 double de = Cm.DeltaE2000(Cm.Lab(t, t), Cm.Lab(xyz, t));
                 lines.Add(S.T($"ΔE to target {de:F2}", $"ΔE до цілі {de:F2}") + (de < 1 ? "  ✓" : ""));
-                if (_prim is M3 P && de >= 0.6)
+                M3? inv = null;
+                try { if (_prim is M3 P0) inv = P0.Inverse(); } catch (InvalidOperationException) { _prim = null; }
+                if (inv is M3 Pi && de >= 0.6)
                 {
-                    var now = P.Inverse() * xyz; var want = P.Inverse() * t;
+                    var now = Pi * xyz; var want = Pi * t;
                     var r = new V3(want.X / now.X, want.Y / now.Y, want.Z / now.Z);
                     r = _ref.SelectedIndex == 0 ? r / r.Max : r / r[_ref.SelectedIndex - 1];
                     for (int c = 0; c < 3; c++) _bars.Children.Add(Bar("RGB"[c].ToString(), r[c], new[] { Brushes.IndianRed, Brushes.LimeGreen, Brushes.DodgerBlue }[c]));

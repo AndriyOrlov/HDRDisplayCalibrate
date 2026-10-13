@@ -184,7 +184,7 @@ namespace HDRDisplayCalibrate
                 await Task.Delay(settleMs, ct);
                 return await _spot.ReadAsync(ct);
             }
-            public void Dispose() { _spot.Dispose(); Application.Current.Dispatcher.Invoke(() => _win.Close()); }
+            public void Dispose() { Application.Current.Dispatcher.Invoke(() => _win.Close()); _spot.Dispose(); }   // patch goes away first: cancel feels instant
         }
 
         /// <summary>DDC/CI automatic monitor adjustment: RGB gains toward the white point, then brightness toward the luminance.</summary>

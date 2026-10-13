@@ -23,6 +23,9 @@ namespace HDRDisplayCalibrate.Core
         readonly StringBuilder _buf = new();
         readonly SemaphoreSlim _gate = new(1, 1);
         static readonly object ConsoleLock = new();
+        static Task _closing = Task.CompletedTask;     // the previous session quitting in the background
+        /// <summary>Waits until a session that was just closed has released the instrument.</summary>
+        public static void WaitReleased() => _closing.Wait(4000);
 
         [StructLayout(LayoutKind.Explicit, CharSet = CharSet.Unicode)]
         struct INPUT_RECORD { [FieldOffset(0)] public ushort EventType; [FieldOffset(4)] public KEY_EVENT_RECORD Key; }
@@ -44,6 +47,7 @@ namespace HDRDisplayCalibrate.Core
         /// <param name="fast">Fixed short integration time (-Y A): much quicker on colours and greys, a little noisier in the dark.</param>
         public SpotSession(MeasureSetup m, string mode, bool fast = false)
         {
+            _closing.Wait(4000);                        // the instrument can only be opened by one spotread
             var psi = new ProcessStartInfo(Argyll.Exe("spotread"))
             {
                 UseShellExecute = false, CreateNoWindow = true,       // hidden console of its own: that is where keys go
@@ -118,10 +122,15 @@ namespace HDRDisplayCalibrate.Core
             finally { _gate.Release(); }
         }
 
+        /// <summary>Returns at once; spotread is asked to quit (so the instrument is left in a clean state) in the background.</summary>
         public void Dispose()
         {
-            try { if (!_p.HasExited) { Key('q'); Thread.Sleep(150); Key('q'); if (!_p.WaitForExit(1500)) _p.Kill(); } } catch { try { _p.Kill(); } catch { } }
-            _p.Dispose();
+            var p = _p;
+            _closing = Task.Run(() =>
+            {
+                try { if (!p.HasExited) { Key('q'); Thread.Sleep(150); Key('q'); if (!p.WaitForExit(1500)) p.Kill(); } } catch { try { p.Kill(); } catch { } }
+                p.Dispose();
+            });
         }
     }
 }

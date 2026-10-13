@@ -79,6 +79,7 @@ namespace HDRDisplayCalibrate.Core
         public static async Task<(int code, string output)> RunAsync(string tool, IEnumerable<string> args, string workDir,
             string stage, IProgress<Progress> progress, CancellationToken ct, string stdin = null)
         {
+            await Task.Run(SpotSession.WaitReleased);
             var psi = new ProcessStartInfo(Exe(tool))
             {
                 UseShellExecute = false, CreateNoWindow = true, WorkingDirectory = workDir,
