@@ -46,6 +46,29 @@ namespace HDRDisplayCalibrate
                 });
                 return;
             }
+            if (e.Args.Length > 0 && e.Args[0] == "--wheel-test")
+            {
+                // a wheel turn over the 3D gamut zooms the camera and does not scroll the page
+                var mw = new MainWindow(5); mw.Show();
+                _ = Dispatcher.InvokeAsync(async () =>
+                {
+                    await System.Threading.Tasks.Task.Delay(1500);
+                    static System.Collections.Generic.IEnumerable<DependencyObject> All(DependencyObject d)
+                    {
+                        for (int i = 0; i < System.Windows.Media.VisualTreeHelper.GetChildrenCount(d); i++)
+                        { var c = System.Windows.Media.VisualTreeHelper.GetChild(d, i); yield return c; foreach (var x in All(c)) yield return x; }
+                    }
+                    var g = All(mw).OfType<Pages.Gamut3D>().First();
+                    var sv = All(mw).OfType<System.Windows.Controls.ScrollViewer>().First(x => x.ScrollableHeight > 0);
+                    var f = typeof(Pages.Gamut3D).GetField("_dist", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+                    double d0 = (double)f.GetValue(g), o0 = sv.VerticalOffset;
+                    g.RaiseEvent(new System.Windows.Input.MouseWheelEventArgs(System.Windows.Input.Mouse.PrimaryDevice, 0, -120) { RoutedEvent = UIElement.MouseWheelEvent });
+                    await System.Threading.Tasks.Task.Delay(200);
+                    System.IO.File.WriteAllText(System.IO.Path.Combine(Core.Paths.Docs, "wheel_test.txt"), $"camera {d0} -> {f.GetValue(g)}, page offset {o0} -> {sv.VerticalOffset}");
+                    Shutdown();
+                });
+                return;
+            }
             if (e.Args.Length > 0 && e.Args[0] == "--esc-test")
             {
                 // live meter on page 1, then a real Esc key press from outside: how long until the job is gone

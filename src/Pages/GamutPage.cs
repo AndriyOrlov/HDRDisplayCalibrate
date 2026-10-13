@@ -146,7 +146,7 @@ namespace HDRDisplayCalibrate.Pages
             MouseLeftButtonDown += (_, e) => { _drag = e.GetPosition(this); CaptureMouse(); };
             MouseLeftButtonUp += (_, _) => { _drag = null; ReleaseMouseCapture(); };
             MouseMove += (_, e) => { if (_drag is Point p) { var q = e.GetPosition(this); _az -= (q.X - p.X) * 0.5; _el = Math.Clamp(_el + (q.Y - p.Y) * 0.5, -85, 85); _drag = q; UpdateCam(); } };
-            MouseWheel += (_, e) => { _dist = Math.Clamp(_dist - e.Delta * 0.3, 200, 1200); UpdateCam(); };
+            MouseWheel += (_, e) => { _dist = Math.Clamp(_dist - e.Delta * 0.3, 200, 1200); UpdateCam(); e.Handled = true; };   // zoom only: the page must not scroll too
         }
 
         void UpdateCam()
