@@ -1,5 +1,6 @@
 // HDRDisplayCalibrate — SDR/HDR display calibration for Windows.
 // Copyright 2026 Andrii Orlov (DeadSue). Licensed under the Apache License, Version 2.0.
+using System;
 using System.Linq;
 using System.Windows;
 
@@ -14,6 +15,8 @@ namespace HDRDisplayCalibrate
         protected override void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
+            if (Environment.GetEnvironmentVariable("HDRDC_LANG") == "en")      // English UI with English number format
+                System.Globalization.CultureInfo.DefaultThreadCurrentCulture = System.Globalization.CultureInfo.CurrentCulture = new System.Globalization.CultureInfo("en-US");
             if (e.Args.Length > 0 && e.Args[0] == "--selftest") { SelfTest.Run(e.Args.Skip(1).ToArray()); Shutdown(); return; }
             if (e.Args.Length > 1 && e.Args[0] == "--render3d")
             {

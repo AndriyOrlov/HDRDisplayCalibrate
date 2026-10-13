@@ -56,7 +56,6 @@ namespace HDRDisplayCalibrate.Core
             var cands = new List<string> { configured, Path.Combine(AppContext.BaseDirectory, "Argyll", "bin"), @"C:\Program Files\ArgyllCMS\bin", @"C:\ArgyllCMS\bin" };
             foreach (var (root, sub) in new[] {
                 (Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), @"DisplayCAL\dl"),
-                (Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), @"GloamApp\current\argyll_cache"),
                 (@"C:\", ""), (@"C:\Program Files", "") })
                 try
                 {

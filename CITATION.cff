@@ -1,0 +1,22 @@
+cff-version: 1.2.0
+message: "If you use HDRDisplayCalibrate or code derived from it, please credit the author as below."
+title: "HDRDisplayCalibrate: SDR and HDR display calibration for Windows with ordinary colorimeters"
+type: software
+authors:
+  - given-names: Andrii
+    family-names: Orlov
+    alias: DeadSue
+    website: "https://deadsue.art"
+repository-code: "https://github.com/AndriyOrlov/HDRDisplayCalibrate"
+license: Apache-2.0
+version: 0.1.0
+date-released: 2026-10-14
+keywords:
+  - HDR
+  - display calibration
+  - MHC2
+  - ICC profile
+  - colorimeter
+  - ArgyllCMS
+  - 3D LUT
+  - Windows

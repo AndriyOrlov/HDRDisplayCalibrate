@@ -46,7 +46,7 @@ namespace HDRDisplayCalibrate
         {
             double w = ActualWidth, h = ActualHeight, pad = 34;
             double maxX = UV ? 0.65 : 0.8, maxY = UV ? 0.62 : 0.9;
-            double s = Math.Min((w - pad - 10) / maxX, (h - pad - 10) / maxY);
+            double s = Math.Min((w - pad - 24) / maxX, (h - pad - 24) / maxY);    // room on top / right for the axis names
             Point P((double x, double y) c) { var (x, y) = Conv(c); return new Point(pad + x * s, h - pad - y * s); }
             Point Raw(double x, double y) => new(pad + x * s, h - pad - y * s);
             for (double g = 0; g <= maxX + 1e-9; g += 0.1)
@@ -59,8 +59,8 @@ namespace HDRDisplayCalibrate
                 dc.DrawLine(new Pen(Draw.Grid, 1), Raw(0, g), Raw(maxX, g));
                 dc.DrawText(Draw.Txt(g.ToString("0.0", CultureInfo.InvariantCulture), 10, Draw.Label), Raw(0, g) + new Vector(-28, -7));
             }
-            dc.DrawText(Draw.Txt(UV ? "u'" : "x", 12, Draw.Label), Raw(maxX, 0) + new Vector(-10, 4));
-            dc.DrawText(Draw.Txt(UV ? "v'" : "y", 12, Draw.Label), Raw(0, maxY) + new Vector(-22, 0));
+            dc.DrawText(Draw.Txt(UV ? "u'" : "x", 12, Draw.Label), Raw(maxX, 0) + new Vector(6, -8));
+            dc.DrawText(Draw.Txt(UV ? "v'" : "y", 12, Draw.Label), Raw(0, maxY) + new Vector(-4, -20));
 
             var locus = new StreamGeometry();
             using (var ctx = locus.Open())

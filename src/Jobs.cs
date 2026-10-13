@@ -15,7 +15,8 @@ namespace HDRDisplayCalibrate
 {
     public static class S
     {
-        public static readonly bool Uk = CultureInfo.CurrentUICulture.TwoLetterISOLanguageName == "uk";
+        // UI language follows Windows; HDRDC_LANG=en|uk overrides it
+        public static readonly bool Uk = (Environment.GetEnvironmentVariable("HDRDC_LANG") ?? CultureInfo.CurrentUICulture.TwoLetterISOLanguageName) == "uk";
         public static string T(string en, string uk) => Uk ? uk : en;
     }
 

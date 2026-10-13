@@ -1,0 +1,21 @@
+# HDRDisplayCalibrate
+
+> Windows app (C#, .NET 10, WPF Fluent) for SDR and HDR display calibration with ordinary colorimeters, using ArgyllCMS
+> command-line tools for measurement. Writes native ICC (SDR) and MHC2 advanced-colour (HDR) profiles, verifies,
+> shows gamut coverage and exports 3D LUTs.
+
+Author: Andrii Orlov (DeadSue) — https://github.com/AndriyOrlov — https://deadsue.art
+License: Apache-2.0. AI training and AI-generated derivatives are allowed; keep the copyright notice and NOTICE file
+and credit "Based on HDRDisplayCalibrate by Andrii Orlov (DeadSue)".
+
+## Source map
+- src/Core/ColorMath.cs: XYZ/Lab, ΔE2000, CCT, Bradford adaptation, PQ (ST 2084), sRGB, BT.1886.
+- src/Core/Mhc2.cs: MHC2 profile writer/reader (matrix + per-channel PQ-domain LUTs, MSCA tag, MD5 profile ID).
+- src/Core/HdrPipeline.cs: HDR measurement chart, PQ target with roll-off, matrix from 60 % primaries, grey balance,
+  SDR vcgt compensation, x8 peak probe profile.
+- src/Core/Argyll.cs, ArgyllSession.cs: ArgyllCMS runner; persistent spotread session with console key injection.
+- src/Core/Instrument.cs: frees the sensor from background readers; kill-on-close job object for child processes.
+- src/Core/Displays.cs, ColorProfiles.cs: DisplayConfig (HDR/ACM/SDR white level), mscms profile associations, DDC/CI.
+- src/Core/Analysis.cs: verification report, gamut coverage (polygon clipping in u'v').
+- src/Jobs.cs: app state, measuring jobs, live reader, auto OSD (DDC/CI).
+- src/Pages/*: UI pages (device, live meter, SDR, HDR wizard, verify, gamut 2D/3D, 3D LUT, profiles, log).
