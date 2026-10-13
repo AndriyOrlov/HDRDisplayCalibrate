@@ -9,6 +9,23 @@ namespace HDRDisplayCalibrate
 {
     static class SelfTest
     {
+        /// <summary>--measure-test &lt;argyll display&gt; &lt;own|window|argyll&gt;: quick 37-patch verification through the real pipeline.</summary>
+        public static async System.Threading.Tasks.Task Measure(string[] a)
+        {
+            var st = AppState.I; st.Init();
+            st.Display = st.Displays.First(d => d.ArgyllNumber == int.Parse(a[0]));
+            st.Setup.Display = int.Parse(a[0]);
+            st.Setup.Patches = a.Length > 1 && a[1] == "window" ? Core.PatchMode.OwnWindow : a.Length > 1 && a[1] == "argyll" ? Core.PatchMode.ArgyllFullscreen : Core.PatchMode.OwnFullscreen;
+            var dir = Paths.Session("selftest_measure");
+            var chart = Jobs.VerifyChart(11).Take(35).Append((1.0, 1.0, 1.0)).Append((0.0, 0.0, 0.0)).ToList();
+            var sw = System.Diagnostics.Stopwatch.StartNew();
+            var m = await Jobs.Measure(chart, dir, "verify", "test", System.Threading.CancellationToken.None);
+            var r = Report.Build(m, "2.2", (0.3127, 0.3290));
+            File.WriteAllText(Path.Combine(dir, "result.txt"), string.Format(CultureInfo.InvariantCulture,
+                "mode {0} patches {1} time {2:F0}s | white {3:F1} cd/m2 {4:F0}K dE {5:F2} | grey {6:F2}/{7:F2} color {8:F2}/{9:F2} gamma {10:F3}",
+                st.Setup.Patches, m.Count, sw.Elapsed.TotalSeconds, r.WhiteNits, r.WhiteCct, r.WhiteDeltaE, r.GreyMeanDE, r.GreyMaxDE, r.ColorMeanDE, r.ColorMaxDE, r.GammaMid));
+        }
+
         public static void Run(string[] a)
         {
             var dir = a[0]; var sb = new StringBuilder(); var inv = CultureInfo.InvariantCulture;
