@@ -158,46 +158,85 @@ namespace HDRDisplayCalibrate
             return rows;
         }
 
+        /// <summary>
+        /// Fast reader for live work: one persistent spotread session plus our own patch window
+        /// (the colour is painted by us, so readings take ~1 s instead of a new Argyll run each time).
+        /// </summary>
+        public sealed class LiveReader : IDisposable
+        {
+            readonly SpotSession _spot;
+            readonly PatchWindow _win;
+            public LiveReader()
+            {
+                _win = Application.Current.Dispatcher.Invoke(() =>
+                {
+                    var w = new PatchWindow(St.Display, St.Setup.Patches != PatchMode.OwnWindow, St.Cfg); w.Show(); return w;
+                });
+                _spot = new SpotSession(St.Setup, "-e");
+            }
+            public async Task<V3> Read(double r, double g, double b, CancellationToken ct, int settleMs = 250)
+            {
+                await Application.Current.Dispatcher.InvokeAsync(() => _win.Paint((byte)Math.Round(r * 255), (byte)Math.Round(g * 255), (byte)Math.Round(b * 255)));
+                await Application.Current.Dispatcher.Invoke(() => _win.Rendered());
+                await Task.Delay(settleMs, ct);
+                return await _spot.ReadAsync(ct);
+            }
+            public void Dispose() { _spot.Dispose(); Application.Current.Dispatcher.Invoke(() => _win.Close()); }
+        }
+
         /// <summary>DDC/CI automatic monitor adjustment: RGB gains toward the white point, then brightness toward the luminance.</summary>
         public static async Task<string> AutoOsd(DisplayTarget d, (double x, double y)? wp, double? nits, string dir, CancellationToken ct)
         {
             using var ddc = Ddc.Open(d) ?? throw new Exception(S.T("This monitor does not answer DDC/CI", "Монітор не відповідає по DDC/CI"));
             if (d.ArgyllNumber is int n) Argyll.LutLinear(n);
-            var prim = await Measure(new[] { (1.0, 0.0, 0.0), (0.0, 1.0, 0.0), (0.0, 0.0, 1.0) }, dir, "osd_prim", S.T("Primaries", "Основні кольори"), ct);
-            var P = M3.FromColumns(prim[0].Xyz, prim[1].Xyz, prim[2].Xyz);
+            using var rd = new LiveReader();
+            St.Report(S.T("Auto OSD: primaries…", "Авто-OSD: основні кольори…"));
+            var P = M3.FromColumns(await rd.Read(1, 0, 0, ct), await rd.Read(0, 1, 0, ct), await rd.Read(0, 0, 1, ct));
             var gains = new[] { Ddc.GainR, Ddc.GainG, Ddc.GainB };
             string last = "";
-            for (int it = 0; it < 8 && wp != null; it++)
+            for (int it = 0; it < 12 && wp != null; it++)
             {
-                var w = (await Measure(new[] { (1.0, 1.0, 1.0) }, dir, "osd_w", S.T("White", "Білий"), ct))[0].Xyz;
+                var w = await rd.Read(1, 1, 1, ct, it == 0 ? 250 : 700);
                 var tgt = Cm.XyToXyz(wp.Value.x, wp.Value.y, w.Y);
                 double de = Cm.DeltaE2000(Cm.Lab(tgt, tgt), Cm.Lab(w, tgt));
                 last = string.Format(Inv, "ΔE {0:F2}, {1:F0} K, {2:F1} cd/m²", de, Cm.Cct(w), w.Y);
                 St.Report(S.T("Auto OSD white: ", "Авто-OSD білий: ") + last);
-                if (de < 0.6) break;
+                if (de < 0.5) break;
                 var now = P.Inverse() * w; var want = P.Inverse() * tgt;
                 var ratio = new V3(want.X / now.X, want.Y / now.Y, want.Z / now.Z); ratio /= ratio.Max;   // only reduce channels
+                bool moved = false;
                 for (int c = 0; c < 3; c++)
                 {
-                    var cur = ddc.Get(gains[c]); if (cur == null) throw new Exception("DDC RGB gain");
-                    double next = cur.Value.cur * (1 + (ratio[c] - 1) * 0.8);
-                    if (ratio.Max >= 0.999 && ratio[c] >= 0.999 && cur.Value.cur < cur.Value.max) next = Math.Min(cur.Value.max, cur.Value.cur + 1);
-                    ddc.Set(gains[c], (uint)Math.Clamp(Math.Round(next), 0, cur.Value.max));
+                    var cur = ddc.Get(gains[c]) ?? throw new Exception("DDC RGB gain");
+                    // gains are roughly linear in light: move most of the way, at least one step
+                    double next = cur.cur * (1 + (ratio[c] - 1) * 0.9);
+                    uint v = (uint)Math.Clamp(Math.Round(next), 0, cur.max);
+                    if (v == cur.cur && Math.Abs(ratio[c] - 1) > 0.004) v = (uint)Math.Clamp((int)cur.cur + (ratio[c] < 1 ? -1 : 1), 0, (int)cur.max);
+                    if (v != cur.cur) { ddc.Set(gains[c], v); moved = true; }
                 }
-                await Task.Delay(1500, ct);
+                if (!moved) break;
             }
-            for (int it = 0; it < 10 && nits != null; it++)
+            if (nits != null)
             {
-                var y = (await Measure(new[] { (1.0, 1.0, 1.0) }, dir, "osd_w", S.T("Brightness", "Яскравість"), ct))[0].Xyz.Y;
-                var cur = ddc.Get(Ddc.Brightness); if (cur == null) break;
-                last = string.Format(Inv, "{0:F1} cd/m² @ {1}", y, cur.Value.cur);
-                St.Report(S.T("Auto OSD brightness: ", "Авто-OSD яскравість: ") + last);
-                double err = (y - nits.Value) / nits.Value;
-                if (Math.Abs(err) < 0.02) break;
-                int step = (int)Math.Clamp(Math.Round(-err * 40), -15, 15); if (step == 0) step = err > 0 ? -1 : 1;
-                uint next = (uint)Math.Clamp((int)cur.Value.cur + step, 0, (int)cur.Value.max);
-                if (next == cur.Value.cur) break;
-                ddc.Set(Ddc.Brightness, next); await Task.Delay(1500, ct);
+                var cur = ddc.Get(Ddc.Brightness);
+                double? prevY = null; uint prevB = 0;
+                for (int it = 0; it < 8 && cur != null; it++)
+                {
+                    var y = (await rd.Read(1, 1, 1, ct, it == 0 ? 250 : 700)).Y;
+                    last = string.Format(Inv, "{0:F1} cd/m² @ brightness {1}", y, cur.Value.cur);
+                    St.Report(S.T("Auto OSD brightness: ", "Авто-OSD яскравість: ") + last);
+                    double err = (y - nits.Value) / nits.Value;
+                    if (Math.Abs(err) < 0.02) break;
+                    // secant step from the last two readings; first step assumes 1 % of range ≈ 1.5 % of luminance
+                    double slope = prevY is double py && cur.Value.cur != prevB ? (y - py) / ((double)cur.Value.cur - prevB) : y * 0.015;
+                    if (slope <= 0) slope = y * 0.015;
+                    int next = (int)Math.Clamp(Math.Round(cur.Value.cur + (nits.Value - y) / slope), 0, cur.Value.max);
+                    if (next == cur.Value.cur) next += err > 0 ? -1 : 1;
+                    if (next < 0 || next > cur.Value.max) break;
+                    prevY = y; prevB = cur.Value.cur;
+                    ddc.Set(Ddc.Brightness, (uint)next);
+                    cur = (cur.Value.cur == (uint)next ? cur : ((uint)next, cur.Value.max));
+                }
             }
             return last;
         }

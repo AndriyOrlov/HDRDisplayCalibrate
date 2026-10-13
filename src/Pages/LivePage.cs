@@ -47,13 +47,16 @@ namespace HDRDisplayCalibrate.Pages
 
         void MeasurePrimaries() => RunJob(async ct =>
         {
-            var dir = Paths.Session("live");
             if (St.Display?.ArgyllNumber is int n) Argyll.LutLinear(n);
-            var p = await Jobs.Measure(new[] { (1.0, 0.0, 0.0), (0.0, 1.0, 0.0), (0.0, 0.0, 1.0), (1.0, 1.0, 1.0) }, dir, "prim", S.T("Primaries", "Основні кольори"), ct);
-            _prim = M3.FromColumns(p[0].Xyz, p[1].Xyz, p[2].Xyz);
-            _sub.Text = string.Join("   ", new[] { "R", "G", "B" }.Select((c, i) => { var (x, y) = p[i].Xyz.Xy; return $"{c} {x:F4} {y:F4}"; })) +
-                        $"   · white {p[3].Xyz.Y:F1} cd/m², {Cm.Cct(p[3].Xyz):F0} K";
-            if (St.Display?.ArgyllNumber is int m) Argyll.LoadInstalled(m);
+            try
+            {
+                using var rd = new Jobs.LiveReader();
+                var p = new[] { await rd.Read(1, 0, 0, ct), await rd.Read(0, 1, 0, ct), await rd.Read(0, 0, 1, ct), await rd.Read(1, 1, 1, ct) };
+                _prim = M3.FromColumns(p[0], p[1], p[2]);
+                _sub.Text = string.Join("   ", new[] { "R", "G", "B" }.Select((c, i) => { var (x, y) = p[i].Xy; return $"{c} {x:F4} {y:F4}"; })) +
+                            $"   · white {p[3].Y:F1} cd/m², {Cm.Cct(p[3]):F0} K";
+            }
+            finally { if (St.Display?.ArgyllNumber is int m) Argyll.LoadInstalled(m); }
             St.Report(S.T("Primaries measured", "Основні кольори виміряно"), 1);
         });
 
@@ -63,21 +66,23 @@ namespace HDRDisplayCalibrate.Pages
             _running = true; ((TextBlock)((StackPanel)_start.Content).Children[1]).Text = S.T("Stop", "Стоп");
             RunJob(async ct =>
             {
-                var dir = Paths.Session("live");
                 if (St.Display?.ArgyllNumber is int n) Argyll.LutLinear(n);
-                Jobs.Hold(true);
                 try
                 {
+                    using var rd = new Jobs.LiveReader();
+                    var sw = System.Diagnostics.Stopwatch.StartNew(); int count = 0;
                     while (_running && !ct.IsCancellationRequested)
                     {
                         double lev = double.Parse((string)_level.SelectedItem, CultureInfo.InvariantCulture) / 100;
-                        var xyz = (await Jobs.Measure(new[] { (lev, lev, lev) }, dir, "live", S.T("Live", "Живий"), ct))[0].Xyz;
+                        var xyz = await rd.Read(lev, lev, lev, ct, 0);
+                        count++;
                         Show(xyz, lev);
+                        St.Report(S.T($"Live: {count} readings, {sw.Elapsed.TotalSeconds / count:F1} s each", $"Живий замір: {count} замірів, {sw.Elapsed.TotalSeconds / count:F1} с на замір"));
                     }
                 }
                 finally
                 {
-                    Jobs.Hold(false); _running = false;
+                    _running = false;
                     ((TextBlock)((StackPanel)_start.Content).Children[1]).Text = S.T("Start", "Старт");
                     if (St.Display?.ArgyllNumber is int m) Argyll.LoadInstalled(m);
                 }

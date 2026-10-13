@@ -116,7 +116,7 @@ namespace HDRDisplayCalibrate.Pages
     public sealed class Gamut3D : Border
     {
         readonly PerspectiveCamera _cam = new() { FieldOfView = 40 };
-        double _az = 35, _el = 25, _dist = 420;
+        double _az = 35, _el = 22, _dist = 560;
         Point? _drag;
 
         static M3 Matrix(Gamut.Space s)
@@ -137,8 +137,8 @@ namespace HDRDisplayCalibrate.Pages
             Height = 460; ClipToBounds = true; Background = Brushes.Transparent;
             var vp = new Viewport3D { Camera = _cam }; Child = vp;
             var group = new Model3DGroup();
-            group.Children.Add(new AmbientLight(Color.FromRgb(200, 200, 200)));
-            group.Children.Add(new DirectionalLight(Color.FromRgb(90, 90, 90), new Vector3D(-1, -1, -1)));
+            group.Children.Add(new AmbientLight(Color.FromRgb(110, 110, 110)));
+            group.Children.Add(new DirectionalLight(Color.FromRgb(70, 70, 70), new Vector3D(-1, -1, -1)));
             group.Children.Add(Solid(Matrix(display)));
             foreach (var (s, c) in refs) group.Children.Add(Wire(Matrix(s), c));
             vp.Children.Add(new ModelVisual3D { Content = group });
@@ -146,7 +146,7 @@ namespace HDRDisplayCalibrate.Pages
             MouseLeftButtonDown += (_, e) => { _drag = e.GetPosition(this); CaptureMouse(); };
             MouseLeftButtonUp += (_, _) => { _drag = null; ReleaseMouseCapture(); };
             MouseMove += (_, e) => { if (_drag is Point p) { var q = e.GetPosition(this); _az -= (q.X - p.X) * 0.5; _el = Math.Clamp(_el + (q.Y - p.Y) * 0.5, -85, 85); _drag = q; UpdateCam(); } };
-            MouseWheel += (_, e) => { _dist = Math.Clamp(_dist - e.Delta * 0.3, 150, 900); UpdateCam(); };
+            MouseWheel += (_, e) => { _dist = Math.Clamp(_dist - e.Delta * 0.3, 200, 1200); UpdateCam(); };
         }
 
         void UpdateCam()
@@ -156,38 +156,43 @@ namespace HDRDisplayCalibrate.Pages
             _cam.Position = pos; _cam.LookDirection = new Vector3D(-pos.X, -pos.Y, -pos.Z); _cam.UpDirection = new Vector3D(0, 1, 0);
         }
 
-        // RGB cube surface: 6 faces, n×n grid, coloured with the patch colour
-        static GeometryModel3D Solid(M3 m, int n = 16)
+        // RGB cube surface: 6 faces, each an n×n grid with its own smooth colour texture
+        static Model3DGroup Solid(M3 m, int n = 24)
         {
-            var mesh = new MeshGeometry3D();
-            var tex = new List<Color>();
+            var g = new Model3DGroup();
             void Face(Func<double, double, (double r, double g, double b)> f)
             {
-                int start = mesh.Positions.Count;
+                var mesh = new MeshGeometry3D();
                 for (int i = 0; i <= n; i++) for (int j = 0; j <= n; j++)
                 {
-                    var (r, g, b) = f(i / (double)n, j / (double)n);
-                    mesh.Positions.Add(ToLab(m, r, g, b));
-                    mesh.TextureCoordinates.Add(new Point(tex.Count % 64 / 64.0 + 1 / 128.0, tex.Count / 64 / 64.0 + 1 / 128.0));
-                    tex.Add(Color.FromRgb((byte)(r * 255), (byte)(g * 255), (byte)(b * 255)));
+                    double u = i / (double)n, v = j / (double)n;
+                    var (r, gg, b) = f(u, v);
+                    mesh.Positions.Add(ToLab(m, r, gg, b));
+                    mesh.TextureCoordinates.Add(new Point(u, v));
                 }
                 for (int i = 0; i < n; i++) for (int j = 0; j < n; j++)
                 {
-                    int a = start + i * (n + 1) + j, b2 = a + 1, c = a + n + 1, d = c + 1;
+                    int a = i * (n + 1) + j, b2 = a + 1, c = a + n + 1, d = c + 1;
                     mesh.TriangleIndices.Add(a); mesh.TriangleIndices.Add(c); mesh.TriangleIndices.Add(b2);
                     mesh.TriangleIndices.Add(b2); mesh.TriangleIndices.Add(c); mesh.TriangleIndices.Add(d);
                 }
+                const int T = 64;                                  // texture: the face's own RGB gradient
+                var px = new int[T * T];
+                for (int y = 0; y < T; y++) for (int x = 0; x < T; x++)
+                {
+                    var (r, gg, b) = f(x / (double)(T - 1), y / (double)(T - 1));
+                    px[y * T + x] = (int)(r * 255) << 16 | (int)(gg * 255) << 8 | (int)(b * 255);
+                }
+                var wb = new System.Windows.Media.Imaging.WriteableBitmap(T, T, 96, 96, PixelFormats.Bgr32, null);
+                wb.WritePixels(new Int32Rect(0, 0, T, T), px, T * 4, 0);
+                wb.Freeze();
+                var mat = new MaterialGroup();
+                mat.Children.Add(new DiffuseMaterial(new ImageBrush(wb)));
+                mat.Children.Add(new EmissiveMaterial(new ImageBrush(wb) { Opacity = 0.35 }));
+                g.Children.Add(new GeometryModel3D(mesh, mat) { BackMaterial = mat });
             }
             Face((u, v) => (u, v, 0)); Face((u, v) => (u, v, 1)); Face((u, v) => (u, 0, v)); Face((u, v) => (u, 1, v)); Face((u, v) => (0, u, v)); Face((u, v) => (1, u, v));
-            // colours packed into a small texture (one texel per vertex)
-            int rows = (tex.Count + 63) / 64;
-            var wb = new System.Windows.Media.Imaging.WriteableBitmap(64, Math.Max(rows, 1), 96, 96, PixelFormats.Bgr32, null);
-            var px = new int[64 * Math.Max(rows, 1)];
-            for (int i = 0; i < tex.Count; i++) px[i] = tex[i].R << 16 | tex[i].G << 8 | tex[i].B;
-            wb.WritePixels(new Int32Rect(0, 0, 64, Math.Max(rows, 1)), px, 64 * 4, 0);
-            var brush = new ImageBrush(wb) { ViewportUnits = BrushMappingMode.Absolute };
-            var mat = new MaterialGroup(); mat.Children.Add(new DiffuseMaterial(brush)); mat.Children.Add(new EmissiveMaterial(new SolidColorBrush(Color.FromArgb(70, 255, 255, 255))));
-            return new GeometryModel3D(mesh, mat) { BackMaterial = mat };
+            return g;
         }
 
         // cube edges as thin tubes made of quads
