@@ -41,7 +41,8 @@ namespace HDRDisplayCalibrate.Core
         [DllImport("kernel32.dll")] static extern bool CloseHandle(IntPtr h);
 
         /// <param name="mode">"-e" emissive (screen, cd/m²) or "-a" ambient (room, lux).</param>
-        public SpotSession(MeasureSetup m, string mode)
+        /// <param name="fast">Fixed short integration time (-Y A): much quicker on colours and greys, a little noisier in the dark.</param>
+        public SpotSession(MeasureSetup m, string mode, bool fast = false)
         {
             var psi = new ProcessStartInfo(Argyll.Exe("spotread"))
             {
@@ -51,6 +52,7 @@ namespace HDRDisplayCalibrate.Core
             };
             foreach (var a in new[] { $"-c{m.Instrument}", mode, "-x", "-N" }) psi.ArgumentList.Add(a);
             if (mode == "-e") { psi.ArgumentList.Add("-y"); psi.ArgumentList.Add(m.DisplayType); }
+            if (fast) { psi.ArgumentList.Add("-Y"); psi.ArgumentList.Add("A"); }
             if (!string.IsNullOrWhiteSpace(m.Correction)) { psi.ArgumentList.Add("-X"); psi.ArgumentList.Add(m.Correction); }
             _p = Process.Start(psi);
             // prompts end without a newline, so read characters, not lines

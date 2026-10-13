@@ -166,13 +166,16 @@ namespace HDRDisplayCalibrate
         {
             readonly SpotSession _spot;
             readonly PatchWindow _win;
-            public LiveReader()
+            /// <summary>Fixed integration time: ~1.5 s on any colour; dark greys (below ~40 %) read a bit noisier.</summary>
+            public readonly bool Fast;
+            public LiveReader(bool fast = false)
             {
+                Fast = fast;
                 _win = Application.Current.Dispatcher.Invoke(() =>
                 {
                     var w = new PatchWindow(St.Display, St.Setup.Patches != PatchMode.OwnWindow, St.Cfg); w.Show(); return w;
                 });
-                _spot = new SpotSession(St.Setup, "-e");
+                _spot = new SpotSession(St.Setup, "-e", fast);
             }
             public async Task<V3> Read(double r, double g, double b, CancellationToken ct, int settleMs = 250)
             {
@@ -189,7 +192,7 @@ namespace HDRDisplayCalibrate
         {
             using var ddc = Ddc.Open(d) ?? throw new Exception(S.T("This monitor does not answer DDC/CI", "Монітор не відповідає по DDC/CI"));
             if (d.ArgyllNumber is int n) Argyll.LutLinear(n);
-            using var rd = new LiveReader();
+            using var rd = new LiveReader(fast: true);      // white and full primaries only: the quick mode is as accurate there
             St.Report(S.T("Auto OSD: primaries…", "Авто-OSD: основні кольори…"));
             var P = M3.FromColumns(await rd.Read(1, 0, 0, ct), await rd.Read(0, 1, 0, ct), await rd.Read(0, 0, 1, ct));
             var gains = new[] { Ddc.GainR, Ddc.GainG, Ddc.GainB };

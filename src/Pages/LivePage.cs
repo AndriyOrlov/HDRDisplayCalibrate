@@ -50,7 +50,7 @@ namespace HDRDisplayCalibrate.Pages
             if (St.Display?.ArgyllNumber is int n) Argyll.LutLinear(n);
             try
             {
-                using var rd = new Jobs.LiveReader();
+                using var rd = new Jobs.LiveReader(fast: true);
                 var p = new[] { await rd.Read(1, 0, 0, ct), await rd.Read(0, 1, 0, ct), await rd.Read(0, 0, 1, ct), await rd.Read(1, 1, 1, ct) };
                 _prim = M3.FromColumns(p[0], p[1], p[2]);
                 _sub.Text = string.Join("   ", new[] { "R", "G", "B" }.Select((c, i) => { var (x, y) = p[i].Xy; return $"{c} {x:F4} {y:F4}"; })) +
@@ -67,13 +67,16 @@ namespace HDRDisplayCalibrate.Pages
             RunJob(async ct =>
             {
                 if (St.Display?.ArgyllNumber is int n) Argyll.LutLinear(n);
+                Jobs.LiveReader rd = null;
                 try
                 {
-                    using var rd = new Jobs.LiveReader();
                     var sw = System.Diagnostics.Stopwatch.StartNew(); int count = 0;
                     while (_running && !ct.IsCancellationRequested)
                     {
                         double lev = double.Parse((string)_level.SelectedItem, CultureInfo.InvariantCulture) / 100;
+                        // quick fixed-time readings for bright levels, the slower adaptive mode for dark greys
+                        bool fast = lev >= 0.4;
+                        if (rd == null || rd.Fast != fast) { rd?.Dispose(); rd = new Jobs.LiveReader(fast); sw.Restart(); count = 0; }
                         var xyz = await rd.Read(lev, lev, lev, ct, 0);
                         count++;
                         Show(xyz, lev);
@@ -82,6 +85,7 @@ namespace HDRDisplayCalibrate.Pages
                 }
                 finally
                 {
+                    rd?.Dispose();
                     _running = false;
                     ((TextBlock)((StackPanel)_start.Content).Children[1]).Text = S.T("Start", "Старт");
                     if (St.Display?.ArgyllNumber is int m) Argyll.LoadInstalled(m);
