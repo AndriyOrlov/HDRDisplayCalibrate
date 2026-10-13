@@ -68,7 +68,12 @@ namespace HDRDisplayCalibrate.Core
             return Bin = cands.FirstOrDefault(Ok);
         }
 
-        public static string Exe(string tool) => Path.Combine(Bin, tool + ".exe");
+        // the folder found at start can disappear (an app that bundled Argyll was uninstalled): look again
+        public static string Exe(string tool)
+        {
+            if (Bin == null || !File.Exists(Path.Combine(Bin, tool + ".exe"))) Find(null);
+            return Path.Combine(Bin ?? throw new FileNotFoundException("ArgyllCMS"), tool + ".exe");
+        }
 
         /// <summary>Runs a tool, streaming each \r / \n separated line; parses "patch N of M" into progress.</summary>
         public static async Task<(int code, string output)> RunAsync(string tool, IEnumerable<string> args, string workDir,
