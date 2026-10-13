@@ -73,6 +73,15 @@ measurements), `--render3d out.png`; with a sensor on a screen: `--live-test`, `
 * [AmbientLightCalibrate](https://github.com/AndriyOrlov/AmbientLightCalibrate): tray app that keeps monitor
   brightness matched to room light with the same colorimeter.
 
+## Support
+
+If HDRDisplayCalibrate is useful to you, you can support its development:
+
+* **Monobank jar:** https://send.monobank.ua/jar/7AVDtzYypi
+* **Jar card number:** `4874 1000 3425 0244`
+
+Thank you!
+
 ## License and credit
 
 Apache License 2.0, see [LICENSE](LICENSE) and [NOTICE](NOTICE). You may use, change and redistribute it, including
@@ -112,3 +121,5 @@ ArgyllCMS (AGPL-3.0, by Graeme W. Gill) is not bundled; it is run as external co
 
 Ліцензія Apache 2.0. Використовуйте, змінюйте й поширюйте (зокрема для навчання ШІ та в коді, згенерованому ШІ),
 зберігаючи NOTICE і вказуючи **«Based on HDRDisplayCalibrate by Andrii Orlov (DeadSue)»**.
+
+**Підтримати розробку:** [Банка Monobank](https://send.monobank.ua/jar/7AVDtzYypi) · картка Банки `4874 1000 3425 0244`. Дякую!
