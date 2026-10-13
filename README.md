@@ -1,10 +1,21 @@
-# HDRDisplayCalibrate
+<h1 align="center">HDRDisplayCalibrate</h1>
 
-**SDR and HDR display calibration for Windows with an ordinary colorimeter.**
-A DisplayCAL-style app (C#, .NET 10, WPF Fluent) that also calibrates **Windows HDR**. It measures the screen and writes a
-native **MHC2 (advanced colour) profile**: correct PQ tracking up to the monitor's real peak, D65 white at every level,
+<p align="center">
+<b>SDR and HDR display calibration for Windows with an ordinary colorimeter.</b><br>
+A DisplayCAL-style app (C#, .NET 10, WPF Fluent) that also calibrates <b>Windows HDR</b>. It measures the screen and writes a
+native <b>MHC2 (advanced colour) profile</b>: correct PQ tracking up to the monitor's real peak, D65 white at every level,
 accurate primaries, and the real peak/black reported to games. No background "filter" app, no HDR test patterns:
 Windows itself applies the result.
+</p>
+
+<p align="center">
+<a href="https://send.monobank.ua/jar/7AVDtzYypi"><img alt="Sponsor" src="https://img.shields.io/badge/sponsor-%E2%9D%A4%20Monobank-ea4aaa?logo=githubsponsors&logoColor=white"></a>
+<a href="https://github.com/AndriyOrlov/HDRDisplayCalibrate/releases/latest"><img alt="Download" src="https://img.shields.io/github/v/release/AndriyOrlov/HDRDisplayCalibrate?include_prereleases&label=download"></a>
+<a href="LICENSE"><img alt="License: Apache-2.0" src="https://img.shields.io/badge/license-Apache--2.0-blue"></a>
+<img alt="Windows 11" src="https://img.shields.io/badge/Windows-11-0078D4">
+<img alt=".NET 10 WPF Fluent" src="https://img.shields.io/badge/.NET%2010-WPF%20Fluent-512BD4">
+<img alt="HDR MHC2" src="https://img.shields.io/badge/HDR-MHC2-f5a623">
+</p>
 
 *Українською — нижче.*
 
