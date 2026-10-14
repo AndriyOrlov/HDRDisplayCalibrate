@@ -50,15 +50,15 @@ namespace HDRDisplayCalibrate.Pages
             _pre.Children.Add(Ui.Table(new[] { "", "", "" }, new[]
             {
                 new[] { ok(d.HdrOn) ? "✓" : "✗", S.T("Windows HDR is on for this display", "Windows HDR увімкнено для цього дисплея"), d.HdrOn ? "" : S.T("required", "обов'язково") },
-                new[] { d.SdrWhiteNits >= 400 ? "✓" : "!", S.T($"“SDR content brightness” = {d.SdrWhiteNits:F0} nits", $"«Яскравість SDR-вмісту» = {d.SdrWhiteNits:F0} ніт"), S.T("set the slider to 100 % while calibrating (measures up to 480 nits of signal); set it back afterwards", "на час калібрування поставте повзунок на 100 % (міряє до 480 ніт сигналу); потім поверніть") },
+                new[] { d.SdrWhiteNits >= 400 ? "✓" : "!", S.F("“SDR content brightness” = {0:F0} nits", "«Яскравість SDR-вмісту» = {0:F0} ніт", d.SdrWhiteNits), S.T("set the slider to 100 % while calibrating (measures up to 480 nits of signal); set it back afterwards", "на час калібрування поставте повзунок на 100 % (міряє до 480 ніт сигналу); потім поверніть") },
                 new[] { "!", S.T("Monitor OSD brightness in HDR at maximum", "Яскравість OSD монітора в HDR на максимумі"), S.T("so the monitor follows the PQ signal as closely as it can", "щоб монітор якомога точніше відстежував PQ-сигнал") },
                 new[] { "!", S.T("Sensor in the centre of the screen, diffuser open", "Датчик по центру екрана, розсіювач відкритий"), "" },
             }, new double[] { 30, 330, 520 }));
             _pre.Children.Add(Ui.Row(
-                Ui.Btn(d.HdrOn ? S.T("HDR is on", "HDR увімкнено") : S.T("Turn HDR on", "Увімкнути HDR"), async () => { if (!d.HdrOn) { Displays.SetHdr(d, true); await Task.Delay(7000); St.RefreshDisplays(); Prereq(); } }, false, ""),
-                Ui.Btn(S.T("Open display settings", "Відкрити параметри дисплея"), ColorProfiles.OpenDisplaySettings, false, ""),
-                Ui.Btn(S.T("Set OSD brightness 100 (DDC/CI)", "OSD яскравість 100 (DDC/CI)"), () => { using var x = Ddc.Open(d); if (x?.Get(Ddc.Brightness) is { } b) x.Set(Ddc.Brightness, b.max); }, false, ""),
-                Ui.Btn(S.T("Refresh", "Оновити"), Prereq, false, "")));
+                Ui.Btn(d.HdrOn ? S.T("HDR is on", "HDR увімкнено") : S.T("Turn HDR on", "Увімкнути HDR"), async () => { if (!d.HdrOn) { Displays.SetHdr(d, true); await Task.Delay(7000); St.RefreshDisplays(); Prereq(); } }, false, "", tip: S.T("Turns Windows HDR on for this display (takes a few seconds).", "Вмикає Windows HDR для цього дисплея (займає кілька секунд).")),
+                Ui.Btn(S.T("Open display settings", "Відкрити параметри дисплея"), ColorProfiles.OpenDisplaySettings, false, "", tip: S.T("Opens Windows Settings → Display, where the HDR colour profile and “SDR content brightness” are set.", "Відкриває Параметри Windows → Дисплей, де вибирається HDR-профіль і «Яскравість SDR-вмісту».")),
+                Ui.Btn(S.T("Set OSD brightness 100 (DDC/CI)", "OSD яскравість 100 (DDC/CI)"), () => { using var x = Ddc.Open(d); if (x?.Get(Ddc.Brightness) is { } b) x.Set(Ddc.Brightness, b.max); }, false, "", tip: S.T("Sets the monitor's own brightness to maximum over DDC/CI so it follows the PQ signal as closely as it can.", "Ставить власну яскравість монітора на максимум через DDC/CI, щоб він якомога точніше відстежував PQ-сигнал.")),
+                Ui.Btn(S.T("Refresh", "Оновити"), Prereq, false, "", tip: S.T("Checks the HDR prerequisites again.", "Ще раз перевіряє умови для HDR."))));
         }
 
         void BuildSteps()
@@ -70,7 +70,8 @@ namespace HDRDisplayCalibrate.Pages
                 S.T("A temporary ×8 probe profile pushes the same patches up to ~3800 nits of signal to find where the monitor clips (~4 min).", "Тимчасовий профіль-зонд ×8 доводить ті самі патчі до ~3800 ніт сигналу, щоб знайти, де монітор обрізає (~4 хв)."), Step2));
             _steps.Children.Add(Step(3, S.T("Build and check the first profile", "Побудувати й перевірити перший профіль"),
                 S.T("Matrix for D65 and sRGB/Rec.2020 primaries, PQ curve with a soft roll-off to the peak.", "Матриця для D65 і основних кольорів, PQ-крива з плавним зрізом до піку."), Step3,
-                Ui.Row(Ui.Text(S.T("Peak, nits", "Пік, ніт")), _peak, Ui.Text(S.T("roll-off from, nits", "зріз від, ніт")), _knee)));
+                Ui.Row(Ui.Text(S.T("Peak, nits", "Пік, ніт")), Ui.Tip(_peak, S.T("Peak luminance written into the profile, cd/m². Step 2 fills it in; a lower value keeps the brightest highlights more neutral.", "Пікова яскравість, яка записується в профіль, кд/м². Крок 2 заповнює її сам; менше значення робить найяскравіші світла нейтральнішими.")),
+                       Ui.Text(S.T("roll-off from, nits", "зріз від, ніт")), Ui.Tip(_knee, S.T("Where the soft roll-off toward the peak starts, cd/m². Brighter signals above it are compressed smoothly instead of clipped.", "Звідки починається плавний зріз до піку, кд/м². Яскравіші сигнали вище нього плавно стискаються, а не обрізаються.")))));
             _steps.Children.Add(Step(4, S.T("Grey balance per channel", "Баланс сірого по каналах"),
                 S.T("Separate R/G/B curves keep the white D65 from shadows to highlights.", "Окремі криві R/G/B тримають білий D65 від тіней до світел."), Step4));
             _steps.Children.Add(Step(5, S.T("Finalize and verify", "Завершити й перевірити"),
@@ -79,7 +80,7 @@ namespace HDRDisplayCalibrate.Pages
 
         static UIElement Step(int n, string title, string text, Action run, UIElement extra = null) =>
             Ui.Card(Ui.Row(new Border { Width = 28, Height = 28, CornerRadius = new CornerRadius(14), Background = Ui.Accent, Child = new TextBlock { Text = n.ToString(), Foreground = Brushes.Black, FontWeight = FontWeights.Bold, HorizontalAlignment = HorizontalAlignment.Center, VerticalAlignment = VerticalAlignment.Center } },
-                           Ui.H2(title)), Ui.Caption(text), extra, Ui.Row(Ui.Btn(S.T("Run", "Виконати"), run, true, "")));
+                           Ui.H2(title)), Ui.Caption(text), extra, Ui.Row(Ui.Btn(S.T("Run", "Виконати"), run, true, "", tip: text)));
 
         // ------------------------------------------------------------ helpers
         bool Ready()
@@ -102,8 +103,8 @@ namespace HDRDisplayCalibrate.Pages
             await Dispatcher.InvokeAsync(() =>
             {
                 ColorProfiles.OpenDisplaySettings();
-                MessageBox.Show(S.T($"In Settings → System → Display → (this monitor) → Color profile, choose:\n\n    {p.Description}\n\nthen move the Settings window off the patch area and press OK.",
-                                    $"У Параметри → Система → Дисплей → (цей монітор) → Колірний профіль виберіть:\n\n    {p.Description}\n\nвідсуньте вікно Параметрів від патча і натисніть OK."), "HDRDisplayCalibrate");
+                MessageBox.Show(S.F("In Settings → System → Display → (this monitor) → Color profile, choose:\n\n    {0}\n\nthen move the Settings window off the patch area and press OK.",
+                                    "У Параметри → Система → Дисплей → (цей монітор) → Колірний профіль виберіть:\n\n    {0}\n\nвідсуньте вікно Параметрів від патча і натисніть OK.", p.Description), "HDRDisplayCalibrate");
             });
             await Task.Delay(1500);
         }
@@ -126,7 +127,7 @@ namespace HDRDisplayCalibrate.Pages
             await Activate(Named(new Mhc2Profile(), "neutral"), $"HDC_{St.Display.Model}_neutral_{DateTime.Now:HHmmss}.icc");
             _base = await Ramp("hdr_base", ct);
             var w = _base.First(p => p.Is(1, 1, 1)).Xyz;
-            Show(S.T("Monitor as it is", "Монітор як є"), _base, null, S.T($"White {w.Y:F0} cd/m² at {_sdrWhite:F0} nits of signal ({w.Y / _sdrWhite * 100:F0} %), {Cm.Cct(w):F0} K", $"Білий {w.Y:F0} кд/м² на {_sdrWhite:F0} ніт сигналу ({w.Y / _sdrWhite * 100:F0} %), {Cm.Cct(w):F0} K"));
+            Show(S.T("Monitor as it is", "Монітор як є"), _base, null, S.F("White {0:F0} cd/m² at {1:F0} nits of signal ({2:F0} %), {3:F0} K", "Білий {0:F0} кд/м² на {1:F0} ніт сигналу ({2:F0} %), {3:F0} K", w.Y, _sdrWhite, w.Y / _sdrWhite * 100, Cm.Cct(w)));
             St.Report(S.T("Step 1 done", "Крок 1 виконано"), 1);
         }); }
 
@@ -140,8 +141,8 @@ namespace HDRDisplayCalibrate.Pages
             var chart = new LineChart { LogX = true, LogY = true, XLabel = S.T("signal, nits", "сигнал, ніт"), YLabel = S.T("measured, cd/m²", "виміряно, кд/м²"), XMin = 0.1, YMin = 0.05 };
             chart.Data.Add(new LineChart.Series(S.T("ideal", "ідеал"), new List<(double, double)> { (0.1, 0.1), (10000, 10000) }, Ui.Muted, true));
             chart.Data.Add(new LineChart.Series(S.T("monitor", "монітор"), _resp.Req.Zip(_resp.Out).Where(t => t.First > 0).ToList(), Ui.Accent, false, true));
-            ShowChart(S.T($"Black {_resp.Black:F3} cd/m², clips at {_resp.ClipReq:F0} nits of signal → {_resp.ClipOut:F0} cd/m². Suggested peak {peak:F0} cd/m² (headroom for neutral highlights).",
-                          $"Чорний {_resp.Black:F3} кд/м², обрізає на {_resp.ClipReq:F0} ніт сигналу → {_resp.ClipOut:F0} кд/м². Рекомендований пік {peak:F0} кд/м² (запас для нейтральних світел)."), chart);
+            ShowChart(S.F("Black {0:F3} cd/m², clips at {1:F0} nits of signal → {2:F0} cd/m². Suggested peak {3:F0} cd/m² (headroom for neutral highlights).",
+                          "Чорний {0:F3} кд/м², обрізає на {1:F0} ніт сигналу → {2:F0} кд/м². Рекомендований пік {3:F0} кд/м² (запас для нейтральних світел).", _resp.Black, _resp.ClipReq, _resp.ClipOut, peak), chart);
             St.Report(S.T("Step 2 done", "Крок 2 виконано"), 1);
         }); }
 
@@ -184,12 +185,12 @@ namespace HDRDisplayCalibrate.Pages
             if (sdr != null) Argyll.LutLoad(disp, Path.Combine(ColorProfiles.ColorDir, sdr));   // real-world state: SDR LUT on top of HDR
             var m = await Jobs.Measure(HdrPipeline.RampChart(_sdrWhite), _dir, "hdr_final", S.T("Verification", "Перевірка"), ct);
             Show(S.T("Final HDR profile", "Фінальний HDR-профіль"), m, (Ui.Num(_knee, 0), _final.MaxNits),
-                 S.T($"Installed and active. Games and apps now see peak {_final.MaxNits:F0} cd/m² and black {_final.MinNits:F3} cd/m². You can set “SDR content brightness” back (e.g. ~10 for 120 cd/m² desktop).",
-                     $"Встановлено й активно. Ігри та програми тепер бачать пік {_final.MaxNits:F0} кд/м² і чорний {_final.MinNits:F3} кд/м². «Яскравість SDR-вмісту» можна повернути (напр. ~10 для робочого столу 120 кд/м²)."));
+                 S.F("Installed and active. Games and apps now see peak {0:F0} cd/m² and black {1:F3} cd/m². You can set “SDR content brightness” back (e.g. ~10 for 120 cd/m² desktop).",
+                     "Встановлено й активно. Ігри та програми тепер бачать пік {0:F0} кд/м² і чорний {1:F3} кд/м². «Яскравість SDR-вмісту» можна повернути (напр. ~10 для робочого столу 120 кд/м²).", _final.MaxNits, _final.MinNits));
             St.Report(S.T("HDR calibration done", "HDR калібрування завершено"), 1);
         }); }
 
-        static void Need(int step) => MessageBox.Show(S.T($"Run step {step} first.", $"Спершу виконайте крок {step}."));
+        static void Need(int step) => MessageBox.Show(S.F("Run step {0} first.", "Спершу виконайте крок {0}.", step));
 
         // ------------------------------------------------------------ results
         void ShowChart(string text, UIElement chart) => Dispatcher.Invoke(() => _out.Children.Insert(0, Ui.Card(Ui.Caption(text), chart)));

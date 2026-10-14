@@ -27,7 +27,7 @@ namespace HDRDisplayCalibrate.Pages
         readonly ComboBox _intent = Ui.Combo(new[] { S.T("Relative colorimetric (clip)", "Відносний колориметричний (обрізати)"), S.T("Perceptual with gamut mapping", "Перцептивний з відображенням гамуту") }, 0);
         readonly ComboBox _size = Ui.Combo(new[] { "17³", "33³", "65³" }, 1);
         readonly ComboBox _fmt = Ui.Combo(new[] { "IRIDAS .cube (DaVinci Resolve, OBS, games)", "madVR .3dlut", "eeColor .txt", "ReShade LUT .png (from .cube)" }, 0);
-        readonly CheckBox _cal = Ui.Check(S.T("Include the display calibration (vcgt) in the LUT", "Включити калібрування дисплея (vcgt) у LUT"), true);
+        readonly CheckBox _cal = Ui.Check(S.T("Include the display calibration (vcgt) in the LUT", "Включити калібрування дисплея (vcgt) у LUT"), true, tip: S.T("Bakes the profile's calibration curve into the LUT, so the LUT alone gives the calibrated picture. The video card curve should then be linear while the LUT is used.", "Вбудовує калібрувальну криву профілю в LUT, тож один LUT дає відкаліброване зображення. Тоді крива відеокарти має бути лінійною, поки використовується LUT."));
         readonly TextBox _dest = Ui.Box("", 520);
         readonly TextBlock _out = Ui.Caption("");
 
@@ -35,14 +35,14 @@ namespace HDRDisplayCalibrate.Pages
                                              "Перетворює профіль дисплея на 3D-LUT для програм, що застосовують свій LUT (madVR, Resolve, OBS, ReShade)."))
         {
             Body.Children.Add(Ui.Card(
-                Ui.Field(S.T("Source colour space", "Колірний простір джерела"), _src),
-                Ui.Field(S.T("Source tone curve", "Крива джерела"), _eotf),
-                Ui.Field(S.T("Rendering", "Відтворення"), _intent),
-                Ui.Field(S.T("LUT size", "Розмір LUT"), _size),
-                Ui.Field(S.T("Format", "Формат"), _fmt),
-                Ui.Field(S.T("Display profile", "Профіль дисплея"), Ui.Row(_dest, Ui.Btn("…", Pick))),
+                Ui.Field(S.T("Source colour space", "Колірний простір джерела"), _src, tip: S.T("Colour space of the content: Rec.709 / sRGB for most video, games and the web; DCI-P3 or Rec.2020 for wide-gamut content.", "Колірний простір вмісту: Rec.709 / sRGB для більшості відео, ігор і вебу; DCI-P3 або Rec.2020 для широкого гамуту.")),
+                Ui.Field(S.T("Source tone curve", "Крива джерела"), _eotf, tip: S.T("The tone curve the content was mastered for: BT.1886 for video, gamma 2.2 for PC content and games.", "Тонова крива, під яку зроблено вміст: BT.1886 для відео, гамма 2.2 для ПК-вмісту та ігор.")),
+                Ui.Field(S.T("Rendering", "Відтворення"), _intent, tip: S.T("What happens to colours the display cannot show: clipped exactly (relative colorimetric) or compressed smoothly (perceptual).", "Що робити з кольорами, яких дисплей не може показати: точно обрізати (відносний колориметричний) або плавно стиснути (перцептивний).")),
+                Ui.Field(S.T("LUT size", "Розмір LUT"), _size, tip: S.T("Grid points per axis. 33³ is the usual choice; 65³ is slightly more precise and much larger.", "Кількість вузлів на вісь. 33³ — звичайний вибір; 65³ трохи точніший і значно більший.")),
+                Ui.Field(S.T("Format", "Формат"), _fmt, tip: S.T("File type for your app: .cube for DaVinci Resolve, OBS and many games, .3dlut for madVR, eeColor box, or a ReShade PNG.", "Тип файлу для вашої програми: .cube для DaVinci Resolve, OBS і багатьох ігор, .3dlut для madVR, коробка eeColor або PNG для ReShade.")),
+                Ui.Field(S.T("Display profile", "Профіль дисплея"), Ui.Row(_dest, Ui.Btn("…", Pick, tip: S.T("Choose another ICC/ICM profile.", "Вибрати інший профіль ICC/ICM."))), tip: S.T("The calibrated ICC profile of the display the LUT is made for.", "Відкалібрований ICC-профіль дисплея, для якого робиться LUT.")),
                 _cal,
-                Ui.Row(Ui.Btn(S.T("Create 3D LUT", "Створити 3D-LUT"), Run, true, "")), _out));
+                Ui.Row(Ui.Btn(S.T("Create 3D LUT", "Створити 3D-LUT"), Run, true, "", tip: S.T("Builds the LUT with ArgyllCMS collink and saves it to the measurements folder.", "Будує LUT через ArgyllCMS collink і зберігає його в теці замірів."))), _out));
         }
 
         public override void OnShow()

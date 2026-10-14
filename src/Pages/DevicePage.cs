@@ -18,7 +18,7 @@ namespace HDRDisplayCalibrate.Pages
         readonly ComboBox _instr = Ui.Combo(Array.Empty<string>(), 0, null, 420);
         readonly ComboBox _type, _patches;
         readonly TextBox _corr = Ui.Box("", 380), _argyll = Ui.Box("", 420);
-        readonly CheckBox _video = Ui.Check(S.T("TV / video levels 16–235", "ТВ / відеорівні 16–235"));
+        readonly CheckBox _video = Ui.Check(S.T("TV / video levels 16–235", "ТВ / відеорівні 16–235"), tip: S.T("Tick only if the display receives a video-range signal (16–235), e.g. a TV on HDMI set to limited range. PC monitors use the full range 0–255.", "Позначте, лише якщо дисплей отримує відеодіапазон 16–235, напр. ТВ по HDMI з обмеженим діапазоном. Монітори на ПК працюють у повному 0–255."));
         readonly TextBlock _argyllState = Ui.Caption("");
         bool _loading;
 
@@ -36,20 +36,31 @@ namespace HDRDisplayCalibrate.Pages
             _video.Click += (_, _) => Save();
             _corr.LostFocus += (_, _) => Save();
 
+            // language first, labelled in English too, so it can be found whatever language is on screen
+            var langs = new[] { ("auto", S.T("Automatic (Windows language)", "Автоматично (мова Windows)")) }.Concat(S.Languages).ToList();
+            var lang = Ui.Combo(langs.Select(l => l.Item2), Math.Max(0, langs.FindIndex(l => l.Item1 == St.Cfg.Str("lang", "auto"))), null, 300);
+            lang.SelectionChanged += (_, _) =>
+            {
+                St.Cfg.Set("lang", langs[lang.SelectedIndex].Item1); St.Cfg.Save();
+                ((App)Application.Current).Reload(langs[lang.SelectedIndex].Item1);
+            };
+            Body.Children.Add(Ui.Card(Ui.Field(S.Lang == "en" ? "Language" : S.T("Language", "Мова") + " · Language", lang,
+                tip: S.T("Interface language. The window reloads in the new language; a running measurement is cancelled.", "Мова інтерфейсу. Вікно перезавантажиться новою мовою; поточний замір буде скасовано."))));
+            Ui.Tip(_displays, S.T("The screen to calibrate. Profiles, patches and DDC/CI all go to this display.", "Екран, який калібруємо. Профілі, патчі й DDC/CI стосуються саме цього дисплея."));
             Body.Children.Add(Ui.Card(Ui.H2(S.T("Display", "Дисплей")),
-                Ui.Row(_displays, Ui.Btn(S.T("Identify", "Показати номери"), Identify, false, ""), Ui.Btn(S.T("Refresh", "Оновити"), () => { St.RefreshDisplays(); OnShow(); }, false, "")),
+                Ui.Row(_displays, Ui.Btn(S.T("Identify", "Показати номери"), Identify, false, "", tip: S.T("Shows which physical screen this is.", "Показує, який це фізичний екран.")), Ui.Btn(S.T("Refresh", "Оновити"), () => { St.RefreshDisplays(); OnShow(); }, false, "", tip: S.T("Looks for displays and colorimeters again, e.g. after plugging in the sensor or switching HDR.", "Заново шукає дисплеї та колориметри, напр. після підключення датчика чи перемикання HDR."))),
                 _info));
             Body.Children.Add(Ui.Card(Ui.H2(S.T("Colorimeter", "Колориметр")),
-                Ui.Field(S.T("Instrument", "Пристрій"), _instr),
-                Ui.Field(S.T("Display technology", "Технологія дисплея"), _type, S.T("i1Display / ColorMunki: LCD and OLED use non-refresh", "i1Display / ColorMunki: для LCD і OLED — без регенерації")),
-                Ui.Field(S.T("Correction (.ccss / .ccmx)", "Корекція (.ccss / .ccmx)"), Ui.Row(_corr, Ui.Btn("…", PickCorrection)), S.T("Optional spectral correction for your panel type", "Необов'язкова спектральна корекція під тип панелі")),
+                Ui.Field(S.T("Instrument", "Пристрій"), _instr, tip: S.T("The colorimeter found by ArgyllCMS. If the list is empty, plug it in and press Refresh.", "Колориметр, який знайшов ArgyllCMS. Якщо список порожній, підключіть його й натисніть «Оновити».")),
+                Ui.Field(S.T("Display technology", "Технологія дисплея"), _type, S.T("i1Display / ColorMunki: LCD and OLED use non-refresh", "i1Display / ColorMunki: для LCD і OLED — без регенерації"), tip: S.T("Tells the colorimeter how to measure. LCD and OLED: non-refresh. CRT, plasma or a flickering (PWM) backlight: refresh.", "Підказує колориметру, як міряти. LCD і OLED — non-refresh. CRT, плазма чи мерехтливе (ШІМ) підсвічування — refresh.")),
+                Ui.Field(S.T("Correction (.ccss / .ccmx)", "Корекція (.ccss / .ccmx)"), Ui.Row(_corr, Ui.Btn("…", PickCorrection, tip: S.T("Choose a .ccss or .ccmx correction file.", "Вибрати файл корекції .ccss або .ccmx."))), S.T("Optional spectral correction for your panel type", "Необов'язкова спектральна корекція під тип панелі"), tip: S.T("Optional spectral correction for the panel's backlight type (WLED, wide-gamut LED, OLED…). Makes a colorimeter more accurate on that panel; leave empty if unsure.", "Необов'язкова спектральна корекція під тип підсвічування панелі (WLED, широкий гамут, OLED…). Робить колориметр точнішим на цій панелі; якщо не впевнені — залиште порожнім.")),
                 _video));
             Body.Children.Add(Ui.Card(Ui.H2(S.T("Test patches", "Тестові патчі")),
                 Ui.Field(S.T("Show patches in", "Показувати патчі"), _patches,
-                    S.T("Own window works full screen or as a window you can drag and resize; OLED/plasma with ABL prefer a window", "Власне вікно: на весь екран або перетягуване вікно; для OLED/плазми з ABL краще вікно")),
-                Ui.Btn(S.T("Preview patch window (5 s)", "Показати вікно патчів (5 с)"), PreviewPatches, false, "")));
+                    S.T("Own window works full screen or as a window you can drag and resize; OLED/plasma with ABL prefer a window", "Власне вікно: на весь екран або перетягуване вікно; для OLED/плазми з ABL краще вікно"), tip: S.T("Where the test colours appear: our own window (full screen, or a window you can move and resize) or ArgyllCMS's window. A smaller window helps OLED and plasma screens that dim large bright areas.", "Де показуються тестові кольори: у власному вікні програми (на весь екран або у вікні, яке можна рухати й змінювати) чи у вікні ArgyllCMS. Менше вікно допомагає OLED і плазмі, які притемнюють великі яскраві ділянки.")),
+                Ui.Btn(S.T("Preview patch window (5 s)", "Показати вікно патчів (5 с)"), PreviewPatches, false, "", tip: S.T("Shows the patch window on the selected display for 5 seconds so you can place the sensor.", "Показує вікно патча на вибраному дисплеї на 5 секунд, щоб ви поставили датчик."))));
             Body.Children.Add(Ui.Card(Ui.H2("ArgyllCMS"),
-                Ui.Field(S.T("bin folder", "Папка bin"), Ui.Row(_argyll, Ui.Btn(S.T("Apply", "Застосувати"), () => { St.Cfg.Set("argyll_bin", _argyll.Text.Trim()); St.Cfg.Save(); Argyll.Find(_argyll.Text.Trim()); St.RefreshDisplays(); OnShow(); }))),
+                Ui.Field(S.T("bin folder", "Папка bin"), Ui.Row(_argyll, Ui.Btn(S.T("Apply", "Застосувати"), () => { St.Cfg.Set("argyll_bin", _argyll.Text.Trim()); St.Cfg.Save(); Argyll.Find(_argyll.Text.Trim()); St.RefreshDisplays(); OnShow(); }, tip: S.T("Use this ArgyllCMS folder and search for displays and instruments again.", "Використати цю теку ArgyllCMS і заново знайти дисплеї та прилади."))), tip: S.T("Folder with the ArgyllCMS tools (dispcal.exe, spotread.exe…). C:\\ArgyllCMS\\bin, Program Files and a DisplayCAL download are found automatically.", "Тека з інструментами ArgyllCMS (dispcal.exe, spotread.exe…). C:\\ArgyllCMS\\bin, Program Files і завантаження DisplayCAL знаходяться автоматично.")),
                 _argyllState));
         }
 
@@ -78,7 +89,7 @@ namespace HDRDisplayCalibrate.Pages
             var d = St.Display; if (d == null) return;
             Displays.RefreshColor(d);
             string ddc;
-            try { using var x = Ddc.Open(d); var b = x?.Get(Ddc.Brightness); ddc = b == null ? S.T("no", "ні") : S.T($"yes · brightness {b.Value.cur}/{b.Value.max}", $"так · яскравість {b.Value.cur}/{b.Value.max}"); }
+            try { using var x = Ddc.Open(d); var b = x?.Get(Ddc.Brightness); ddc = b == null ? S.T("no", "ні") : S.F("yes · brightness {0}/{1}", "так · яскравість {0}/{1}", b.Value.cur, b.Value.max); }
             catch { ddc = "?"; }
             _info.Children.Add(Ui.Table(new[] { "", "" }, new[]
             {
@@ -93,7 +104,7 @@ namespace HDRDisplayCalibrate.Pages
             }, new double[] { 230, 600 }));
             if (d.HdrSupported)
                 _info.Children.Add(Ui.Row(Ui.Btn(d.HdrOn ? S.T("Turn HDR off", "Вимкнути HDR") : S.T("Turn HDR on", "Увімкнути HDR"),
-                    async () => { Displays.SetHdr(d, !d.HdrOn); await Task.Delay(6000); St.RefreshDisplays(); OnShow(); }, false, "")));
+                    async () => { Displays.SetHdr(d, !d.HdrOn); await Task.Delay(6000); St.RefreshDisplays(); OnShow(); }, false, "", tip: S.T("Switches Windows HDR for this display. The monitor may show its own message for a few seconds.", "Перемикає Windows HDR для цього дисплея. Монітор може кілька секунд показувати своє повідомлення."))));
             if (d.AcmOn && !d.HdrOn)
                 _info.Children.Add(new TextBlock { Text = S.T("⚠ ACM is on: in SDR Windows then uses the HDR (advanced colour) profile instead of the ICC calibration. Turn it off in Settings → Display → Color profile for SDR calibration.",
                                                               "⚠ ACM увімкнено: у SDR Windows тоді бере HDR-профіль замість ICC-калібрування. Для SDR-калібрування вимкніть його в Параметри → Дисплей → Колірний профіль."), Foreground = Ui.Warm, TextWrapping = TextWrapping.Wrap, Margin = new Thickness(0, 8, 0, 0) });

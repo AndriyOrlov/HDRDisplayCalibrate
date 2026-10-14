@@ -49,7 +49,9 @@ namespace HDRDisplayCalibrate.Core
         }
         public void Save() => File.WriteAllText(FilePath, J.ToJsonString(new JsonSerializerOptions { WriteIndented = true }));
         public string Str(string k, string def = "") => J[k]?.GetValue<string>() ?? def;
-        public double Num(string k, double def) => J[k] is JsonValue v && v.TryGetValue(out double d) ? d : def;
+        // values set in code (int) and parsed from JSON read the same way
+        public double Num(string k, double def) =>
+            J[k] is JsonValue v && double.TryParse(v.ToJsonString(), System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out double d) ? d : def;
         public bool Bool(string k, bool def) => J[k] is JsonValue v && v.TryGetValue(out bool b) ? b : def;
         public void Set(string k, JsonNode v) => J[k] = v;
     }

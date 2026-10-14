@@ -35,8 +35,8 @@ namespace HDRDisplayCalibrate.Core
                             try { p.Kill(); p.WaitForExit(2000); } catch { }
                             Log.Write($"stopped {tool} of {owner} to free the sensor");
                         }
-                        else throw new InvalidOperationException(S.T($"The sensor is busy: {tool} ({owner ?? "another program"}) is using it. Close it and try again.",
-                                                                      $"Датчик зайнятий: його використовує {tool} ({owner ?? "інша програма"}). Закрийте і спробуйте ще раз."));
+                        else throw new InvalidOperationException(S.F("The sensor is busy: {0} ({1}) is using it. Close it and try again.",
+                                                                      "Датчик зайнятий: його використовує {0} ({1}). Закрийте і спробуйте ще раз.", tool, owner ?? S.T("another program", "інша програма")));
                     }
             var other = Others.FirstOrDefault(n => Process.GetProcessesByName(n).Length > 0);
             if (other != null) Log.Write($"note: {other} is running and may hold the sensor");

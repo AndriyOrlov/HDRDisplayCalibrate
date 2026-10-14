@@ -12,30 +12,33 @@ namespace HDRDisplayCalibrate
 {
     public partial class MainWindow : Window
     {
-        readonly List<(string icon, string title, Func<Page> make)> _pages = new()
+        readonly List<(string icon, string title, string tip, Func<Page> make)> _pages = new()
         {
-            ("", S.T("Display & sensor", "Дисплей і датчик"), () => new DevicePage()),
-            ("", S.T("Live meter", "Живий замір"), () => new LivePage()),
-            ("", S.T("SDR calibration", "SDR калібрування"), () => new SdrPage()),
-            ("", S.T("HDR calibration", "HDR калібрування"), () => new HdrPage()),
-            ("", S.T("Verify & report", "Перевірка і звіт"), () => new VerifyPage()),
-            ("", S.T("Gamut", "Гамут"), () => new GamutPage()),
-            ("", S.T("3D LUT", "3D-LUT"), () => new LutPage()),
-            ("", S.T("Profiles", "Профілі"), () => new ProfilesPage()),
-            ("", S.T("Log", "Журнал"), () => new LogPage()),
+            ("", S.T("Display & sensor", "Дисплей і датчик"), S.T("Choose the display, the colorimeter, how patches are shown, and the language.", "Вибір дисплея, колориметра, способу показу патчів і мови."), () => new DevicePage()),
+            ("", S.T("Live meter", "Живий замір"), S.T("Continuous readings while you adjust the monitor's menu, or automatic adjustment over DDC/CI.", "Безперервні заміри, поки ви налаштовуєте меню монітора, або автоматичне налаштування через DDC/CI."), () => new LivePage()),
+            ("", S.T("SDR calibration", "SDR калібрування"), S.T("Grey scale, white point and an ICC profile for normal (SDR) mode.", "Сіра шкала, точка білого та ICC-профіль для звичайного (SDR) режиму."), () => new SdrPage()),
+            ("", S.T("HDR calibration", "HDR калібрування"), S.T("Step-by-step Windows HDR calibration into a native MHC2 profile.", "Покрокове калібрування Windows HDR у рідний MHC2-профіль."), () => new HdrPage()),
+            ("", S.T("Verify & report", "Перевірка і звіт"), S.T("Check how accurate the display is now: ΔE, gamma, contrast.", "Перевірка, наскільки точний дисплей зараз: ΔE, гамма, контраст."), () => new VerifyPage()),
+            ("", S.T("Gamut", "Гамут"), S.T("Which colour standards the display can show, in 2D and 3D.", "Які колірні стандарти дисплей може показати — у 2D і 3D."), () => new GamutPage()),
+            ("", S.T("3D LUT", "3D-LUT"), S.T("Export the calibration as a 3D LUT for madVR, Resolve, OBS or ReShade.", "Експорт калібрування як 3D-LUT для madVR, Resolve, OBS чи ReShade."), () => new LutPage()),
+            ("", S.T("Profiles", "Профілі"), S.T("The display's SDR and HDR profiles, video card LUT tools.", "SDR і HDR профілі дисплея, інструменти LUT відеокарти."), () => new ProfilesPage()),
+            ("", S.T("Log", "Журнал"), S.T("Everything the program and ArgyllCMS did — useful for reporting problems.", "Усе, що робили програма й ArgyllCMS, — знадобиться для повідомлень про проблеми."), () => new LogPage()),
         };
         readonly Dictionary<int, Page> _made = new();
+        public int Page => Math.Max(0, Nav.SelectedIndex);
 
         public MainWindow(int startPage = 0)
         {
             InitializeComponent();
             CancelButton.Content = S.T("Cancel (Esc)", "Скасувати (Esc)");
-            foreach (var (icon, title, _) in _pages)
+            Ui.Tip(CancelButton, S.T("Stops the running measurement at once and restores the display calibration. Esc does the same from any window.", "Одразу зупиняє поточний замір і повертає калібрування дисплея. Esc робить те саме з будь-якого вікна."));
+            if (S.Rtl) FlowDirection = FlowDirection.RightToLeft;
+            foreach (var (icon, title, tip, _) in _pages)
             {
                 var sp = new StackPanel { Orientation = Orientation.Horizontal, Margin = new Thickness(4, 6, 4, 6) };
                 sp.Children.Add(new TextBlock { Text = icon, FontFamily = Ui.Icons, FontSize = 16, Width = 28, VerticalAlignment = VerticalAlignment.Center });
                 sp.Children.Add(new TextBlock { Text = title, VerticalAlignment = VerticalAlignment.Center });
-                Nav.Items.Add(new ListBoxItem { Content = sp });
+                Nav.Items.Add(Ui.Tip(new ListBoxItem { Content = sp }, tip));
             }
             SourceInitialized += (_, _) =>
             {
@@ -52,13 +55,13 @@ namespace HDRDisplayCalibrate
             // Esc cancels any measurement at once, wherever the focus is (our patch window, Argyll's window, another app):
             // the key is taken globally only while a job runs
             PreviewKeyDown += (_, e) => { if (e.Key == System.Windows.Input.Key.Escape && AppState.I.Job != null) { AppState.I.Cancel(); e.Handled = true; } };
-            AppState.I.Status += (t, p) =>
+            Action<string, double> onStatus = (t, p) =>
             {
                 StatusText.Text = t;
                 StatusBar.IsIndeterminate = p < 0 && AppState.I.Job != null;
                 if (p >= 0) StatusBar.Value = p * 100;
             };
-            AppState.I.Changed += () => Dispatcher.Invoke(() =>
+            Action onChanged = () => Dispatcher.Invoke(() =>
             {
                 CancelButton.IsEnabled = AppState.I.Job != null;
                 var hwnd = new WindowInteropHelper(this).Handle;
@@ -71,6 +74,13 @@ namespace HDRDisplayCalibrate
                 var d = AppState.I.Display;
                 TitleDisplay.Text = d == null ? "" : $"· {d.Name}{(d.HdrOn ? " · HDR" : "")}";
             });
+            AppState.I.Status += onStatus; AppState.I.Changed += onChanged;
+            Closed += (_, _) =>          // a window replaced by a language reload stops listening
+            {
+                AppState.I.Status -= onStatus; AppState.I.Changed -= onChanged;
+                var hw = new WindowInteropHelper(this).Handle;
+                if (_escOn && hw != IntPtr.Zero) UnregisterHotKey(hw, EscHotkey);
+            };
             Loaded += (_, _) =>
             {
                 AppState.I.Init();

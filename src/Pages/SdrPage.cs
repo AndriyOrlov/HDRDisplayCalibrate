@@ -20,10 +20,10 @@ namespace HDRDisplayCalibrate.Pages
         readonly ComboBox _quality = Ui.Combo(new[] { S.T("Fast", "Швидко"), S.T("Medium", "Середньо"), S.T("High (slow)", "Висока (довго)") }, 2);
         readonly ComboBox _patches = Ui.Combo(new[] { S.T("No profile (calibration only)", "Без профілю (лише калібрування)"), "120", "250", "400", "600", "1000", "2000" }, 4);
         readonly ComboBox _ptype = Ui.Combo(new[] { S.T("XYZ LUT + matrix (best)", "XYZ LUT + матриця (найкраще)"), S.T("Matrix / shaper (simple)", "Матриця / шейпер (простий)") });
-        readonly CheckBox _ambient = Ui.Check(S.T("Adjust tone curve to room light (CIECAM02, dispcal -a)", "Підлаштувати криву під освітлення кімнати (CIECAM02, dispcal -a)"));
+        readonly CheckBox _ambient = Ui.Check(S.T("Adjust tone curve to room light (CIECAM02, dispcal -a)", "Підлаштувати криву під освітлення кімнати (CIECAM02, dispcal -a)"), tip: S.T("Adapts the tone curve to how bright the room is (CIECAM02 viewing conditions). Useful when the room is much darker or brighter than a typical office.", "Підлаштовує тонову криву під яскравість кімнати (умови перегляду CIECAM02). Корисно, коли кімната значно темніша чи світліша за звичайний офіс."));
         readonly TextBox _lux = Ui.Box("");
-        readonly CheckBox _install = Ui.Check(S.T("Install the profile for this display", "Встановити профіль для цього дисплея"), true);
-        readonly CheckBox _verify = Ui.Check(S.T("Verify afterwards (120 patches)", "Перевірити після (120 патчів)"), true);
+        readonly CheckBox _install = Ui.Check(S.T("Install the profile for this display", "Встановити профіль для цього дисплея"), true, tip: S.T("When the profile is ready, installs it and makes it the default for this display.", "Коли профіль готовий, встановлює його й робить основним для цього дисплея."));
+        readonly CheckBox _verify = Ui.Check(S.T("Verify afterwards (120 patches)", "Перевірити після (120 патчів)"), true, tip: S.T("Measures 120 patches with the new profile and shows the final accuracy.", "Міряє 120 патчів із новим профілем і показує підсумкову точність."));
         readonly TextBox _name = Ui.Box("", 360);
         readonly StackPanel _result = new();
 
@@ -35,18 +35,18 @@ namespace HDRDisplayCalibrate.Pages
                 "Сіра шкала і точка білого записуються в LUT відеокарти, кольори дисплея описує ICC-профіль. Якщо в моніторі є RGB-регулятори, спершу «Живий замір»."))
         {
             Body.Children.Add(Ui.Card(Ui.H2(S.T("Targets", "Цілі")),
-                Ui.Field(S.T("White point", "Точка білого"), _wp.View),
-                Ui.Field(S.T("White luminance, cd/m²", "Яскравість білого, кд/м²"), Ui.Row(_nits, Ui.Btn(S.T("From room light", "За освітленням кімнати"), FromRoom, false, "")), S.T("Empty = native (maximum)", "Порожньо = рідна (максимум)")),
-                Ui.Field(S.T("Tone curve", "Тональна крива"), _curve),
-                Ui.Field(S.T("Room light, lx", "Освітлення кімнати, лк"), Ui.Row(_lux), S.T("Measured with the diffuser; used for the suggestion and the optional adjustment", "Міряється з розсіювачем; для підказки і необов'язкової корекції")),
+                Ui.Field(S.T("White point", "Точка білого"), _wp.View, tip: S.T("Target white: D65 for sRGB / Rec.709 work and games, D50 to match prints, “Native” keeps the panel's own white.", "Цільовий білий: D65 для роботи в sRGB / Rec.709 та ігор, D50 — під друк, «Рідна» лишає власний білий панелі.")),
+                Ui.Field(S.T("White luminance, cd/m²", "Яскравість білого, кд/м²"), Ui.Row(_nits, Ui.Btn(S.T("From room light", "За освітленням кімнати"), FromRoom, false, "", tip: S.T("Measures the room with the diffuser and fills in a suitable white luminance.", "Міряє кімнату з розсіювачем і підставляє відповідну яскравість білого."))), S.T("Empty = native (maximum)", "Порожньо = рідна (максимум)"), tip: S.T("Target brightness of white: around 120 for a normal room, 80–100 for a dark room.", "Цільова яскравість білого: близько 120 для звичайної кімнати, 80–100 для темної.")),
+                Ui.Field(S.T("Tone curve", "Тональна крива"), _curve, tip: S.T("How greys rise from black to white: 2.2 for PC and games, 2.4 or BT.1886 for video in a dark room, sRGB for the exact sRGB curve.", "Як сірі зростають від чорного до білого: 2.2 для ПК та ігор, 2.4 або BT.1886 для відео в темній кімнаті, sRGB — точна крива sRGB.")),
+                Ui.Field(S.T("Room light, lx", "Освітлення кімнати, лк"), Ui.Row(_lux), S.T("Measured with the diffuser; used for the suggestion and the optional adjustment", "Міряється з розсіювачем; для підказки і необов'язкової корекції"), tip: S.T("Room illuminance used to adapt the tone curve. “From room light” fills it in.", "Освітленість кімнати для підлаштування тонової кривої. Її заповнює кнопка «З освітлення кімнати».")),
                 _ambient));
             Body.Children.Add(Ui.Card(Ui.H2(S.T("Quality", "Якість")),
-                Ui.Field(S.T("Calibration quality", "Якість калібрування"), _quality, S.T("High = more grey-scale iterations", "Висока = більше ітерацій сірої шкали")),
-                Ui.Field(S.T("Profile patches", "Патчів у профілі"), _patches, S.T("~3–15 s per patch depending on the instrument and darkness", "~3–15 с на патч залежно від датчика й темряви")),
-                Ui.Field(S.T("Profile type", "Тип профілю"), _ptype),
-                Ui.Field(S.T("Name", "Назва"), _name, S.T("Empty = display name and date", "Порожньо = назва дисплея і дата")),
+                Ui.Field(S.T("Calibration quality", "Якість калібрування"), _quality, S.T("High = more grey-scale iterations", "Висока = більше ітерацій сірої шкали"), tip: S.T("How many measurements the grey-scale calibration takes. Higher is smoother but slower.", "Скільки замірів робить калібрування сірої шкали. Вища якість — плавніше, але довше.")),
+                Ui.Field(S.T("Profile patches", "Патчів у профілі"), _patches, S.T("~3–15 s per patch depending on the instrument and darkness", "~3–15 с на патч залежно від датчика й темряви"), tip: S.T("Number of colour patches for the ICC profile. More patches describe the display more precisely but take longer (~3–15 s each).", "Кількість кольорових патчів для ICC-профілю. Більше патчів — точніший опис дисплея, але довше (~3–15 с кожен).")),
+                Ui.Field(S.T("Profile type", "Тип профілю"), _ptype, tip: S.T("XYZ LUT + matrix describes the display most precisely; matrix / shaper is simpler and works with more apps.", "XYZ LUT + матриця описує дисплей найточніше; матриця / шейпер простіший і працює з більшою кількістю програм.")),
+                Ui.Field(S.T("Name", "Назва"), _name, S.T("Empty = display name and date", "Порожньо = назва дисплея і дата"), tip: S.T("File name for the calibration and the profile.", "Назва файлів калібрування та профілю.")),
                 _install, _verify,
-                Ui.Row(Ui.Btn(S.T("Start calibration", "Почати калібрування"), Run, true, ""))));
+                Ui.Row(Ui.Btn(S.T("Start calibration", "Почати калібрування"), Run, true, "", tip: S.T("Runs the calibration and profiling. Keep the sensor on the screen; Esc cancels.", "Запускає калібрування і профілювання. Датчик має бути на екрані; Esc скасовує.")))));
             Body.Children.Add(_result);
             var rl = St.Cfg.Num("room_lux", double.NaN);
             if (!double.IsNaN(rl)) _lux.Text = rl.ToString("0.#", CultureInfo.InvariantCulture);
@@ -58,7 +58,7 @@ namespace HDRDisplayCalibrate.Pages
             _lux.Text = lux.ToString("0.#", CultureInfo.InvariantCulture);
             double sug = lux <= 2 ? 100 : lux >= 1000 ? 220 : Cm.Interp(Math.Log10(lux), new[] { Math.Log10(2), 1, Math.Log10(50), Math.Log10(150), Math.Log10(400), 3 }, new[] { 100.0, 120, 140, 160, 185, 220 });
             _nits.Text = sug.ToString("0", CultureInfo.InvariantCulture);
-            St.Report(S.T($"Room {lux:F1} lx → {sug:F0} cd/m²", $"Кімната {lux:F1} лк → {sug:F0} кд/м²"), 1);
+            St.Report(S.F("Room {0:F1} lx → {1:F0} cd/m²", "Кімната {0:F1} лк → {1:F0} кд/м²", lux, sug), 1);
         });
 
         void Run()

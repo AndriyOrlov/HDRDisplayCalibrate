@@ -16,7 +16,7 @@ namespace HDRDisplayCalibrate.Pages
         readonly WhitePicker _wp = new();
         readonly ComboBox _curve = Ui.Combo(new[] { "2.2", "2.4", "BT.1886", "sRGB", "L*" });
         readonly ComboBox _size = Ui.Combo(new[] { S.T("Quick (37 patches)", "Швидко (37 патчів)"), S.T("Standard (63 patches)", "Стандарт (63 патчі)"), S.T("Extended (63 + 160 random)", "Розширено (63 + 160 випадкових)") }, 1);
-        readonly CheckBox _raw = Ui.Check(S.T("Measure the bare display (switch the calibration LUT off)", "Міряти «голий» дисплей (вимкнути калібрувальний LUT)"));
+        readonly CheckBox _raw = Ui.Check(S.T("Measure the bare display (switch the calibration LUT off)", "Міряти «голий» дисплей (вимкнути калібрувальний LUT)"), tip: S.T("Switches the calibration curve off while measuring, to see how the panel performs without it.", "Вимикає калібрувальну криву на час заміру, щоб побачити, який вигляд має панель без неї."));
         readonly StackPanel _result = new();
         static readonly string[] CurveIds = { "2.2", "2.4", "bt1886", "srgb", "lstar" };
 
@@ -24,10 +24,10 @@ namespace HDRDisplayCalibrate.Pages
             S.T("Measures how close the display is to the target: white, black, contrast, gamma, ΔE2000 of greys and colours.", "Міряє, наскільки дисплей близький до цілі: білий, чорний, контраст, гамма, ΔE2000 сірих і кольорів."))
         {
             Body.Children.Add(Ui.Card(
-                Ui.Field(S.T("Target white", "Цільовий білий"), _wp.View),
-                Ui.Field(S.T("Target tone curve", "Цільова крива"), _curve),
-                Ui.Field(S.T("Patch set", "Набір патчів"), _size), _raw,
-                Ui.Row(Ui.Btn(S.T("Measure", "Заміряти"), Run, true, ""), Ui.Btn(S.T("Open .ti3…", "Відкрити .ti3…"), Open, false, ""))));
+                Ui.Field(S.T("Target white", "Цільовий білий"), _wp.View, tip: S.T("The white point the results are compared with.", "Точка білого, з якою порівнюються результати.")),
+                Ui.Field(S.T("Target tone curve", "Цільова крива"), _curve, tip: S.T("The tone curve the results are compared with.", "Тонова крива, з якою порівнюються результати.")),
+                Ui.Field(S.T("Patch set", "Набір патчів"), _size, tip: S.T("How many colours to measure: a quick check, the standard report, or an extended set with random colours.", "Скільки кольорів міряти: швидка перевірка, стандартний звіт або розширений набір із випадковими кольорами.")), _raw,
+                Ui.Row(Ui.Btn(S.T("Measure", "Заміряти"), Run, true, "", tip: S.T("Measures the patches on the screen and builds the report. Esc cancels.", "Міряє патчі на екрані й будує звіт. Esc скасовує.")), Ui.Btn(S.T("Open .ti3…", "Відкрити .ti3…"), Open, false, "", tip: S.T("Builds a report from an existing ArgyllCMS measurement file (.ti3).", "Будує звіт з наявного файлу замірів ArgyllCMS (.ti3).")))));
             Body.Children.Add(_result);
         }
 

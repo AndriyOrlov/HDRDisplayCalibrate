@@ -13,13 +13,6 @@ using HDRDisplayCalibrate.Core;
 
 namespace HDRDisplayCalibrate
 {
-    public static class S
-    {
-        // UI language follows Windows; HDRDC_LANG=en|uk overrides it
-        public static readonly bool Uk = (Environment.GetEnvironmentVariable("HDRDC_LANG") ?? CultureInfo.CurrentUICulture.TwoLetterISOLanguageName) == "uk";
-        public static string T(string en, string uk) => Uk ? uk : en;
-    }
-
     /// <summary>Shared state: settings, selected display/instrument and the running job.</summary>
     public sealed class AppState
     {

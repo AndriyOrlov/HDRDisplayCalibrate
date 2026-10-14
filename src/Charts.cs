@@ -38,7 +38,7 @@ namespace HDRDisplayCalibrate
             (0.7079,0.2920),(0.7140,0.2859),(0.7190,0.2809),(0.7260,0.2740),(0.7300,0.2700),(0.7347,0.2653),
         };
 
-        public ChromaticityChart() { Height = 460; }
+        public ChromaticityChart() { Height = 460; FlowDirection = FlowDirection.LeftToRight; }   // charts never mirror in right-to-left languages
 
         (double, double) Conv((double x, double y) p) => UV ? Core.Gamut.Uv(p) : p;
 
@@ -109,7 +109,7 @@ namespace HDRDisplayCalibrate
         public double? XMin, XMax, YMin, YMax;
         public string XLabel = "", YLabel = "";
 
-        public LineChart() { Height = 300; }
+        public LineChart() { Height = 300; FlowDirection = FlowDirection.LeftToRight; }
 
         protected override void OnRender(DrawingContext dc)
         {
@@ -154,7 +154,7 @@ namespace HDRDisplayCalibrate
     public sealed class DeltaEChart : FrameworkElement
     {
         public List<(Color c, double de)> Bars = new();
-        public DeltaEChart() { Height = 200; }
+        public DeltaEChart() { Height = 200; FlowDirection = FlowDirection.LeftToRight; }
         protected override void OnRender(DrawingContext dc)
         {
             if (Bars.Count == 0) return;

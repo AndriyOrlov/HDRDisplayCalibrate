@@ -42,25 +42,37 @@ namespace HDRDisplayCalibrate
         }
 
         /// <summary>Label on the left, control on the right.</summary>
-        public static Grid Field(string label, UIElement control, string hint = null, double labelWidth = 220)
+        /// <summary>Attaches a wrapped, long-lived tooltip.</summary>
+        public static T Tip<T>(T el, string tip) where T : FrameworkElement
+        {
+            if (string.IsNullOrEmpty(tip)) return el;
+            el.ToolTip = new ToolTip { Content = new TextBlock { Text = tip, TextWrapping = TextWrapping.Wrap, MaxWidth = 380 } };
+            ToolTipService.SetShowDuration(el, 60000);
+            ToolTipService.SetInitialShowDelay(el, 400);
+            ToolTipService.SetShowOnDisabled(el, true);
+            return el;
+        }
+
+        public static Grid Field(string label, UIElement control, string hint = null, double labelWidth = 220, string tip = null)
         {
             var g = new Grid { Margin = new Thickness(0, 4, 0, 4) };
             g.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(labelWidth) });
             g.ColumnDefinitions.Add(new ColumnDefinition());
             var l = Stack(Text(label), hint == null ? null : Caption(hint)); l.VerticalAlignment = VerticalAlignment.Center;
             g.Children.Add(l); Grid.SetColumn(control, 1); g.Children.Add(control);
-            if (control is FrameworkElement fe) fe.VerticalAlignment = VerticalAlignment.Center;
+            if (control is FrameworkElement fe) { fe.VerticalAlignment = VerticalAlignment.Center; if (fe.ToolTip == null) Tip(fe, tip); }
+            Tip(l, tip);
             return g;
         }
 
-        public static Button Btn(string text, Action click, bool accent = false, string icon = null)
+        public static Button Btn(string text, Action click, bool accent = false, string icon = null, string tip = null)
         {
             var content = icon == null ? (object)text : Row(new TextBlock { Text = icon, FontFamily = Icons, VerticalAlignment = VerticalAlignment.Center, Margin = new Thickness(0, 0, 8, 0) }, new TextBlock { Text = text, VerticalAlignment = VerticalAlignment.Center, Margin = new Thickness(0) });
             if (content is StackPanel sp) sp.Margin = new Thickness(0);
             var b = new Button { Content = content, Padding = new Thickness(14, 6, 14, 6), Margin = new Thickness(0, 0, 8, 0), HorizontalAlignment = HorizontalAlignment.Left };
             if (accent) b.Style = (Style)Application.Current.TryFindResource("AccentButtonStyle") ?? b.Style;
             b.Click += (_, _) => click();
-            return b;
+            return Tip(b, tip);
         }
 
         public static ComboBox Combo(IEnumerable<string> items, int selected = 0, Action<int> changed = null, double width = 260)
@@ -73,7 +85,7 @@ namespace HDRDisplayCalibrate
         }
 
         public static TextBox Box(string text, double width = 120) => new() { Text = text, MinWidth = width, HorizontalAlignment = HorizontalAlignment.Left };
-        public static CheckBox Check(string text, bool on = false) => new() { Content = text, IsChecked = on, Margin = new Thickness(0, 4, 0, 4) };
+        public static CheckBox Check(string text, bool on = false, string tip = null) => Tip(new CheckBox { Content = text, IsChecked = on, Margin = new Thickness(0, 4, 0, 4) }, tip);
 
         /// <summary>Simple table: header row plus rows of strings.</summary>
         public static Grid Table(string[] header, IEnumerable<string[]> rows, double[] widths = null)

@@ -31,15 +31,15 @@ namespace HDRDisplayCalibrate.Pages
                 "Налаштовуйте меню самого монітора (RGB, яскравість), дивлячись на цифри, або дайте DDC/CI зробити це автоматично."))
         {
             _ref = Ui.Combo(new[] { S.T("auto (only reduce)", "авто (лише зменшувати)"), S.T("keep R", "R не чіпати"), S.T("keep G", "G не чіпати"), S.T("keep B", "B не чіпати") }, 0, null, 200);
-            _start = Ui.Btn(S.T("Start", "Старт"), Toggle, true, "");
+            _start = Ui.Btn(S.T("Start", "Старт"), Toggle, true, "", tip: S.T("Starts continuous readings of a grey patch. Press again, or Esc, to stop.", "Починає безперервні заміри сірого патча. Натисніть ще раз або Esc, щоб зупинити."));
             Body.Children.Add(Ui.Card(Ui.H2(S.T("Target", "Ціль")),
-                Ui.Field(S.T("White point", "Точка білого"), _wp.View),
-                Ui.Field(S.T("White luminance, cd/m²", "Яскравість білого, кд/м²"), _nits, S.T("Empty = don't care", "Порожньо = не важливо")),
-                Ui.Field(S.T("Grey level, %", "Рівень сірого, %"), _level, S.T("100% → gain / contrast controls; 20–30% → offset / bias (TV 2-point white balance)", "100% → gain / contrast; 20–30% → offset / bias (2-точковий баланс білого ТВ)")),
-                Ui.Field(S.T("Reference channel", "Опорний канал"), _ref)));
-            Body.Children.Add(Ui.Card(Ui.Row(Ui.Btn(S.T("Measure R/G/B", "Виміряти R/G/B"), MeasurePrimaries, false, ""), _start,
-                                             Ui.Btn(S.T("Auto OSD (DDC/CI)", "Авто-OSD (DDC/CI)"), AutoOsd, false, ""),
-                                             Ui.Btn(S.T("Room light", "Освітлення кімнати"), Room, false, "")),
+                Ui.Field(S.T("White point", "Точка білого"), _wp.View, tip: S.T("The white you are aiming for. D65 is the standard for sRGB, Rec.709 and Rec.2020.", "Білий, до якого прагнете. D65 — стандарт для sRGB, Rec.709 і Rec.2020.")),
+                Ui.Field(S.T("White luminance, cd/m²", "Яскравість білого, кд/м²"), _nits, S.T("Empty = don't care", "Порожньо = не важливо"), tip: S.T("Target brightness of white: about 80–120 for a dim room, 120–160 for an office. Leave empty to ignore luminance.", "Цільова яскравість білого: близько 80–120 для темної кімнати, 120–160 для офісу. Порожньо — яскравість не враховується.")),
+                Ui.Field(S.T("Grey level, %", "Рівень сірого, %"), _level, S.T("100% → gain / contrast controls; 20–30% → offset / bias (TV 2-point white balance)", "100% → gain / contrast; 20–30% → offset / bias (2-точковий баланс білого ТВ)"), tip: S.T("Which grey is shown. 100 % for the RGB gain / contrast controls, 20–30 % for offset / bias (two-point white balance on TVs).", "Який сірий показується. 100 % — для RGB gain / контрасту, 20–30 % — для offset / bias (двоточковий баланс білого на ТВ).")),
+                Ui.Field(S.T("Reference channel", "Опорний канал"), _ref, tip: S.T("The channel left as it is while the hints adjust the other two. “Auto” only ever lowers channels, so none of them clips.", "Канал, який лишається як є, поки підказки підганяють два інші. «Авто» лише зменшує канали, тож жоден не обрізається."))));
+            Body.Children.Add(Ui.Card(Ui.Row(Ui.Btn(S.T("Measure R/G/B", "Виміряти R/G/B"), MeasurePrimaries, false, "", tip: S.T("Measures pure red, green and blue once. Needed for the per-channel hints.", "Один раз міряє чистий червоний, зелений і синій. Потрібно для підказок по каналах.")), _start,
+                                             Ui.Btn(S.T("Auto OSD (DDC/CI)", "Авто-OSD (DDC/CI)"), AutoOsd, false, "", tip: S.T("The program sets the monitor's own RGB gains and brightness over DDC/CI toward the target white and luminance (about 15 s).", "Програма сама виставляє RGB і яскравість у меню монітора через DDC/CI до цільового білого та яскравості (близько 15 с).")),
+                                             Ui.Btn(S.T("Room light", "Освітлення кімнати"), Room, false, "", tip: S.T("Measures the room light with the diffuser over the sensor and suggests a white luminance for it.", "Міряє освітлення кімнати (розсіювач на датчику) і радить відповідну яскравість білого."))),
                 _room, _big, _sub, _bars,
                 Ui.Caption(S.T("While the meter runs, the display's calibration is switched off (linear video LUT). It is restored when you stop.",
                                "Поки йде замір, калібрування дисплея вимкнене (лінійний LUT). Після зупинки воно повертається."))));
@@ -81,7 +81,7 @@ namespace HDRDisplayCalibrate.Pages
                         var xyz = await rd.Read(lev, lev, lev, ct, 0);
                         count++;
                         Show(xyz, lev);
-                        St.Report(S.T($"Live: {count} readings, {sw.Elapsed.TotalSeconds / count:F1} s each", $"Живий замір: {count} замірів, {sw.Elapsed.TotalSeconds / count:F1} с на замір"));
+                        St.Report(S.F("Live: {0} readings, {1:F1} s each", "Живий замір: {0} замірів, {1:F1} с на замір", count, sw.Elapsed.TotalSeconds / count));
                     }
                 }
                 finally
@@ -105,7 +105,7 @@ namespace HDRDisplayCalibrate.Pages
             {
                 var t = Cm.XyToXyz(tx, ty, xyz.Y);
                 double de = Cm.DeltaE2000(Cm.Lab(t, t), Cm.Lab(xyz, t));
-                lines.Add(S.T($"ΔE to target {de:F2}", $"ΔE до цілі {de:F2}") + (de < 1 ? "  ✓" : ""));
+                lines.Add(S.F("ΔE to target {0:F2}", "ΔE до цілі {0:F2}", de) + (de < 1 ? "  ✓" : ""));
                 M3? inv = null;
                 try { if (_prim is M3 P0) inv = P0.Inverse(); } catch (InvalidOperationException) { _prim = null; }
                 if (inv is M3 Pi && de >= 0.6)
@@ -121,7 +121,7 @@ namespace HDRDisplayCalibrate.Pages
             if (!double.IsNaN(n) && lev > 0.99)
             {
                 double d = (xyz.Y - n) / n * 100;
-                lines.Add(Math.Abs(d) < 3 ? S.T("Luminance OK ✓", "Яскравість OK ✓") : S.T($"Luminance: {(d > 0 ? "lower" : "raise")} ({d:+0;-0}%)", $"Яскравість: {(d > 0 ? "зменшити" : "збільшити")} ({d:+0;-0}%)"));
+                lines.Add(Math.Abs(d) < 3 ? S.T("Luminance OK ✓", "Яскравість OK ✓") : d > 0 ? S.F("Luminance: lower ({0:+0;-0}%)", "Яскравість: зменшити ({0:+0;-0}%)", d) : S.F("Luminance: raise ({0:+0;-0}%)", "Яскравість: збільшити ({0:+0;-0}%)", d));
             }
             _sub.Text = string.Join("\n", lines);
         }
@@ -158,7 +158,7 @@ namespace HDRDisplayCalibrate.Pages
             St.Report(S.T("Measuring room light (diffuser over the lens)…", "Міряю освітлення кімнати (розсіювач на лінзі)…"));
             var (lux, cct) = await Jobs.Ambient(ct);
             double sug = lux <= 2 ? 100 : lux >= 1000 ? 220 : Cm.Interp(Math.Log10(lux), new[] { Math.Log10(2), 1, Math.Log10(50), Math.Log10(150), Math.Log10(400), 3 }, new[] { 100.0, 120, 140, 160, 185, 220 });
-            _room.Text = S.T($"Room: {lux:F1} lx, {cct:F0} K → suggested white {sug:F0} cd/m²", $"Кімната: {lux:F1} лк, {cct:F0} K → рекомендований білий {sug:F0} кд/м²");
+            _room.Text = S.F("Room: {0:F1} lx, {1:F0} K → suggested white {2:F0} cd/m²", "Кімната: {0:F1} лк, {1:F0} K → рекомендований білий {2:F0} кд/м²", lux, cct, sug);
             St.Cfg.Set("room_lux", lux); St.Cfg.Set("room_cct", cct); St.Cfg.Save();
             St.Report(_room.Text, 1);
         });

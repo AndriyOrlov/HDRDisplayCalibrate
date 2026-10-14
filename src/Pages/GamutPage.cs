@@ -19,7 +19,7 @@ namespace HDRDisplayCalibrate.Pages
     public sealed class GamutPage : Page
     {
         readonly StackPanel _result = new();
-        readonly CheckBox _uv = Ui.Check(S.T("CIE 1976 u'v' (perceptually more even)", "CIE 1976 u'v' (рівномірніше для ока)"), true);
+        readonly CheckBox _uv = Ui.Check(S.T("CIE 1976 u'v' (perceptually more even)", "CIE 1976 u'v' (рівномірніше для ока)"), true, tip: S.T("The u′v′ diagram spreads colours more evenly than the classic xy one, so the triangles compare more fairly by eye.", "Діаграма u′v′ розподіляє кольори рівномірніше за класичну xy, тож трикутники чесніше порівнювати на око."));
         Gamut.Space _display;
 
         public GamutPage() : base(S.T("Gamut", "Гамут"),
@@ -28,9 +28,9 @@ namespace HDRDisplayCalibrate.Pages
         {
             _uv.Click += (_, _) => Render();
             Body.Children.Add(Ui.Card(Ui.Row(
-                Ui.Btn(S.T("From the active profile", "З активного профілю"), FromProfile, true, ""),
-                Ui.Btn(S.T("Measure now", "Заміряти зараз"), Measure, false, ""),
-                Ui.Btn(S.T("Open ICC…", "Відкрити ICC…"), OpenIcc, false, "")), _uv));
+                Ui.Btn(S.T("From the active profile", "З активного профілю"), FromProfile, true, "", tip: S.T("Reads the primaries from the colour profile Windows uses for this display now.", "Бере основні кольори з профілю, який Windows зараз використовує для цього дисплея.")),
+                Ui.Btn(S.T("Measure now", "Заміряти зараз"), Measure, false, "", tip: S.T("Measures red, green, blue and white on the screen (sensor on the screen, diffuser open).", "Міряє червоний, зелений, синій і білий на екрані (датчик на екрані, розсіювач відкритий).")),
+                Ui.Btn(S.T("Open ICC…", "Відкрити ICC…"), OpenIcc, false, "", tip: S.T("Shows the gamut of any ICC/ICM profile file.", "Показує гамут будь-якого файлу профілю ICC/ICM."))), _uv));
             Body.Children.Add(_result);
         }
 
@@ -80,7 +80,7 @@ namespace HDRDisplayCalibrate.Pages
             double Sf(int o) => unchecked((int)U(o)) / 65536.0;
             var tags = new Dictionary<string, int>();
             for (int i = 0, n = (int)U(128); i < n; i++) tags[Encoding.ASCII.GetString(b, 132 + 12 * i, 4)] = (int)U(132 + 12 * i + 4);
-            V3 X(string t) => tags.TryGetValue(t, out int o) ? new V3(Sf(o + 8), Sf(o + 12), Sf(o + 16)) : throw new InvalidDataException(S.T($"Profile has no {t} tag (not a matrix/LUT display profile)", $"У профілі немає тегу {t}"));
+            V3 X(string t) => tags.TryGetValue(t, out int o) ? new V3(Sf(o + 8), Sf(o + 12), Sf(o + 16)) : throw new InvalidDataException(S.F("Profile has no {0} tag (not a matrix/LUT display profile)", "У профілі немає тегу {0}", t));
             var chad = tags.TryGetValue("chad", out int co) ? new M3(Enumerable.Range(0, 9).Select(i => Sf(co + 8 + 4 * i)).ToArray()) : M3.Identity;
             var inv = chad.Inverse();
             return new Gamut.Space(name, (inv * X("rXYZ")).Xy, (inv * X("gXYZ")).Xy, (inv * X("bXYZ")).Xy);
@@ -103,8 +103,8 @@ namespace HDRDisplayCalibrate.Pages
             chart.Points.Add(((0.3127, 0.3290), Brushes.White, "D65"));
             _result.Children.Add(Ui.Card(Ui.H2(_display.Name),
                 Ui.Table(new[] { S.T("Standard", "Стандарт"), S.T("Coverage", "Покриття"), S.T("Relative size", "Відносний розмір") }, rows, new double[] { 260, 140, 160 }),
-                Ui.Caption(S.T($"Primaries: R {_display.R.x:F4} {_display.R.y:F4} · G {_display.G.x:F4} {_display.G.y:F4} · B {_display.B.x:F4} {_display.B.y:F4}",
-                               $"Основні: R {_display.R.x:F4} {_display.R.y:F4} · G {_display.G.x:F4} {_display.G.y:F4} · B {_display.B.x:F4} {_display.B.y:F4}")),
+                Ui.Caption(S.F("Primaries: R {0:F4} {1:F4} · G {2:F4} {3:F4} · B {4:F4} {5:F4}", "Основні: R {0:F4} {1:F4} · G {2:F4} {3:F4} · B {4:F4} {5:F4}",
+                               _display.R.x, _display.R.y, _display.G.x, _display.G.y, _display.B.x, _display.B.y)),
                 chart));
             _result.Children.Add(Ui.Card(Ui.H2(S.T("3D gamut (CIE Lab, drag to rotate, wheel to zoom)", "3D-гамут (CIE Lab, тягніть — обертати, коліщатко — масштаб)")),
                 Ui.Caption(S.T("Solid = display; wireframes = sRGB (grey), DCI-P3 (orange), Rec.2020 (cyan).", "Суцільне = дисплей; каркаси = sRGB (сірий), DCI-P3 (помаранчевий), Rec.2020 (блакитний).")),
@@ -134,7 +134,7 @@ namespace HDRDisplayCalibrate.Pages
 
         public Gamut3D(Gamut.Space display, (Gamut.Space s, Color c)[] refs)
         {
-            Height = 460; ClipToBounds = true; Background = Brushes.Transparent;
+            Height = 460; ClipToBounds = true; Background = Brushes.Transparent; FlowDirection = FlowDirection.LeftToRight;
             var vp = new Viewport3D { Camera = _cam }; Child = vp;
             var group = new Model3DGroup();
             group.Children.Add(new AmbientLight(Color.FromRgb(110, 110, 110)));

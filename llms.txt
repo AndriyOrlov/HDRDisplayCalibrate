@@ -19,3 +19,4 @@ and credit "Based on HDRDisplayCalibrate by Andrii Orlov (DeadSue)".
 - src/Core/Analysis.cs: verification report, gamut coverage (polygon clipping in u'v').
 - src/Jobs.cs: app state, measuring jobs, live reader, auto OSD (DDC/CI).
 - src/Pages/*: UI pages (device, live meter, SDR, HDR wizard, verify, gamut 2D/3D, 3D LUT, profiles, log).
+- src/I18n.cs, src/i18n/*.json: UI strings; S.T("English","Ukrainian") in code, other languages keyed by SHA-1 prefix of the English text (tools/extract_strings.py).

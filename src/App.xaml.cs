@@ -8,6 +8,16 @@ namespace HDRDisplayCalibrate
 {
     public partial class App : Application
     {
+        /// <summary>Rebuilds the main window in another language, on the same page.</summary>
+        public void Reload(string lang)
+        {
+            AppState.I.Cancel();
+            S.Init(lang);
+            var old = (MainWindow)MainWindow;
+            var w = new MainWindow(old.Page) { Left = old.Left, Top = old.Top, Width = old.Width, Height = old.Height, WindowState = old.WindowState };
+            MainWindow = w; w.Show(); old.Close();
+        }
+
         // let a session that is still quitting leave the sensor cleanly (a crash is covered by the job object)
         protected override void OnExit(ExitEventArgs e) { Core.SpotSession.WaitReleased(); base.OnExit(e); }
 
@@ -15,8 +25,7 @@ namespace HDRDisplayCalibrate
         protected override void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
-            if (Environment.GetEnvironmentVariable("HDRDC_LANG") == "en")      // English UI with English number format
-                System.Globalization.CultureInfo.DefaultThreadCurrentCulture = System.Globalization.CultureInfo.CurrentCulture = new System.Globalization.CultureInfo("en-US");
+            S.Init(Core.Settings.Load().Str("lang", "auto"));
             if (e.Args.Length > 0 && e.Args[0] == "--selftest") { SelfTest.Run(e.Args.Skip(1).ToArray()); Shutdown(); return; }
             if (e.Args.Length > 1 && e.Args[0] == "--render3d")
             {

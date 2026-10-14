@@ -20,11 +20,11 @@ namespace HDRDisplayCalibrate.Pages
                 "SDR (ICC) і HDR (MHC2) профілі вибраного дисплея. HDR-профіль починає діяти лише після вибору в Параметри → Дисплей → Колірний профіль."))
         {
             Body.Children.Add(Ui.Card(Ui.Row(
-                Ui.Btn(S.T("Install profile…", "Встановити профіль…"), Install, true, ""),
-                Ui.Btn(S.T("Load calibration (LUT)", "Завантажити калібрування (LUT)"), () => { if (St.Display?.ArgyllNumber is int n) { Argyll.LoadInstalled(n); St.Report(S.T("Calibration loaded", "Калібрування завантажено"), 1); } }, false, ""),
-                Ui.Btn(S.T("Reset LUT", "Скинути LUT"), () => { if (St.Display?.ArgyllNumber is int n) { Argyll.LutLinear(n); St.Report(S.T("Video LUT reset to linear", "LUT відеокарти скинуто"), 1); } }, false, ""),
-                Ui.Btn(S.T("Display settings", "Параметри дисплея"), ColorProfiles.OpenDisplaySettings, false, ""),
-                Ui.Btn(S.T("Profiles folder", "Тека профілів"), () => Process.Start("explorer.exe", ColorProfiles.ColorDir), false, ""))));
+                Ui.Btn(S.T("Install profile…", "Встановити профіль…"), Install, true, "", tip: S.T("Installs an ICC/ICM (SDR) or MHC2 (HDR) profile file for the selected display.", "Встановлює файл профілю ICC/ICM (SDR) або MHC2 (HDR) для вибраного дисплея.")),
+                Ui.Btn(S.T("Load calibration (LUT)", "Завантажити калібрування (LUT)"), () => { if (St.Display?.ArgyllNumber is int n) { Argyll.LoadInstalled(n); St.Report(S.T("Calibration loaded", "Калібрування завантажено"), 1); } }, false, "", tip: S.T("Loads the calibration curve of the display's active profile into the video card again, e.g. if another program reset it.", "Знову завантажує калібрувальну криву активного профілю у відеокарту, напр. якщо інша програма її скинула.")),
+                Ui.Btn(S.T("Reset LUT", "Скинути LUT"), () => { if (St.Display?.ArgyllNumber is int n) { Argyll.LutLinear(n); St.Report(S.T("Video LUT reset to linear", "LUT відеокарти скинуто"), 1); } }, false, "", tip: S.T("Makes the video card curve linear (no calibration) until it is loaded again.", "Робить криву відеокарти лінійною (без калібрування), доки її не завантажать знову.")),
+                Ui.Btn(S.T("Display settings", "Параметри дисплея"), ColorProfiles.OpenDisplaySettings, false, "", tip: S.T("Opens Windows Settings → Display (colour profile, HDR, SDR content brightness).", "Відкриває Параметри Windows → Дисплей (колірний профіль, HDR, яскравість SDR-вмісту).")),
+                Ui.Btn(S.T("Profiles folder", "Тека профілів"), () => Process.Start("explorer.exe", ColorProfiles.ColorDir), false, "", tip: S.T("Opens the Windows colour profiles folder.", "Відкриває теку колірних профілів Windows.")))));
             Body.Children.Add(_list);
         }
 
@@ -50,8 +50,8 @@ namespace HDRDisplayCalibrate.Pages
                     var date = Ui.Caption(ColorProfiles.Created(n)?.ToString("yyyy-MM-dd HH:mm") ?? ""); date.VerticalAlignment = VerticalAlignment.Center;
                     var name = n; bool h = hdr;
                     var btns = Ui.Row(
-                        n == def ? null : Ui.Btn(S.T("Make default", "Зробити основним"), () => { ColorProfiles.SetDefault(d, name, h); Fill(); }),
-                        Ui.Btn(S.T("Remove", "Прибрати"), () => { ColorProfiles.Remove(d, name, h); Fill(); }));
+                        n == def ? null : Ui.Btn(S.T("Make default", "Зробити основним"), () => { ColorProfiles.SetDefault(d, name, h); Fill(); }, tip: S.T("Makes this the profile Windows uses for the display.", "Робить цей профіль тим, який Windows використовує для дисплея.")),
+                        Ui.Btn(S.T("Remove", "Прибрати"), () => { ColorProfiles.Remove(d, name, h); Fill(); }, tip: S.T("Removes this profile from the display's list.", "Прибирає цей профіль зі списку дисплея.")));
                     btns.Margin = new Thickness(0);
                     Grid.SetColumn(date, 1); Grid.SetColumn(btns, 2);
                     g.Children.Add(txt); g.Children.Add(date); g.Children.Add(btns);
@@ -83,8 +83,8 @@ namespace HDRDisplayCalibrate.Pages
         public LogPage() : base(S.T("Log", "Журнал"), null)
         {
             Body.Children.Add(_box);
-            Body.Children.Add(Ui.Row(Ui.Btn(S.T("Open log file", "Відкрити файл журналу"), () => Process.Start(new ProcessStartInfo(Path.Combine(Paths.Home, "log.txt")) { UseShellExecute = true })),
-                                     Ui.Btn(S.T("Measurements folder", "Тека замірів"), () => Process.Start("explorer.exe", Paths.Docs))));
+            Body.Children.Add(Ui.Row(Ui.Btn(S.T("Open log file", "Відкрити файл журналу"), () => Process.Start(new ProcessStartInfo(Path.Combine(Paths.Home, "log.txt")) { UseShellExecute = true }), tip: S.T("Opens the program's detailed log, useful when reporting a problem.", "Відкриває детальний журнал програми — знадобиться, якщо повідомляєте про проблему.")),
+                                     Ui.Btn(S.T("Measurements folder", "Тека замірів"), () => Process.Start("explorer.exe", Paths.Docs), tip: S.T("Opens the folder with all measurements, profiles, reports and LUTs.", "Відкриває теку з усіма замірами, профілями, звітами та LUT."))));
             Log.Line += s => Dispatcher.BeginInvoke(() => { _box.AppendText(s + "\n"); if (_box.LineCount > 4000) _box.Clear(); _box.ScrollToEnd(); });
         }
     }

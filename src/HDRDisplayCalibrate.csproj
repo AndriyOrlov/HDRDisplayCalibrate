@@ -10,7 +10,7 @@
     <ApplicationIcon>app.ico</ApplicationIcon>
     <ApplicationHighDpiMode>PerMonitorV2</ApplicationHighDpiMode>
     <NoWarn>WPF0001;CA1416</NoWarn>
-    <Version>0.1.0</Version>
+    <Version>0.2.0</Version>
     <Authors>Andrii Orlov (DeadSue)</Authors>
     <Copyright>Copyright 2026 Andrii Orlov (DeadSue)</Copyright>
     <Product>HDRDisplayCalibrate</Product>
@@ -18,5 +18,6 @@
   </PropertyGroup>
   <ItemGroup>
     <Resource Include="app.ico" />
+    <EmbeddedResource Include="i18n\*.json" LogicalName="HDRDisplayCalibrate.i18n.%(Filename).json" />
   </ItemGroup>
 </Project>

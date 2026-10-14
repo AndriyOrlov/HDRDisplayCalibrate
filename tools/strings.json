@@ -1,0 +1,1382 @@
+{
+ "586d171c": {
+  "en": "100% → gain / contrast controls; 20–30% → offset / bias (TV 2-point white balance)",
+  "uk": "100% → gain / contrast; 20–30% → offset / bias (2-точковий баланс білого ТВ)"
+ },
+ "47d879eb": {
+  "en": "3D gamut (CIE Lab, drag to rotate, wheel to zoom)",
+  "uk": "3D-гамут (CIE Lab, тягніть — обертати, коліщатко — масштаб)"
+ },
+ "04807773": {
+  "en": "3D LUT",
+  "uk": "3D-LUT"
+ },
+ "6cc3de3f": {
+  "en": "3D LUT ready",
+  "uk": "3D-LUT готовий"
+ },
+ "5a7d3e8d": {
+  "en": "A primary read as black: is the sensor on this monitor?",
+  "uk": "Один з кольорів виміряно як чорний: датчик точно на цьому моніторі?"
+ },
+ "f63f33d6": {
+  "en": "A temporary ×8 probe profile pushes the same patches up to ~3800 nits of signal to find where the monitor clips (~4 min).",
+  "uk": "Тимчасовий профіль-зонд ×8 доводить ті самі патчі до ~3800 ніт сигналу, щоб знайти, де монітор обрізає (~4 хв)."
+ },
+ "8ff43fcd": {
+  "en": "Adapts the tone curve to how bright the room is (CIECAM02 viewing conditions). Useful when the room is much darker or brighter than a typical office.",
+  "uk": "Підлаштовує тонову криву під яскравість кімнати (умови перегляду CIECAM02). Корисно, коли кімната значно темніша чи світліша за звичайний офіс."
+ },
+ "8979cd2b": {
+  "en": "Adjust the monitor's own menu (RGB gain/offset, brightness) while watching the readings, or let DDC/CI do it automatically.",
+  "uk": "Налаштовуйте меню самого монітора (RGB, яскравість), дивлячись на цифри, або дайте DDC/CI зробити це автоматично."
+ },
+ "2b40ae23": {
+  "en": "Adjust tone curve to room light (CIECAM02, dispcal -a)",
+  "uk": "Підлаштувати криву під освітлення кімнати (CIECAM02, dispcal -a)"
+ },
+ "86f5e87e": {
+  "en": "Another measurement is running",
+  "uk": "Уже йде інший замір"
+ },
+ "a61e7d89": {
+  "en": "another program",
+  "uk": "інша програма"
+ },
+ "cfea419c": {
+  "en": "Apply",
+  "uk": "Застосувати"
+ },
+ "8ea4ef8c": {
+  "en": "Argyll display",
+  "uk": "Дисплей Argyll"
+ },
+ "5cdf8875": {
+  "en": "Argyll draws its own window during measurement.",
+  "uk": "Argyll сам малює своє вікно під час заміру."
+ },
+ "e79368c2": {
+  "en": "Argyll window — centre square",
+  "uk": "Вікно Argyll — квадрат по центру"
+ },
+ "2931f5cd": {
+  "en": "Argyll window — full screen",
+  "uk": "Вікно Argyll — на весь екран"
+ },
+ "bd65bee0": {
+  "en": "ArgyllCMS was not found. Install ArgyllCMS (or DisplayCAL) and set its bin folder on the first page.",
+  "uk": "Не знайдено ArgyllCMS. Встановіть ArgyllCMS (або DisplayCAL) і вкажіть папку bin на першій сторінці."
+ },
+ "6d9f4448": {
+  "en": "auto (only reduce)",
+  "uk": "авто (лише зменшувати)"
+ },
+ "6ca5e23a": {
+  "en": "Auto colour management (ACM)",
+  "uk": "Автокерування кольором (ACM)"
+ },
+ "ddb75f70": {
+  "en": "Auto OSD (DDC/CI)",
+  "uk": "Авто-OSD (DDC/CI)"
+ },
+ "0d216c92": {
+  "en": "Auto OSD brightness: ",
+  "uk": "Авто-OSD яскравість: "
+ },
+ "b50090c3": {
+  "en": "Auto OSD done",
+  "uk": "Авто-OSD готово"
+ },
+ "3217555c": {
+  "en": "Auto OSD done: ",
+  "uk": "Авто-OSD готово: "
+ },
+ "cc90d5d3": {
+  "en": "Auto OSD white: ",
+  "uk": "Авто-OSD білий: "
+ },
+ "52a0ff2e": {
+  "en": "Auto OSD: primaries…",
+  "uk": "Авто-OSD: основні кольори…"
+ },
+ "9f9438fe": {
+  "en": "Automatic (Windows language)",
+  "uk": "Автоматично (мова Windows)"
+ },
+ "3cdc78ee": {
+  "en": "Bakes the profile's calibration curve into the LUT, so the LUT alone gives the calibrated picture. The video card curve should then be linear while the LUT is used.",
+  "uk": "Вбудовує калібрувальну криву профілю в LUT, тож один LUT дає відкаліброване зображення. Тоді крива відеокарти має бути лінійною, поки використовується LUT."
+ },
+ "2c445dd5": {
+  "en": "Before you start",
+  "uk": "Перед початком"
+ },
+ "06871750": {
+  "en": "bin folder",
+  "uk": "Папка bin"
+ },
+ "5321c43b": {
+  "en": "Black / contrast",
+  "uk": "Чорний / контраст"
+ },
+ "11d52022": {
+  "en": "Black {0:F3} cd/m², clips at {1:F0} nits of signal → {2:F0} cd/m². Suggested peak {3:F0} cd/m² (headroom for neutral highlights).",
+  "uk": "Чорний {0:F3} кд/м², обрізає на {1:F0} ніт сигналу → {2:F0} кд/м². Рекомендований пік {3:F0} кд/м² (запас для нейтральних світел)."
+ },
+ "0020f644": {
+  "en": "Build and check the first profile",
+  "uk": "Побудувати й перевірити перший профіль"
+ },
+ "07951c0c": {
+  "en": "Building 3D LUT…",
+  "uk": "Будую 3D-LUT…"
+ },
+ "6ad80e50": {
+  "en": "Building profile",
+  "uk": "Побудова профілю"
+ },
+ "8f23dcd8": {
+  "en": "Building profile…",
+  "uk": "Будую профіль…"
+ },
+ "a3873031": {
+  "en": "Builds a native Windows HDR (MHC2) profile from colorimeter readings: correct PQ tracking up to your monitor's real peak, D65 white at every level, accurate colours, and the real peak/black reported to games. No background app and no HDR test patterns needed.",
+  "uk": "Будує рідний HDR-профіль Windows (MHC2) за замірами колориметра: правильне відстеження PQ до реального піку монітора, білий D65 на всіх рівнях, точні кольори і реальний пік/чорний для ігор. Без програм у фоні і без HDR-патернів."
+ },
+ "03c1f6be": {
+  "en": "Builds a report from an existing ArgyllCMS measurement file (.ti3).",
+  "uk": "Будує звіт з наявного файлу замірів ArgyllCMS (.ti3)."
+ },
+ "e4edc229": {
+  "en": "Builds the LUT with ArgyllCMS collink and saves it to the measurements folder.",
+  "uk": "Будує LUT через ArgyllCMS collink і зберігає його в теці замірів."
+ },
+ "f5ed075f": {
+  "en": "Calibration",
+  "uk": "Калібрування"
+ },
+ "52af1791": {
+  "en": "Calibration loaded",
+  "uk": "Калібрування завантажено"
+ },
+ "47b23e93": {
+  "en": "Calibration quality",
+  "uk": "Якість калібрування"
+ },
+ "9c2c5ec0": {
+  "en": "Cancel (Esc)",
+  "uk": "Скасувати (Esc)"
+ },
+ "a1bf92ef": {
+  "en": "Cancelled",
+  "uk": "Скасовано"
+ },
+ "71e141bc": {
+  "en": "Check how accurate the display is now: ΔE, gamma, contrast.",
+  "uk": "Перевірка, наскільки точний дисплей зараз: ΔE, гамма, контраст."
+ },
+ "afc87e99": {
+  "en": "Checks the HDR prerequisites again.",
+  "uk": "Ще раз перевіряє умови для HDR."
+ },
+ "a723ef41": {
+  "en": "Choose a .ccss or .ccmx correction file.",
+  "uk": "Вибрати файл корекції .ccss або .ccmx."
+ },
+ "2f68f595": {
+  "en": "Choose another ICC/ICM profile.",
+  "uk": "Вибрати інший профіль ICC/ICM."
+ },
+ "efefd81a": {
+  "en": "Choose the display's ICC profile.",
+  "uk": "Виберіть ICC-профіль дисплея."
+ },
+ "f02f8f36": {
+  "en": "Choose the display, the colorimeter, how patches are shown, and the language.",
+  "uk": "Вибір дисплея, колориметра, способу показу патчів і мови."
+ },
+ "a561c875": {
+  "en": "CIE 1976 u'v' (perceptually more even)",
+  "uk": "CIE 1976 u'v' (рівномірніше для ока)"
+ },
+ "14079adc": {
+  "en": "Colorimeter",
+  "uk": "Колориметр"
+ },
+ "416b4b16": {
+  "en": "Colour space of the content: Rec.709 / sRGB for most video, games and the web; DCI-P3 or Rec.2020 for wide-gamut content.",
+  "uk": "Колірний простір вмісту: Rec.709 / sRGB для більшості відео, ігор і вебу; DCI-P3 або Rec.2020 для широкого гамуту."
+ },
+ "d226ba2e": {
+  "en": "Colour temperature, K",
+  "uk": "Колірна температура, K"
+ },
+ "a5a6ae17": {
+  "en": "Colour ΔE avg / max",
+  "uk": "Кольори ΔE сер. / макс."
+ },
+ "7d9b8823": {
+  "en": "Compensates for the SDR calibration curve Windows also applies in HDR, installs the final profile and verifies it.",
+  "uk": "Компенсує SDR-криву, яку Windows застосовує і в HDR, встановлює фінальний профіль і перевіряє."
+ },
+ "4511fe86": {
+  "en": "Continuous readings while you adjust the monitor's menu, or automatic adjustment over DDC/CI.",
+  "uk": "Безперервні заміри, поки ви налаштовуєте меню монітора, або автоматичне налаштування через DDC/CI."
+ },
+ "53dd88f1": {
+  "en": "Correction (.ccss / .ccmx)",
+  "uk": "Корекція (.ccss / .ccmx)"
+ },
+ "80e13549": {
+  "en": "Coverage",
+  "uk": "Покриття"
+ },
+ "f7c09157": {
+  "en": "Create 3D LUT",
+  "uk": "Створити 3D-LUT"
+ },
+ "0f0751ef": {
+  "en": "Created:\n",
+  "uk": "Створено:\n"
+ },
+ "4ab7ff07": {
+  "en": "CRT / plasma / flickering backlight (refresh)",
+  "uk": "CRT / плазма / мерехтлива підсвітка (refresh)"
+ },
+ "923a1d2e": {
+  "en": "Custom x, y",
+  "uk": "Свої x, y"
+ },
+ "574ff9b0": {
+  "en": "Display",
+  "uk": "Дисплей"
+ },
+ "26e9b532": {
+  "en": "Display & sensor",
+  "uk": "Дисплей і датчик"
+ },
+ "9d97887e": {
+  "en": "Display profile",
+  "uk": "Профіль дисплея"
+ },
+ "fa9e60e4": {
+  "en": "Display settings",
+  "uk": "Параметри дисплея"
+ },
+ "98dc5cd3": {
+  "en": "Display technology",
+  "uk": "Технологія дисплея"
+ },
+ "34135ca8": {
+  "en": "Drag to move · drag the corner to resize · put the sensor in the middle",
+  "uk": "Тягніть, щоб перемістити · кут — змінити розмір · датчик по центру"
+ },
+ "a5797019": {
+  "en": "effective gamma",
+  "uk": "ефективна гамма"
+ },
+ "f787f435": {
+  "en": "Effective gamma per step",
+  "uk": "Ефективна гамма по кроках"
+ },
+ "851917fb": {
+  "en": "Empty = display name and date",
+  "uk": "Порожньо = назва дисплея і дата"
+ },
+ "51fb74ad": {
+  "en": "Empty = don't care",
+  "uk": "Порожньо = не важливо"
+ },
+ "de1e67eb": {
+  "en": "Empty = native (maximum)",
+  "uk": "Порожньо = рідна (максимум)"
+ },
+ "649df08a": {
+  "en": "English",
+  "uk": "Українська"
+ },
+ "4c14f0ce": {
+  "en": "Error: ",
+  "uk": "Помилка: "
+ },
+ "32f064aa": {
+  "en": "Everything the program and ArgyllCMS did — useful for reporting problems.",
+  "uk": "Усе, що робили програма й ArgyllCMS, — знадобиться для повідомлень про проблеми."
+ },
+ "9e99b6c0": {
+  "en": "Export the calibration as a 3D LUT for madVR, Resolve, OBS or ReShade.",
+  "uk": "Експорт калібрування як 3D-LUT для madVR, Resolve, OBS чи ReShade."
+ },
+ "73a3bfe8": {
+  "en": "Extended (63 + 160 random)",
+  "uk": "Розширено (63 + 160 випадкових)"
+ },
+ "8db6a2f1": {
+  "en": "Fast",
+  "uk": "Швидко"
+ },
+ "67bda1b0": {
+  "en": "File name for the calibration and the profile.",
+  "uk": "Назва файлів калібрування та профілю."
+ },
+ "62ede9fa": {
+  "en": "File type for your app: .cube for DaVinci Resolve, OBS and many games, .3dlut for madVR, eeColor box, or a ReShade PNG.",
+  "uk": "Тип файлу для вашої програми: .cube для DaVinci Resolve, OBS і багатьох ігор, .3dlut для madVR, коробка eeColor або PNG для ReShade."
+ },
+ "db916b0a": {
+  "en": "Files: ",
+  "uk": "Файли: "
+ },
+ "f2d23b43": {
+  "en": "Final HDR profile",
+  "uk": "Фінальний HDR-профіль"
+ },
+ "0c00775e": {
+  "en": "Finalize and verify",
+  "uk": "Завершити й перевірити"
+ },
+ "56018f89": {
+  "en": "Find the real peak",
+  "uk": "Знайти реальний пік"
+ },
+ "6e559bc9": {
+  "en": "Folder with the ArgyllCMS tools (dispcal.exe, spotread.exe…). C:\\ArgyllCMS\\bin, Program Files and a DisplayCAL download are found automatically.",
+  "uk": "Тека з інструментами ArgyllCMS (dispcal.exe, spotread.exe…). C:\\ArgyllCMS\\bin, Program Files і завантаження DisplayCAL знаходяться автоматично."
+ },
+ "041a5dec": {
+  "en": "Format",
+  "uk": "Формат"
+ },
+ "4e37f088": {
+  "en": "From room light",
+  "uk": "За освітленням кімнати"
+ },
+ "88afed30": {
+  "en": "From the active profile",
+  "uk": "З активного профілю"
+ },
+ "cba508b1": {
+  "en": "Gamma",
+  "uk": "Гамма"
+ },
+ "fcf28c65": {
+  "en": "Gamma (mid)",
+  "uk": "Гамма (середні)"
+ },
+ "f3867772": {
+  "en": "Gamma 2.2",
+  "uk": "Гамма 2.2"
+ },
+ "2e4b7991": {
+  "en": "Gamma 2.2 (PC, games)",
+  "uk": "Гамма 2.2 (ПК, ігри)"
+ },
+ "b6989bdf": {
+  "en": "Gamma 2.4",
+  "uk": "Гамма 2.4"
+ },
+ "7ad6fc89": {
+  "en": "Gamma 2.4 (dark room)",
+  "uk": "Гамма 2.4 (темна кімната)"
+ },
+ "09b42dc9": {
+  "en": "Gamut",
+  "uk": "Гамут"
+ },
+ "d5607e0a": {
+  "en": "Grey balance per channel",
+  "uk": "Баланс сірого по каналах"
+ },
+ "9b1fc847": {
+  "en": "Grey level, %",
+  "uk": "Рівень сірого, %"
+ },
+ "3145127a": {
+  "en": "Grey scale",
+  "uk": "Сіра шкала"
+ },
+ "1ff2e10d": {
+  "en": "Grey scale and white point go into the video card LUT, the display's colours are described by an ICC profile. Run the live meter first if the monitor has RGB controls.",
+  "uk": "Сіра шкала і точка білого записуються в LUT відеокарти, кольори дисплея описує ICC-профіль. Якщо в моніторі є RGB-регулятори, спершу «Живий замір»."
+ },
+ "62abeaf2": {
+  "en": "Grey scale, white point and an ICC profile for normal (SDR) mode.",
+  "uk": "Сіра шкала, точка білого та ICC-профіль для звичайного (SDR) режиму."
+ },
+ "10a2cfaa": {
+  "en": "Grey ΔE avg / max",
+  "uk": "Сірий ΔE сер. / макс."
+ },
+ "f70fca51": {
+  "en": "Grid points per axis. 33³ is the usual choice; 65³ is slightly more precise and much larger.",
+  "uk": "Кількість вузлів на вісь. 33³ — звичайний вибір; 65³ трохи точніший і значно більший."
+ },
+ "11cc9295": {
+  "en": "HDR / advanced colour profiles",
+  "uk": "HDR / розширені профілі"
+ },
+ "226d4110": {
+  "en": "HDR calibration",
+  "uk": "HDR калібрування"
+ },
+ "8d57d1f9": {
+  "en": "HDR calibration done",
+  "uk": "HDR калібрування завершено"
+ },
+ "fc5638a1": {
+  "en": "HDR is on",
+  "uk": "HDR увімкнено"
+ },
+ "76bead35": {
+  "en": "HDR is on for this display. SDR calibration should be done with HDR off. Continue anyway?",
+  "uk": "Для цього дисплея увімкнено HDR. SDR-калібрування роблять з вимкненим HDR. Продовжити?"
+ },
+ "16db707c": {
+  "en": "HDR profile",
+  "uk": "Профіль HDR"
+ },
+ "6d5e1a26": {
+  "en": "High (slow)",
+  "uk": "Висока (довго)"
+ },
+ "f9f3e6f3": {
+  "en": "High = more grey-scale iterations",
+  "uk": "Висока = більше ітерацій сірої шкали"
+ },
+ "954027ae": {
+  "en": "How greys rise from black to white: 2.2 for PC and games, 2.4 or BT.1886 for video in a dark room, sRGB for the exact sRGB curve.",
+  "uk": "Як сірі зростають від чорного до білого: 2.2 для ПК та ігор, 2.4 або BT.1886 для відео в темній кімнаті, sRGB — точна крива sRGB."
+ },
+ "72390b98": {
+  "en": "How many colours to measure: a quick check, the standard report, or an extended set with random colours.",
+  "uk": "Скільки кольорів міряти: швидка перевірка, стандартний звіт або розширений набір із випадковими кольорами."
+ },
+ "38a9d933": {
+  "en": "How many measurements the grey-scale calibration takes. Higher is smoother but slower.",
+  "uk": "Скільки замірів робить калібрування сірої шкали. Вища якість — плавніше, але довше."
+ },
+ "91504f21": {
+  "en": "i1Display / ColorMunki: LCD and OLED use non-refresh",
+  "uk": "i1Display / ColorMunki: для LCD і OLED — без регенерації"
+ },
+ "8181445a": {
+  "en": "ideal",
+  "uk": "ідеал"
+ },
+ "76e6012a": {
+  "en": "ideal PQ",
+  "uk": "ідеальний PQ"
+ },
+ "38af51b7": {
+  "en": "Identify",
+  "uk": "Показати номери"
+ },
+ "42d46b43": {
+  "en": "In Settings → System → Display → (this monitor) → Color profile, choose:\n\n    {0}\n\nthen move the Settings window off the patch area and press OK.",
+  "uk": "У Параметри → Система → Дисплей → (цей монітор) → Колірний профіль виберіть:\n\n    {0}\n\nвідсуньте вікно Параметрів від патча і натисніть OK."
+ },
+ "e10487e4": {
+  "en": "Include the display calibration (vcgt) in the LUT",
+  "uk": "Включити калібрування дисплея (vcgt) у LUT"
+ },
+ "c0c8ee2b": {
+  "en": "input level",
+  "uk": "вхідний рівень"
+ },
+ "8f34f8ad": {
+  "en": "Install profile…",
+  "uk": "Встановити профіль…"
+ },
+ "78bebe77": {
+  "en": "Install the profile for this display",
+  "uk": "Встановити профіль для цього дисплея"
+ },
+ "3cd91cca": {
+  "en": "Installed and active. Games and apps now see peak {0:F0} cd/m² and black {1:F3} cd/m². You can set “SDR content brightness” back (e.g. ~10 for 120 cd/m² desktop).",
+  "uk": "Встановлено й активно. Ігри та програми тепер бачать пік {0:F0} кд/м² і чорний {1:F3} кд/м². «Яскравість SDR-вмісту» можна повернути (напр. ~10 для робочого столу 120 кд/м²)."
+ },
+ "4ddf1d8c": {
+  "en": "Installs a neutral HDR profile and measures 40 grey levels spread evenly in PQ plus primaries (~5 min).",
+  "uk": "Встановлює нейтральний HDR-профіль і міряє 40 рівнів сірого, рівномірно по PQ, плюс основні кольори (~5 хв)."
+ },
+ "c0062b4b": {
+  "en": "Installs an ICC/ICM (SDR) or MHC2 (HDR) profile file for the selected display.",
+  "uk": "Встановлює файл профілю ICC/ICM (SDR) або MHC2 (HDR) для вибраного дисплея."
+ },
+ "f05f3633": {
+  "en": "Instrument",
+  "uk": "Пристрій"
+ },
+ "e23e6c1b": {
+  "en": "Interface language. The window reloads in the new language; a running measurement is cancelled.",
+  "uk": "Мова інтерфейсу. Вікно перезавантажиться новою мовою; поточний замір буде скасовано."
+ },
+ "ce68320c": {
+  "en": "Is this an HDR (advanced colour / MHC2) profile?",
+  "uk": "Це HDR (MHC2) профіль?"
+ },
+ "56bf96b6": {
+  "en": "keep B",
+  "uk": "B не чіпати"
+ },
+ "6df05987": {
+  "en": "keep G",
+  "uk": "G не чіпати"
+ },
+ "097773a3": {
+  "en": "keep R",
+  "uk": "R не чіпати"
+ },
+ "89b86ab0": {
+  "en": "Language",
+  "uk": "Мова"
+ },
+ "a98e3961": {
+  "en": "LCD / OLED (non-refresh)",
+  "uk": "LCD / OLED (без регенерації)"
+ },
+ "7c7f5d04": {
+  "en": "Level",
+  "uk": "Рівень"
+ },
+ "c3ce3553": {
+  "en": "Live meter",
+  "uk": "Живий замір"
+ },
+ "3f6d00c5": {
+  "en": "Live: {0} readings, {1:F1} s each",
+  "uk": "Живий замір: {0} замірів, {1:F1} с на замір"
+ },
+ "9b8d4ae1": {
+  "en": "Load calibration (LUT)",
+  "uk": "Завантажити калібрування (LUT)"
+ },
+ "acb3e067": {
+  "en": "Loads the calibration curve of the display's active profile into the video card again, e.g. if another program reset it.",
+  "uk": "Знову завантажує калібрувальну криву активного профілю у відеокарту, напр. якщо інша програма її скинула."
+ },
+ "8bf95ea3": {
+  "en": "Log",
+  "uk": "Журнал"
+ },
+ "a27c678b": {
+  "en": "Looks for displays and colorimeters again, e.g. after plugging in the sensor or switching HDR.",
+  "uk": "Заново шукає дисплеї та колориметри, напр. після підключення датчика чи перемикання HDR."
+ },
+ "fca54083": {
+  "en": "Luminance OK ✓",
+  "uk": "Яскравість OK ✓"
+ },
+ "7cb4dd23": {
+  "en": "Luminance: lower ({0:+0;-0}%)",
+  "uk": "Яскравість: зменшити ({0:+0;-0}%)"
+ },
+ "e30b682f": {
+  "en": "Luminance: raise ({0:+0;-0}%)",
+  "uk": "Яскравість: збільшити ({0:+0;-0}%)"
+ },
+ "79ebda8c": {
+  "en": "LUT size",
+  "uk": "Розмір LUT"
+ },
+ "7b2628d1": {
+  "en": "Make default",
+  "uk": "Зробити основним"
+ },
+ "e38ece9a": {
+  "en": "Makes the video card curve linear (no calibration) until it is loaded again.",
+  "uk": "Робить криву відеокарти лінійною (без калібрування), доки її не завантажать знову."
+ },
+ "53609265": {
+  "en": "Makes this the profile Windows uses for the display.",
+  "uk": "Робить цей профіль тим, який Windows використовує для дисплея."
+ },
+ "2b77dab4": {
+  "en": "Matrix / shaper (simple)",
+  "uk": "Матриця / шейпер (простий)"
+ },
+ "d65b91df": {
+  "en": "Matrix for D65 and sRGB/Rec.2020 primaries, PQ curve with a soft roll-off to the peak.",
+  "uk": "Матриця для D65 і основних кольорів, PQ-крива з плавним зрізом до піку."
+ },
+ "d4fd0a23": {
+  "en": "Measure",
+  "uk": "Заміряти"
+ },
+ "a7f6cce7": {
+  "en": "Measure now",
+  "uk": "Заміряти зараз"
+ },
+ "f5c32b2d": {
+  "en": "Measure R/G/B",
+  "uk": "Виміряти R/G/B"
+ },
+ "dc4504af": {
+  "en": "Measure the bare display (switch the calibration LUT off)",
+  "uk": "Міряти «голий» дисплей (вимкнути калібрувальний LUT)"
+ },
+ "c5d3bb40": {
+  "en": "Measure the monitor as it is",
+  "uk": "Заміряти монітор як є"
+ },
+ "38130e34": {
+  "en": "measured",
+  "uk": "виміряно"
+ },
+ "bc05b6fe": {
+  "en": "measured 60 %",
+  "uk": "виміряно 60 %"
+ },
+ "fa59171d": {
+  "en": "Measured with the diffuser; used for the suggestion and the optional adjustment",
+  "uk": "Міряється з розсіювачем; для підказки і необов'язкової корекції"
+ },
+ "21b1a95a": {
+  "en": "measured, cd/m²",
+  "uk": "виміряно, кд/м²"
+ },
+ "67532f0f": {
+  "en": "Measurements folder",
+  "uk": "Тека замірів"
+ },
+ "9c3d60c3": {
+  "en": "Measures 120 patches with the new profile and shows the final accuracy.",
+  "uk": "Міряє 120 патчів із новим профілем і показує підсумкову точність."
+ },
+ "1a381e7b": {
+  "en": "Measures how close the display is to the target: white, black, contrast, gamma, ΔE2000 of greys and colours.",
+  "uk": "Міряє, наскільки дисплей близький до цілі: білий, чорний, контраст, гамма, ΔE2000 сірих і кольорів."
+ },
+ "3c201f3d": {
+  "en": "Measures pure red, green and blue once. Needed for the per-channel hints.",
+  "uk": "Один раз міряє чистий червоний, зелений і синій. Потрібно для підказок по каналах."
+ },
+ "a1312744": {
+  "en": "Measures red, green, blue and white on the screen (sensor on the screen, diffuser open).",
+  "uk": "Міряє червоний, зелений, синій і білий на екрані (датчик на екрані, розсіювач відкритий)."
+ },
+ "deb16a6c": {
+  "en": "Measures the patches on the screen and builds the report. Esc cancels.",
+  "uk": "Міряє патчі на екрані й будує звіт. Esc скасовує."
+ },
+ "5b0282bc": {
+  "en": "Measures the room light with the diffuser over the sensor and suggests a white luminance for it.",
+  "uk": "Міряє освітлення кімнати (розсіювач на датчику) і радить відповідну яскравість білого."
+ },
+ "2545e532": {
+  "en": "Measures the room with the diffuser and fills in a suitable white luminance.",
+  "uk": "Міряє кімнату з розсіювачем і підставляє відповідну яскравість білого."
+ },
+ "9270d251": {
+  "en": "Measuring room light (diffuser over the lens)…",
+  "uk": "Міряю освітлення кімнати (розсіювач на лінзі)…"
+ },
+ "d404968e": {
+  "en": "Medium",
+  "uk": "Середньо"
+ },
+ "9796809f": {
+  "en": "monitor",
+  "uk": "монітор"
+ },
+ "e21195b0": {
+  "en": "Monitor as it is",
+  "uk": "Монітор як є"
+ },
+ "88ac76e1": {
+  "en": "Monitor OSD brightness in HDR at maximum",
+  "uk": "Яскравість OSD монітора в HDR на максимумі"
+ },
+ "709a2322": {
+  "en": "Name",
+  "uk": "Назва"
+ },
+ "55c7f534": {
+  "en": "Native (no change)",
+  "uk": "Рідна (без змін)"
+ },
+ "fd128635": {
+  "en": "no",
+  "uk": "ні"
+ },
+ "ef8985b5": {
+  "en": "No ambient reading (is the diffuser over the lens?)",
+  "uk": "Немає заміру освітлення (розсіювач на лінзі?)"
+ },
+ "935dbcd1": {
+  "en": "No colorimeter found — plug it in and press Refresh",
+  "uk": "Колориметр не знайдено — підключіть і натисніть «Оновити»"
+ },
+ "ea8e29b3": {
+  "en": "No profile (calibration only)",
+  "uk": "Без профілю (лише калібрування)"
+ },
+ "52bb6423": {
+  "en": "No SDR profile for this display yet — measure instead.",
+  "uk": "Для цього дисплея ще немає SDR-профілю — заміряйте."
+ },
+ "71f8e797": {
+  "en": "none",
+  "uk": "немає"
+ },
+ "094b763b": {
+  "en": "not found",
+  "uk": "не знайдено"
+ },
+ "15438cc0": {
+  "en": "not supported",
+  "uk": "не підтримується"
+ },
+ "3e5ab40b": {
+  "en": "Number of colour patches for the ICC profile. More patches describe the display more precisely but take longer (~3–15 s each).",
+  "uk": "Кількість кольорових патчів для ICC-профілю. Більше патчів — точніший опис дисплея, але довше (~3–15 с кожен)."
+ },
+ "c35a4b29": {
+  "en": "of target",
+  "uk": "від цілі"
+ },
+ "da7a6873": {
+  "en": "off",
+  "uk": "вимкнено"
+ },
+ "db3d405b": {
+  "en": "on",
+  "uk": "увімкнено"
+ },
+ "31354e72": {
+  "en": "Open .ti3…",
+  "uk": "Відкрити .ti3…"
+ },
+ "83a03a9f": {
+  "en": "Open display settings",
+  "uk": "Відкрити параметри дисплея"
+ },
+ "9aa3b117": {
+  "en": "Open ICC…",
+  "uk": "Відкрити ICC…"
+ },
+ "dae1f33f": {
+  "en": "Open log file",
+  "uk": "Відкрити файл журналу"
+ },
+ "fc98d878": {
+  "en": "Opens the folder with all measurements, profiles, reports and LUTs.",
+  "uk": "Відкриває теку з усіма замірами, профілями, звітами та LUT."
+ },
+ "32ff130a": {
+  "en": "Opens the program's detailed log, useful when reporting a problem.",
+  "uk": "Відкриває детальний журнал програми — знадобиться, якщо повідомляєте про проблему."
+ },
+ "3a57ea69": {
+  "en": "Opens the Windows colour profiles folder.",
+  "uk": "Відкриває теку колірних профілів Windows."
+ },
+ "73f743b7": {
+  "en": "Opens Windows Settings → Display (colour profile, HDR, SDR content brightness).",
+  "uk": "Відкриває Параметри Windows → Дисплей (колірний профіль, HDR, яскравість SDR-вмісту)."
+ },
+ "8aa4ba19": {
+  "en": "Opens Windows Settings → Display, where the HDR colour profile and “SDR content brightness” are set.",
+  "uk": "Відкриває Параметри Windows → Дисплей, де вибирається HDR-профіль і «Яскравість SDR-вмісту»."
+ },
+ "d97fd474": {
+  "en": "Optional spectral correction for the panel's backlight type (WLED, wide-gamut LED, OLED…). Makes a colorimeter more accurate on that panel; leave empty if unsure.",
+  "uk": "Необов'язкова спектральна корекція під тип підсвічування панелі (WLED, широкий гамут, OLED…). Робить колориметр точнішим на цій панелі; якщо не впевнені — залиште порожнім."
+ },
+ "677c701b": {
+  "en": "Optional spectral correction for your panel type",
+  "uk": "Необов'язкова спектральна корекція під тип панелі"
+ },
+ "04cb8896": {
+  "en": "Own window works full screen or as a window you can drag and resize; OLED/plasma with ABL prefer a window",
+  "uk": "Власне вікно: на весь екран або перетягуване вікно; для OLED/плазми з ABL краще вікно"
+ },
+ "59e234f8": {
+  "en": "Own window — full screen",
+  "uk": "Власне вікно — на весь екран"
+ },
+ "e1e312dc": {
+  "en": "Own window — movable, resizable",
+  "uk": "Власне вікно — перетягуване, змінний розмір"
+ },
+ "ca52aea4": {
+  "en": "Patch set",
+  "uk": "Набір патчів"
+ },
+ "dece0c1a": {
+  "en": "Peak luminance written into the profile, cd/m². Step 2 fills it in; a lower value keeps the brightest highlights more neutral.",
+  "uk": "Пікова яскравість, яка записується в профіль, кд/м². Крок 2 заповнює її сам; менше значення робить найяскравіші світла нейтральнішими."
+ },
+ "8d6d9644": {
+  "en": "Peak, nits",
+  "uk": "Пік, ніт"
+ },
+ "7231f711": {
+  "en": "Perceptual with gamut mapping",
+  "uk": "Перцептивний з відображенням гамуту"
+ },
+ "2ebb425b": {
+  "en": "Pick the screen to calibrate, the colorimeter and how test patches are shown.",
+  "uk": "Виберіть екран, колориметр і як показувати тестові патчі."
+ },
+ "7cedf20f": {
+  "en": "PQ tracking",
+  "uk": "Відстеження PQ"
+ },
+ "2e1cd8f8": {
+  "en": "Press “Measure R/G/B” for channel hints.",
+  "uk": "Натисніть «Виміряти R/G/B» для підказок по каналах."
+ },
+ "8c3b1ddf": {
+  "en": "Preview patch window (5 s)",
+  "uk": "Показати вікно патчів (5 с)"
+ },
+ "2284d268": {
+  "en": "Primaries",
+  "uk": "Основні кольори"
+ },
+ "c490106e": {
+  "en": "Primaries and white (CIE 1931 xy)",
+  "uk": "Основні кольори і білий (CIE 1931 xy)"
+ },
+ "1085c2e4": {
+  "en": "Primaries measured",
+  "uk": "Основні кольори виміряно"
+ },
+ "d46037c0": {
+  "en": "Primaries: R {0:F4} {1:F4} · G {2:F4} {3:F4} · B {4:F4} {5:F4}",
+  "uk": "Основні: R {0:F4} {1:F4} · G {2:F4} {3:F4} · B {4:F4} {5:F4}"
+ },
+ "ff4fc027": {
+  "en": "Profile",
+  "uk": "Профіль"
+ },
+ "d77d863e": {
+  "en": "Profile has no {0} tag (not a matrix/LUT display profile)",
+  "uk": "У профілі немає тегу {0}"
+ },
+ "eac6e9ba": {
+  "en": "Profile patches",
+  "uk": "Патчів у профілі"
+ },
+ "5145f8f2": {
+  "en": "Profile type",
+  "uk": "Тип профілю"
+ },
+ "0690d549": {
+  "en": "Profile v1",
+  "uk": "Профіль v1"
+ },
+ "56bb7790": {
+  "en": "Profile v2 (grey balanced)",
+  "uk": "Профіль v2 (баланс сірого)"
+ },
+ "0c2a9300": {
+  "en": "Profiles",
+  "uk": "Профілі"
+ },
+ "91461d6f": {
+  "en": "Profiles folder",
+  "uk": "Тека профілів"
+ },
+ "a60f2c73": {
+  "en": "Quality",
+  "uk": "Якість"
+ },
+ "d2622c03": {
+  "en": "Quick (37 patches)",
+  "uk": "Швидко (37 патчів)"
+ },
+ "374cfdf2": {
+  "en": "Reads the primaries from the colour profile Windows uses for this display now.",
+  "uk": "Бере основні кольори з профілю, який Windows зараз використовує для цього дисплея."
+ },
+ "f1c4d7a1": {
+  "en": "Reference channel",
+  "uk": "Опорний канал"
+ },
+ "56e3badc": {
+  "en": "Refresh",
+  "uk": "Оновити"
+ },
+ "4f61aeb9": {
+  "en": "Relative colorimetric (clip)",
+  "uk": "Відносний колориметричний (обрізати)"
+ },
+ "fb398ac4": {
+  "en": "relative luminance",
+  "uk": "відносна яскравість"
+ },
+ "d8416dbf": {
+  "en": "Relative size",
+  "uk": "Відносний розмір"
+ },
+ "e963907d": {
+  "en": "Remove",
+  "uk": "Прибрати"
+ },
+ "e260b41c": {
+  "en": "Removes this profile from the display's list.",
+  "uk": "Прибирає цей профіль зі списку дисплея."
+ },
+ "e066e804": {
+  "en": "Rendering",
+  "uk": "Відтворення"
+ },
+ "ee45c303": {
+  "en": "Report",
+  "uk": "Звіт"
+ },
+ "1a77d416": {
+  "en": "required",
+  "uk": "обов'язково"
+ },
+ "c1a0c104": {
+  "en": "Reset LUT",
+  "uk": "Скинути LUT"
+ },
+ "5faa59d4": {
+  "en": "Result",
+  "uk": "Результат"
+ },
+ "e1e4d87c": {
+  "en": "roll-off from, nits",
+  "uk": "зріз від, ніт"
+ },
+ "e7d3dfa5": {
+  "en": "Room illuminance used to adapt the tone curve. “From room light” fills it in.",
+  "uk": "Освітленість кімнати для підлаштування тонової кривої. Її заповнює кнопка «З освітлення кімнати»."
+ },
+ "6bde11a2": {
+  "en": "Room light",
+  "uk": "Освітлення кімнати"
+ },
+ "5a5f9f59": {
+  "en": "Room light, lx",
+  "uk": "Освітлення кімнати, лк"
+ },
+ "6abe4307": {
+  "en": "Room {0:F1} lx → {1:F0} cd/m²",
+  "uk": "Кімната {0:F1} лк → {1:F0} кд/м²"
+ },
+ "ca5dcd70": {
+  "en": "Room: {0:F1} lx, {1:F0} K → suggested white {2:F0} cd/m²",
+  "uk": "Кімната: {0:F1} лк, {1:F0} K → рекомендований білий {2:F0} кд/м²"
+ },
+ "b1b39260": {
+  "en": "Run",
+  "uk": "Виконати"
+ },
+ "370d9c58": {
+  "en": "Run step {0} first.",
+  "uk": "Спершу виконайте крок {0}."
+ },
+ "a06eef72": {
+  "en": "Runs the calibration and profiling. Keep the sensor on the screen; Esc cancels.",
+  "uk": "Запускає калібрування і профілювання. Датчик має бути на екрані; Esc скасовує."
+ },
+ "c2d9bed8": {
+  "en": "SDR (ICC) and HDR (advanced colour / MHC2) profiles associated with the selected display. HDR profiles take effect only after you pick them in Settings → Display → Color profile.",
+  "uk": "SDR (ICC) і HDR (MHC2) профілі вибраного дисплея. HDR-профіль починає діяти лише після вибору в Параметри → Дисплей → Колірний профіль."
+ },
+ "8ec4214b": {
+  "en": "SDR calibration",
+  "uk": "SDR калібрування"
+ },
+ "1d28b9af": {
+  "en": "SDR calibration done",
+  "uk": "SDR калібрування завершено"
+ },
+ "aa68967b": {
+  "en": "SDR profile",
+  "uk": "Профіль SDR"
+ },
+ "39cac824": {
+  "en": "SDR profiles",
+  "uk": "SDR профілі"
+ },
+ "4da267c9": {
+  "en": "SDR white in HDR",
+  "uk": "Білий SDR у HDR"
+ },
+ "c7eed92e": {
+  "en": "Select a display first.",
+  "uk": "Спершу виберіть дисплей."
+ },
+ "786f0a96": {
+  "en": "Sensor in the centre of the screen, diffuser open",
+  "uk": "Датчик по центру екрана, розсіювач відкритий"
+ },
+ "92038249": {
+  "en": "Separate R/G/B curves keep the white D65 from shadows to highlights.",
+  "uk": "Окремі криві R/G/B тримають білий D65 від тіней до світел."
+ },
+ "5147c636": {
+  "en": "Set OSD brightness 100 (DDC/CI)",
+  "uk": "OSD яскравість 100 (DDC/CI)"
+ },
+ "dbaa82cf": {
+  "en": "set the slider to 100 % while calibrating (measures up to 480 nits of signal); set it back afterwards",
+  "uk": "на час калібрування поставте повзунок на 100 % (міряє до 480 ніт сигналу); потім поверніть"
+ },
+ "d21d68d8": {
+  "en": "Sets the monitor's own brightness to maximum over DDC/CI so it follows the PQ signal as closely as it can.",
+  "uk": "Ставить власну яскравість монітора на максимум через DDC/CI, щоб він якомога точніше відстежував PQ-сигнал."
+ },
+ "25be33c0": {
+  "en": "Show patches in",
+  "uk": "Показувати патчі"
+ },
+ "d09ab323": {
+  "en": "Shows the gamut of any ICC/ICM profile file.",
+  "uk": "Показує гамут будь-якого файлу профілю ICC/ICM."
+ },
+ "87de13ef": {
+  "en": "Shows the patch window on the selected display for 5 seconds so you can place the sensor.",
+  "uk": "Показує вікно патча на вибраному дисплеї на 5 секунд, щоб ви поставили датчик."
+ },
+ "d920ed0c": {
+  "en": "Shows which physical screen this is.",
+  "uk": "Показує, який це фізичний екран."
+ },
+ "ff8bcf71": {
+  "en": "signal, nits",
+  "uk": "сигнал, ніт"
+ },
+ "97fd3c29": {
+  "en": "so the monitor follows the PQ signal as closely as it can",
+  "uk": "щоб монітор якомога точніше відстежував PQ-сигнал"
+ },
+ "6427db1c": {
+  "en": "Solid = display; wireframes = sRGB (grey), DCI-P3 (orange), Rec.2020 (cyan).",
+  "uk": "Суцільне = дисплей; каркаси = sRGB (сірий), DCI-P3 (помаранчевий), Rec.2020 (блакитний)."
+ },
+ "f8f875b4": {
+  "en": "Source colour space",
+  "uk": "Колірний простір джерела"
+ },
+ "8a411bf0": {
+  "en": "Source profile curve (e.g. sRGB)",
+  "uk": "Крива профілю джерела (напр. sRGB)"
+ },
+ "3ad2b455": {
+  "en": "Source tone curve",
+  "uk": "Крива джерела"
+ },
+ "2dfa6607": {
+  "en": "Standard",
+  "uk": "Стандарт"
+ },
+ "7b30214e": {
+  "en": "Standard (63 patches)",
+  "uk": "Стандарт (63 патчі)"
+ },
+ "952f3754": {
+  "en": "Start",
+  "uk": "Старт"
+ },
+ "840a9b8d": {
+  "en": "Start calibration",
+  "uk": "Почати калібрування"
+ },
+ "57669e0f": {
+  "en": "Starts continuous readings of a grey patch. Press again, or Esc, to stop.",
+  "uk": "Починає безперервні заміри сірого патча. Натисніть ще раз або Esc, щоб зупинити."
+ },
+ "a171c35d": {
+  "en": "Step 1 done",
+  "uk": "Крок 1 виконано"
+ },
+ "7832298f": {
+  "en": "Step 2 done",
+  "uk": "Крок 2 виконано"
+ },
+ "4b5ace4b": {
+  "en": "Step 3 done",
+  "uk": "Крок 3 виконано"
+ },
+ "e24a2258": {
+  "en": "Step 4 done",
+  "uk": "Крок 4 виконано"
+ },
+ "8f4a5b2a": {
+  "en": "Step-by-step Windows HDR calibration into a native MHC2 profile.",
+  "uk": "Покрокове калібрування Windows HDR у рідний MHC2-профіль."
+ },
+ "9e253470": {
+  "en": "Stop",
+  "uk": "Стоп"
+ },
+ "4c0ba3e8": {
+  "en": "Stops the running measurement at once and restores the display calibration. Esc does the same from any window.",
+  "uk": "Одразу зупиняє поточний замір і повертає калібрування дисплея. Esc робить те саме з будь-якого вікна."
+ },
+ "cd1bda74": {
+  "en": "supported, off",
+  "uk": "підтримується, вимкнено"
+ },
+ "bccd7654": {
+  "en": "Switches the calibration curve off while measuring, to see how the panel performs without it.",
+  "uk": "Вимикає калібрувальну криву на час заміру, щоб побачити, який вигляд має панель без неї."
+ },
+ "94c647c8": {
+  "en": "Switches Windows HDR for this display. The monitor may show its own message for a few seconds.",
+  "uk": "Перемикає Windows HDR для цього дисплея. Монітор може кілька секунд показувати своє повідомлення."
+ },
+ "61ad50a9": {
+  "en": "Target",
+  "uk": "Ціль"
+ },
+ "0e8a3ad9": {
+  "en": "target",
+  "uk": "ціль"
+ },
+ "92307210": {
+  "en": "Target brightness of white: about 80–120 for a dim room, 120–160 for an office. Leave empty to ignore luminance.",
+  "uk": "Цільова яскравість білого: близько 80–120 для темної кімнати, 120–160 для офісу. Порожньо — яскравість не враховується."
+ },
+ "e24a780d": {
+  "en": "Target brightness of white: around 120 for a normal room, 80–100 for a dark room.",
+  "uk": "Цільова яскравість білого: близько 120 для звичайної кімнати, 80–100 для темної."
+ },
+ "13a7b626": {
+  "en": "Target tone curve",
+  "uk": "Цільова крива"
+ },
+ "5a5762a5": {
+  "en": "Target white",
+  "uk": "Цільовий білий"
+ },
+ "40a4655e": {
+  "en": "Target white: D65 for sRGB / Rec.709 work and games, D50 to match prints, “Native” keeps the panel's own white.",
+  "uk": "Цільовий білий: D65 для роботи в sRGB / Rec.709 та ігор, D50 — під друк, «Рідна» лишає власний білий панелі."
+ },
+ "d35260a0": {
+  "en": "Targets",
+  "uk": "Цілі"
+ },
+ "00367b42": {
+  "en": "Tells the colorimeter how to measure. LCD and OLED: non-refresh. CRT, plasma or a flickering (PWM) backlight: refresh.",
+  "uk": "Підказує колориметру, як міряти. LCD і OLED — non-refresh. CRT, плазма чи мерехтливе (ШІМ) підсвічування — refresh."
+ },
+ "6657261c": {
+  "en": "Test patches",
+  "uk": "Тестові патчі"
+ },
+ "117ebb2c": {
+  "en": "The calibrated ICC profile of the display the LUT is made for.",
+  "uk": "Відкалібрований ICC-профіль дисплея, для якого робиться LUT."
+ },
+ "ae5e7e59": {
+  "en": "The channel left as it is while the hints adjust the other two. “Auto” only ever lowers channels, so none of them clips.",
+  "uk": "Канал, який лишається як є, поки підказки підганяють два інші. «Авто» лише зменшує канали, тож жоден не обрізається."
+ },
+ "1f685759": {
+  "en": "The colorimeter found by ArgyllCMS. If the list is empty, plug it in and press Refresh.",
+  "uk": "Колориметр, який знайшов ArgyllCMS. Якщо список порожній, підключіть його й натисніть «Оновити»."
+ },
+ "0efcc673": {
+  "en": "The display's SDR and HDR profiles, video card LUT tools.",
+  "uk": "SDR і HDR профілі дисплея, інструменти LUT відеокарти."
+ },
+ "5338a779": {
+  "en": "The measurement has no white patch.",
+  "uk": "У замірі немає білого патча."
+ },
+ "4063d20c": {
+  "en": "The program sets the monitor's own RGB gains and brightness over DDC/CI toward the target white and luminance (about 15 s).",
+  "uk": "Програма сама виставляє RGB і яскравість у меню монітора через DDC/CI до цільового білого та яскравості (близько 15 с)."
+ },
+ "3c5afc89": {
+  "en": "The screen to calibrate. Profiles, patches and DDC/CI all go to this display.",
+  "uk": "Екран, який калібруємо. Профілі, патчі й DDC/CI стосуються саме цього дисплея."
+ },
+ "6114c6ba": {
+  "en": "The sensor is busy: {0} ({1}) is using it. Close it and try again.",
+  "uk": "Датчик зайнятий: його використовує {0} ({1}). Закрийте і спробуйте ще раз."
+ },
+ "a241566e": {
+  "en": "The tone curve the content was mastered for: BT.1886 for video, gamma 2.2 for PC content and games.",
+  "uk": "Тонова крива, під яку зроблено вміст: BT.1886 для відео, гамма 2.2 для ПК-вмісту та ігор."
+ },
+ "a3990e07": {
+  "en": "The tone curve the results are compared with.",
+  "uk": "Тонова крива, з якою порівнюються результати."
+ },
+ "050a5a5e": {
+  "en": "The u′v′ diagram spreads colours more evenly than the classic xy one, so the triangles compare more fairly by eye.",
+  "uk": "Діаграма u′v′ розподіляє кольори рівномірніше за класичну xy, тож трикутники чесніше порівнювати на око."
+ },
+ "ff97e5ea": {
+  "en": "The white point the results are compared with.",
+  "uk": "Точка білого, з якою порівнюються результати."
+ },
+ "5881a001": {
+  "en": "The white you are aiming for. D65 is the standard for sRGB, Rec.709 and Rec.2020.",
+  "uk": "Білий, до якого прагнете. D65 — стандарт для sRGB, Rec.709 і Rec.2020."
+ },
+ "3ddb7e79": {
+  "en": "This monitor does not answer DDC/CI",
+  "uk": "Монітор не відповідає по DDC/CI"
+ },
+ "1795f2d6": {
+  "en": "Tick only if the display receives a video-range signal (16–235), e.g. a TV on HDMI set to limited range. PC monitors use the full range 0–255.",
+  "uk": "Позначте, лише якщо дисплей отримує відеодіапазон 16–235, напр. ТВ по HDMI з обмеженим діапазоном. Монітори на ПК працюють у повному 0–255."
+ },
+ "01a7b371": {
+  "en": "Tone curve",
+  "uk": "Тональна крива"
+ },
+ "4797daba": {
+  "en": "Tone response",
+  "uk": "Тональна крива"
+ },
+ "082354c8": {
+  "en": "Turn HDR off",
+  "uk": "Вимкнути HDR"
+ },
+ "111a842a": {
+  "en": "Turn HDR on",
+  "uk": "Увімкнути HDR"
+ },
+ "ff5b2db9": {
+  "en": "Turn Windows HDR on for this display first.",
+  "uk": "Спершу увімкніть Windows HDR для цього дисплея."
+ },
+ "07d6de46": {
+  "en": "Turns the display profile into a 3D LUT for players and apps that apply their own LUT (madVR, Resolve, OBS, ReShade).",
+  "uk": "Перетворює профіль дисплея на 3D-LUT для програм, що застосовують свій LUT (madVR, Resolve, OBS, ReShade)."
+ },
+ "e46105ac": {
+  "en": "Turns Windows HDR on for this display (takes a few seconds).",
+  "uk": "Вмикає Windows HDR для цього дисплея (займає кілька секунд)."
+ },
+ "f219df1c": {
+  "en": "TV / video levels 16–235",
+  "uk": "ТВ / відеорівні 16–235"
+ },
+ "df2e67db": {
+  "en": "Use this ArgyllCMS folder and search for displays and instruments again.",
+  "uk": "Використати цю теку ArgyllCMS і заново знайти дисплеї та прилади."
+ },
+ "03128bed": {
+  "en": "Verification",
+  "uk": "Перевірка"
+ },
+ "85ff2696": {
+  "en": "Verification done",
+  "uk": "Перевірку завершено"
+ },
+ "04d59ac8": {
+  "en": "Verify & report",
+  "uk": "Перевірка і звіт"
+ },
+ "9245bca5": {
+  "en": "Verify afterwards (120 patches)",
+  "uk": "Перевірити після (120 патчів)"
+ },
+ "05bb2896": {
+  "en": "Video LUT reset to linear",
+  "uk": "LUT відеокарти скинуто"
+ },
+ "2631bc24": {
+  "en": "What happens to colours the display cannot show: clipped exactly (relative colorimetric) or compressed smoothly (perceptual).",
+  "uk": "Що робити з кольорами, яких дисплей не може показати: точно обрізати (відносний колориметричний) або плавно стиснути (перцептивний)."
+ },
+ "ed2f0ce7": {
+  "en": "When the profile is ready, installs it and makes it the default for this display.",
+  "uk": "Коли профіль готовий, встановлює його й робить основним для цього дисплея."
+ },
+ "13d438ac": {
+  "en": "Where the soft roll-off toward the peak starts, cd/m². Brighter signals above it are compressed smoothly instead of clipped.",
+  "uk": "Звідки починається плавний зріз до піку, кд/м². Яскравіші сигнали вище нього плавно стискаються, а не обрізаються."
+ },
+ "b98cf64f": {
+  "en": "Where the test colours appear: our own window (full screen, or a window you can move and resize) or ArgyllCMS's window. A smaller window helps OLED and plasma screens that dim large bright areas.",
+  "uk": "Де показуються тестові кольори: у власному вікні програми (на весь екран або у вікні, яке можна рухати й змінювати) чи у вікні ArgyllCMS. Менше вікно допомагає OLED і плазмі, які притемнюють великі яскраві ділянки."
+ },
+ "35321046": {
+  "en": "Which colour standards the display can show, in 2D and 3D.",
+  "uk": "Які колірні стандарти дисплей може показати — у 2D і 3D."
+ },
+ "99a1a407": {
+  "en": "Which colours the display can show compared with the common standards. Coverage = how much of the standard's triangle the display reaches.",
+  "uk": "Які кольори дисплей здатен показати порівняно зі стандартами. Покриття = яку частку трикутника стандарту досягає дисплей."
+ },
+ "85c78c7f": {
+  "en": "Which grey is shown. 100 % for the RGB gain / contrast controls, 20–30 % for offset / bias (two-point white balance on TVs).",
+  "uk": "Який сірий показується. 100 % — для RGB gain / контрасту, 20–30 % — для offset / bias (двоточковий баланс білого на ТВ)."
+ },
+ "ff41add1": {
+  "en": "While the meter runs, the display's calibration is switched off (linear video LUT). It is restored when you stop.",
+  "uk": "Поки йде замір, калібрування дисплея вимкнене (лінійний LUT). Після зупинки воно повертається."
+ },
+ "37619fc1": {
+  "en": "White",
+  "uk": "Білий"
+ },
+ "528cef87": {
+  "en": "white",
+  "uk": "білий"
+ },
+ "e295ad37": {
+  "en": "White luminance, cd/m²",
+  "uk": "Яскравість білого, кд/м²"
+ },
+ "fb87ddd9": {
+  "en": "White point",
+  "uk": "Точка білого"
+ },
+ "1ccb7b2f": {
+  "en": "White point error per level",
+  "uk": "Похибка білого по рівнях"
+ },
+ "0f425ceb": {
+  "en": "White {0:F0} cd/m² at {1:F0} nits of signal ({2:F0} %), {3:F0} K",
+  "uk": "Білий {0:F0} кд/м² на {1:F0} ніт сигналу ({2:F0} %), {3:F0} K"
+ },
+ "c75d7a46": {
+  "en": "white ΔE2000 vs D65",
+  "uk": "ΔE2000 білого від D65"
+ },
+ "b1a4b649": {
+  "en": "Windows device",
+  "uk": "Пристрій Windows"
+ },
+ "f7affabe": {
+  "en": "Windows HDR is on for this display",
+  "uk": "Windows HDR увімкнено для цього дисплея"
+ },
+ "76ce2556": {
+  "en": "XYZ LUT + matrix (best)",
+  "uk": "XYZ LUT + матриця (найкраще)"
+ },
+ "97a50be4": {
+  "en": "XYZ LUT + matrix describes the display most precisely; matrix / shaper is simpler and works with more apps.",
+  "uk": "XYZ LUT + матриця описує дисплей найточніше; матриця / шейпер простіший і працює з більшою кількістю програм."
+ },
+ "d8c9aa26": {
+  "en": "yes · brightness {0}/{1}",
+  "uk": "так · яскравість {0}/{1}"
+ },
+ "0214d3de": {
+  "en": "~3–15 s per patch depending on the instrument and darkness",
+  "uk": "~3–15 с на патч залежно від датчика й темряви"
+ },
+ "ba1a55f1": {
+  "en": "ΔE to target {0:F2}",
+  "uk": "ΔE до цілі {0:F2}"
+ },
+ "df96477b": {
+  "en": "ΔE2000 per patch (bar colour = patch colour; dashed lines at 1, 2, 3)",
+  "uk": "ΔE2000 по патчах (колір стовпця = колір патча; пунктир на 1, 2, 3)"
+ },
+ "b0d40611": {
+  "en": "“SDR content brightness” = {0:F0} nits",
+  "uk": "«Яскравість SDR-вмісту» = {0:F0} ніт"
+ },
+ "086a6c6d": {
+  "en": "⚠ ACM is on: in SDR Windows then uses the HDR (advanced colour) profile instead of the ICC calibration. Turn it off in Settings → Display → Color profile for SDR calibration.",
+  "uk": "⚠ ACM увімкнено: у SDR Windows тоді бере HDR-профіль замість ICC-калібрування. Для SDR-калібрування вимкніть його в Параметри → Дисплей → Колірний профіль."
+ }
+}
