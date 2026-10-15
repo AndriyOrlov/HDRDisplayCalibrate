@@ -84,10 +84,16 @@ namespace HDRDisplayCalibrate
                 if (t.Fill && t.Stroke is SolidColorBrush sb) fill = new SolidColorBrush(Color.FromArgb(40, sb.Color.R, sb.Color.G, sb.Color.B));
                 dc.DrawGeometry(fill, pen, g);
             }
+            var labelled = new List<Point>();
             foreach (var (p, b, label) in Points)
             {
-                dc.DrawEllipse(b, new Pen(Brushes.Black, 1), P(p), 4, 4);
-                if (label != null) dc.DrawText(Draw.Txt(label, 11, b), P(p) + new Vector(6, -8));
+                var at = P(p);
+                dc.DrawEllipse(b, new Pen(Brushes.Black, 1), at, 4, 4);
+                if (label == null) continue;
+                // points that sit on top of each other (measured white on the target) get their labels stacked
+                int near = labelled.Count(q => (q - at).Length < 14);
+                dc.DrawText(Draw.Txt(label, 11, b), at + new Vector(6, -8 + 13 * near));
+                labelled.Add(at);
             }
             double ly = 8;
             foreach (var t in Triangles)

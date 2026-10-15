@@ -67,6 +67,10 @@
   "en": "ArgyllCMS was not found. Install ArgyllCMS (or DisplayCAL) and set its bin folder on the first page.",
   "uk": "Не знайдено ArgyllCMS. Встановіть ArgyllCMS (або DisplayCAL) і вкажіть папку bin на першій сторінці."
  },
+ "48e15c54": {
+  "en": "At every sign-in, loads each display's calibration curves from its default profile into the video card. Useful when Windows' own loader is switched off or another tool resets the curves.",
+  "uk": "При кожному вході в Windows завантажує у відеокарту калібрувальні криві основного профілю кожного дисплея. Корисно, коли завантажувач Windows вимкнений або інша програма скидає криві."
+ },
  "c17630d7": {
   "en": "At the current monitor brightness white reaches {0:F0} cd/m²; after the white point correction about {1:F0} cd/m² remain, below the target of {2:F0} cd/m².\n\nYes: raise the monitor's own brightness over DDC/CI\nNo: calibrate to {1:F0} cd/m²\nCancel: stop",
   "uk": "На поточній яскравості монітора білий дає {0:F0} кд/м²; після корекції точки білого залишиться близько {1:F0} кд/м², менше за ціль {2:F0} кд/м².\n\nТак: підняти яскравість самого монітора через DDC/CI\nНі: калібрувати на {1:F0} кд/м²\nСкасувати: зупинити"
@@ -155,9 +159,17 @@
   "en": "Builds the LUT with ArgyllCMS collink and saves it to the measurements folder.",
   "uk": "Будує LUT через ArgyllCMS collink і зберігає його в теці замірів."
  },
+ "fdfb02ee": {
+  "en": "Calibrate SDR first: Windows also applies the SDR calibration curve in HDR, and step 5 compensates for it.",
+  "uk": "Спершу відкалібруйте SDR: Windows накладає SDR-криву і в HDR, а крок 5 її компенсує."
+ },
  "f5ed075f": {
   "en": "Calibration",
   "uk": "Калібрування"
+ },
+ "b2cb279c": {
+  "en": "Calibration at startup",
+  "uk": "Калібрування при запуску"
  },
  "52af1791": {
   "en": "Calibration loaded",
@@ -179,6 +191,10 @@
   "en": "Check how accurate the display is now: ΔE, gamma, contrast.",
   "uk": "Перевірка, наскільки точний дисплей зараз: ΔE, гамма, контраст."
  },
+ "03a0deca": {
+  "en": "Check the result on Verify & report.",
+  "uk": "Перевірте результат на сторінці «Перевірка і звіт»."
+ },
  "afc87e99": {
   "en": "Checks the HDR prerequisites again.",
   "uk": "Ще раз перевіряє умови для HDR."
@@ -198,6 +214,10 @@
  "f02f8f36": {
   "en": "Choose the display, the colorimeter, how patches are shown, and the language.",
   "uk": "Вибір дисплея, колориметра, способу показу патчів і мови."
+ },
+ "478e4ffe": {
+  "en": "Choose the targets below and press Start calibration (about 1–1.5 h at high quality and 600 patches). Esc cancels at any time.",
+  "uk": "Виберіть цілі нижче й натисніть «Почати калібрування» (близько 1–1,5 год на високій якості і 600 патчах). Esc скасовує будь-коли."
  },
  "a561c875": {
   "en": "CIE 1976 u'v' (perceptually more even)",
@@ -226,6 +246,14 @@
  "4511fe86": {
   "en": "Continuous readings while you adjust the monitor's menu, or automatic adjustment over DDC/CI.",
   "uk": "Безперервні заміри, поки ви налаштовуєте меню монітора, або автоматичне налаштування через DDC/CI."
+ },
+ "25ee1ccc": {
+  "en": "Copies the full path, to paste into the file name box of “Add profile”.",
+  "uk": "Копіює повний шлях, щоб вставити його в поле імені файлу у «Додати профіль»."
+ },
+ "9804556f": {
+  "en": "Copy path",
+  "uk": "Копіювати шлях"
  },
  "53dd88f1": {
   "en": "Correction (.ccss / .ccmx)",
@@ -415,6 +443,10 @@
   "en": "Grid points per axis. 33³ is the usual choice; 65³ is slightly more precise and much larger.",
   "uk": "Кількість вузлів на вісь. 33³ — звичайний вибір; 65³ трохи точніший і значно більший."
  },
+ "7e301d2f": {
+  "en": "Hang the sensor in the centre of this screen with the diffuser open. Windows HDR must be off for this display.",
+  "uk": "Повісьте датчик по центру цього екрана, розсіювач відкритий. Windows HDR для цього дисплея має бути вимкнений."
+ },
  "11cc9295": {
   "en": "HDR / advanced colour profiles",
   "uk": "HDR / розширені профілі"
@@ -475,9 +507,13 @@
   "en": "Identify",
   "uk": "Показати номери"
  },
- "42d46b43": {
-  "en": "In Settings → System → Display → (this monitor) → Color profile, choose:\n\n    {0}\n\nthen move the Settings window off the patch area and press OK.",
-  "uk": "У Параметри → Система → Дисплей → (цей монітор) → Колірний профіль виберіть:\n\n    {0}\n\nвідсуньте вікно Параметрів від патча і натисніть OK."
+ "4947a55a": {
+  "en": "If the monitor has RGB controls, get close to the target white first: Live meter → Auto OSD, or by hand.",
+  "uk": "Якщо в моніторі є RGB-регулятори, спершу наблизьтесь до цільового білого: «Живий замір» → «Авто-OSD» або вручну."
+ },
+ "af94a23f": {
+  "en": "In Settings → System → Display → (this monitor) → Color profile, choose:",
+  "uk": "У Параметри → Система → Дисплей → (цей монітор) → Колірний профіль виберіть:"
  },
  "e10487e4": {
   "en": "Include the display calibration (vcgt) in the LUT",
@@ -531,6 +567,10 @@
   "en": "keep R",
   "uk": "R не чіпати"
  },
+ "3eb0df57": {
+  "en": "Keep the sensor in place and the Settings window away from the centre of the screen during measurements.",
+  "uk": "Під час замірів не рухайте датчик і тримайте вікно Параметрів подалі від центру екрана."
+ },
  "89b86ab0": {
   "en": "Language",
   "uk": "Мова"
@@ -538,6 +578,10 @@
  "a98e3961": {
   "en": "LCD / OLED (non-refresh)",
   "uk": "LCD / OLED (без регенерації)"
+ },
+ "9e786450": {
+  "en": "Let the monitor warm up for about 30 minutes. In its menu turn off dynamic contrast, eco and other automatic picture modes.",
+  "uk": "Дайте монітору прогрітися близько 30 хвилин. У його меню вимкніть динамічний контраст, еко та інші автоматичні режими картинки."
  },
  "7c7f5d04": {
   "en": "Level",
@@ -554,6 +598,10 @@
  "9b8d4ae1": {
   "en": "Load calibration (LUT)",
   "uk": "Завантажити калібрування (LUT)"
+ },
+ "d3e71899": {
+  "en": "Load the calibration at Windows sign-in",
+  "uk": "Завантажувати калібрування при вході в Windows"
  },
  "acb3e067": {
   "en": "Loads the calibration curve of the display's active profile into the video card again, e.g. if another program reset it.",
@@ -727,6 +775,10 @@
   "en": "not found",
   "uk": "не знайдено"
  },
+ "949e1986": {
+  "en": "Not in the list? Press “Add profile” there and choose this file:",
+  "uk": "Немає у списку? Натисніть там «Додати профіль» і виберіть цей файл:"
+ },
  "15438cc0": {
   "en": "not supported",
   "uk": "не підтримується"
@@ -766,6 +818,10 @@
  "fc98d878": {
   "en": "Opens the folder with all measurements, profiles, reports and LUTs.",
   "uk": "Відкриває теку з усіма замірами, профілями, звітами та LUT."
+ },
+ "afabd326": {
+  "en": "Opens the folder with the profile file selected.",
+  "uk": "Відкриває теку з виділеним файлом профілю."
  },
  "32ff130a": {
   "en": "Opens the program's detailed log, useful when reporting a problem.",
@@ -979,6 +1035,10 @@
   "en": "Run step {0} first.",
   "uk": "Спершу виконайте крок {0}."
  },
+ "0683d4fb": {
+  "en": "Run steps 1 to 5 in order. Each step installs a profile: in Settings → Display → Color management press “Set profile” for it, then OK in the app. If it is already marked Current, set another profile first and then this one.",
+  "uk": "Виконайте кроки 1–5 по черзі. Кожен крок встановлює профіль: у Параметри → Дисплей → Керування кольором натисніть для нього «Установити профіль», потім OK у програмі. Якщо він уже позначений Current, спершу встановіть інший профіль, а потім цей."
+ },
  "a06eef72": {
   "en": "Runs the calibration and profiling. Keep the sensor on the screen; Esc cancels.",
   "uk": "Запускає калібрування і профілювання. Датчик має бути на екрані; Esc скасовує."
@@ -1034,6 +1094,10 @@
  "25be33c0": {
   "en": "Show patches in",
   "uk": "Показувати патчі"
+ },
+ "95fe46dc": {
+  "en": "Show the profile file",
+  "uk": "Показати файл профілю"
  },
  "d09ab323": {
   "en": "Shows the gamut of any ICC/ICM profile file.",
@@ -1227,6 +1291,10 @@
   "en": "The white you are aiming for. D65 is the standard for sRGB, Rec.709 and Rec.2020.",
   "uk": "Білий, до якого прагнете. D65 — стандарт для sRGB, Rec.709 і Rec.2020."
  },
+ "558adf40": {
+  "en": "Then move the Settings window off the patch area and press OK.",
+  "uk": "Потім відсуньте вікно Параметрів від патча і натисніть OK."
+ },
  "3ddb7e79": {
   "en": "This monitor does not answer DDC/CI",
   "uk": "Монітор не відповідає по DDC/CI"
@@ -1250,6 +1318,10 @@
  "111a842a": {
   "en": "Turn HDR on",
   "uk": "Увімкнути HDR"
+ },
+ "303fbfa2": {
+  "en": "Turn HDR on, set “SDR content brightness” to 100 % and the monitor's own HDR brightness to maximum (the buttons below help).",
+  "uk": "Увімкніть HDR, поставте «Яскравість SDR-вмісту» на 100 %, а яскравість HDR у меню монітора — на максимум (кнопки нижче допоможуть)."
  },
  "ff5b2db9": {
   "en": "Turn Windows HDR on for this display first.",
@@ -1294,6 +1366,18 @@
  "2631bc24": {
   "en": "What happens to colours the display cannot show: clipped exactly (relative colorimetric) or compressed smoothly (perceptual).",
   "uk": "Що робити з кольорами, яких дисплей не може показати: точно обрізати (відносний колориметричний) або плавно стиснути (перцептивний)."
+ },
+ "779b1d58": {
+  "en": "What to do",
+  "uk": "Що робити"
+ },
+ "5fe3cf60": {
+  "en": "When step 5 is done, set “SDR content brightness” back to what you like for the desktop.",
+  "uk": "Після кроку 5 поверніть «Яскравість SDR-вмісту» на зручну для робочого столу."
+ },
+ "75019289": {
+  "en": "When the app asks, open Settings → Display → Color management and press “Set profile” for the new profile: Windows loads the calibration of the profile chosen there, also after a restart.",
+  "uk": "Коли програма попросить, відкрийте Параметри → Дисплей → Керування кольором і натисніть «Установити профіль» для нового профілю: Windows завантажує калібрування профілю, вибраного саме там, і після перезавантаження теж."
  },
  "ed2f0ce7": {
   "en": "When the profile is ready, installs it and makes it the default for this display.",
@@ -1390,5 +1474,9 @@
  "086a6c6d": {
   "en": "⚠ ACM is on: in SDR Windows then uses the HDR (advanced colour) profile instead of the ICC calibration. Turn it off in Settings → Display → Color profile for SDR calibration.",
   "uk": "⚠ ACM увімкнено: у SDR Windows тоді бере HDR-профіль замість ICC-калібрування. Для SDR-калібрування вимкніть його в Параметри → Дисплей → Колірний профіль."
+ },
+ "28d9408b": {
+  "en": "⚠ Windows' own calibration loader is switched off on this PC (often by another calibration tool), so calibration is not loaded after a restart. Turn the option above on, or re-enable it in an administrator terminal:",
+  "uk": "⚠ Завантажувач калібрування Windows на цьому ПК вимкнений (часто це робить інша програма калібрування), тож після перезавантаження калібрування не завантажується. Увімкніть опцію вище або знову ввімкніть його в терміналі адміністратора:"
  }
 }

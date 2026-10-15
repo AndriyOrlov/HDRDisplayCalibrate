@@ -19,6 +19,7 @@ namespace HDRDisplayCalibrate.Core
         [DllImport("mscms.dll", CharSet = CharSet.Unicode)] static extern int ColorProfileAddDisplayAssociation(int scope, string profile, Native.LUID adapter, uint sourceId, bool setDefault, bool advancedColor);
         [DllImport("mscms.dll", CharSet = CharSet.Unicode)] static extern int ColorProfileRemoveDisplayAssociation(int scope, string profile, Native.LUID adapter, uint sourceId, bool advancedColor);
         [DllImport("mscms.dll", CharSet = CharSet.Unicode)] static extern int ColorProfileSetDisplayDefaultAssociation(int scope, string profile, int type, int subType, Native.LUID adapter, uint sourceId);
+        [DllImport("mscms.dll", CharSet = CharSet.Unicode)] static extern bool AssociateColorProfileWithDeviceW(string machine, string profile, string device);
         [DllImport("mscms.dll", CharSet = CharSet.Unicode)] static extern int ColorProfileGetDisplayDefault(int scope, Native.LUID adapter, uint sourceId, int type, int subType, out IntPtr name);
 
         /// <summary>Copies the profile into the system colour folder and makes it the display's default (SDR or HDR list).</summary>
@@ -26,9 +27,18 @@ namespace HDRDisplayCalibrate.Core
         {
             if (!InstallColorProfileW(null, iccPath)) throw new IOException("InstallColorProfile failed: " + Marshal.GetLastWin32Error());
             var name = Path.GetFileName(iccPath);
-            int hr = ColorProfileAddDisplayAssociation(UserScope, name, d.Adapter, d.SourceId, true, hdr);
+            // HDR: only add the profile to the display's list. Marking it as default through the API shows it as
+            // "Current HDR profile" in Settings, but Windows applies an HDR profile only when the user presses
+            // "Set profile" there (and that button is disabled for the current one)
+            int hr = ColorProfileAddDisplayAssociation(UserScope, name, d.Adapter, d.SourceId, !hdr, hdr);
             if (hr != 0) throw new IOException($"associate failed 0x{hr:X8}");
-            ColorProfileSetDisplayDefaultAssociation(UserScope, name, IccType, hdr ? HdrSub : SdrSub, d.Adapter, d.SourceId);
+            if (!hdr)
+            {
+                ColorProfileSetDisplayDefaultAssociation(UserScope, name, IccType, SdrSub, d.Adapter, d.SourceId);
+                // also the classic per-device association (what calibrite PROFILER and DisplayCAL use): the newest
+                // associated profile becomes the device default for older loaders and apps
+                if (!string.IsNullOrEmpty(d.DevicePath)) AssociateColorProfileWithDeviceW(null, name, d.DevicePath);
+            }
             Log.Write($"profile {name} → {d.Name} ({(hdr ? "HDR" : "SDR")})");
             return name;
         }

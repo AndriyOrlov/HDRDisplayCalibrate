@@ -26,6 +26,12 @@ namespace HDRDisplayCalibrate
         {
             base.OnStartup(e);
             S.Init(Core.Settings.Load().Str("lang", "auto"));
+            if (e.Args.Length > 0 && e.Args[0] == "--load-luts")
+            {
+                // sign-in loader: put each display's calibration into the video card and exit
+                try { Core.Argyll.Find(Core.Settings.Load().Str("argyll_bin")); if (Core.Argyll.Bin != null) Core.LutLoader.LoadAll(); } catch (Exception ex) { Core.Log.Write("loader: " + ex.Message); }
+                Shutdown(); return;
+            }
             if (e.Args.Length > 0 && e.Args[0] == "--selftest") { SelfTest.Run(e.Args.Skip(1).ToArray()); Shutdown(); return; }
             if (e.Args.Length > 1 && e.Args[0] == "--render3d")
             {

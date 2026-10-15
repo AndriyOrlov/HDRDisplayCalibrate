@@ -25,6 +25,19 @@ namespace HDRDisplayCalibrate.Pages
                 Ui.Btn(S.T("Reset LUT", "Скинути LUT"), () => { if (St.Display?.ArgyllNumber is int n) { Argyll.LutLinear(n); St.Report(S.T("Video LUT reset to linear", "LUT відеокарти скинуто"), 1); } }, false, "", tip: S.T("Makes the video card curve linear (no calibration) until it is loaded again.", "Робить криву відеокарти лінійною (без калібрування), доки її не завантажать знову.")),
                 Ui.Btn(S.T("Display settings", "Параметри дисплея"), ColorProfiles.OpenDisplaySettings, false, "", tip: S.T("Opens Windows Settings → Display (colour profile, HDR, SDR content brightness).", "Відкриває Параметри Windows → Дисплей (колірний профіль, HDR, яскравість SDR-вмісту).")),
                 Ui.Btn(S.T("Profiles folder", "Тека профілів"), () => Process.Start("explorer.exe", ColorProfiles.ColorDir), false, "", tip: S.T("Opens the Windows colour profiles folder.", "Відкриває теку колірних профілів Windows.")))));
+            var loader = Ui.Check(S.T("Load the calibration at Windows sign-in", "Завантажувати калібрування при вході в Windows"), LutLoader.Enabled,
+                S.T("At every sign-in, loads each display's calibration curves from its default profile into the video card. Useful when Windows' own loader is switched off or another tool resets the curves.",
+                    "При кожному вході в Windows завантажує у відеокарту калібрувальні криві основного профілю кожного дисплея. Корисно, коли завантажувач Windows вимкнений або інша програма скидає криві."));
+            loader.Click += (_, _) => LutLoader.Enabled = loader.IsChecked == true;
+            var warn = Ui.Caption("");
+            if (LutLoader.WindowsLoaderDisabled())
+            {
+                warn.Text = S.T("⚠ Windows' own calibration loader is switched off on this PC (often by another calibration tool), so calibration is not loaded after a restart. Turn the option above on, or re-enable it in an administrator terminal:",
+                                "⚠ Завантажувач калібрування Windows на цьому ПК вимкнений (часто це робить інша програма калібрування), тож після перезавантаження калібрування не завантажується. Увімкніть опцію вище або знову ввімкніть його в терміналі адміністратора:")
+                            + Environment.NewLine + LutLoader.EnableTaskCommand;
+                warn.Foreground = Ui.Warm;
+            }
+            Body.Children.Add(Ui.Card(Ui.H2(S.T("Calibration at startup", "Калібрування при запуску")), loader, warn));
             Body.Children.Add(_list);
         }
 

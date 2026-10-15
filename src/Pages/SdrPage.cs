@@ -34,6 +34,13 @@ namespace HDRDisplayCalibrate.Pages
             S.T("Grey scale and white point go into the video card LUT, the display's colours are described by an ICC profile. Run the live meter first if the monitor has RGB controls.",
                 "Сіра шкала і точка білого записуються в LUT відеокарти, кольори дисплея описує ICC-профіль. Якщо в моніторі є RGB-регулятори, спершу «Живий замір»."))
         {
+            Body.Children.Add(Ui.Guide(S.T("What to do", "Що робити"),
+                S.T("Let the monitor warm up for about 30 minutes. In its menu turn off dynamic contrast, eco and other automatic picture modes.", "Дайте монітору прогрітися близько 30 хвилин. У його меню вимкніть динамічний контраст, еко та інші автоматичні режими картинки."),
+                S.T("Hang the sensor in the centre of this screen with the diffuser open. Windows HDR must be off for this display.", "Повісьте датчик по центру цього екрана, розсіювач відкритий. Windows HDR для цього дисплея має бути вимкнений."),
+                S.T("If the monitor has RGB controls, get close to the target white first: Live meter → Auto OSD, or by hand.", "Якщо в моніторі є RGB-регулятори, спершу наблизьтесь до цільового білого: «Живий замір» → «Авто-OSD» або вручну."),
+                S.T("Choose the targets below and press Start calibration (about 1–1.5 h at high quality and 600 patches). Esc cancels at any time.", "Виберіть цілі нижче й натисніть «Почати калібрування» (близько 1–1,5 год на високій якості і 600 патчах). Esc скасовує будь-коли."),
+                S.T("When the app asks, open Settings → Display → Color management and press “Set profile” for the new profile: Windows loads the calibration of the profile chosen there, also after a restart.", "Коли програма попросить, відкрийте Параметри → Дисплей → Керування кольором і натисніть «Установити профіль» для нового профілю: Windows завантажує калібрування профілю, вибраного саме там, і після перезавантаження теж."),
+                S.T("Check the result on Verify & report.", "Перевірте результат на сторінці «Перевірка і звіт».")));
             Body.Children.Add(Ui.Card(Ui.H2(S.T("Targets", "Цілі")),
                 Ui.Field(S.T("White point", "Точка білого"), _wp.View, tip: S.T("Target white: D65 for sRGB / Rec.709 work and games, D50 to match prints, “Native” keeps the panel's own white.", "Цільовий білий: D65 для роботи в sRGB / Rec.709 та ігор, D50 — під друк, «Рідна» лишає власний білий панелі.")),
                 Ui.Field(S.T("White luminance, cd/m²", "Яскравість білого, кд/м²"), Ui.Row(_nits, Ui.Btn(S.T("From room light", "За освітленням кімнати"), FromRoom, false, "", tip: S.T("Measures the room with the diffuser and fills in a suitable white luminance.", "Міряє кімнату з розсіювачем і підставляє відповідну яскравість білого."))), S.T("Empty = native (maximum)", "Порожньо = рідна (максимум)"), tip: S.T("Target brightness of white: around 120 for a normal room, 80–100 for a dark room.", "Цільова яскравість білого: близько 120 для звичайної кімнати, 80–100 для темної.")),
@@ -132,7 +139,18 @@ namespace HDRDisplayCalibrate.Pages
                     var (cc, co) = await Argyll.RunAsync("colprof", cp, dir, S.T("Building profile", "Побудова профілю"), new Progress<Progress>(p => St.Report(S.T("Building profile…", "Будую профіль…"))), ct);
                     if (cc != 0) throw new Exception(Jobs.LastError(co) ?? "colprof failed");
                     icc = Path.Combine(dir, name + ".icm");
-                    if (_install.IsChecked == true) { Argyll.InstallProfile(disp, icc); Log.Write($"installed {icc}"); }
+                    if (_install.IsChecked == true)
+                    {
+                        Argyll.InstallProfile(disp, icc); Log.Write($"installed {icc}");
+                        // Windows loads the curves of the profile chosen in Settings → Color management (also after a restart),
+                        // so the user confirms the new profile there
+                        await Dispatcher.InvokeAsync(() =>
+                        {
+                            ColorProfiles.OpenDisplaySettings();
+                            new ProfilePrompt(name, Path.Combine(ColorProfiles.ColorDir, Path.GetFileName(icc))).ShowDialog();
+                        });
+                        Argyll.LutLoad(disp, icc);
+                    }
                 }
                 // 3. verification
                 if (_verify.IsChecked == true)

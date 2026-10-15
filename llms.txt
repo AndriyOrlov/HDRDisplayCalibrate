@@ -20,3 +20,5 @@ and credit "Based on HDRDisplayCalibrate by Andrii Orlov (DeadSue)".
 - src/Jobs.cs: app state, measuring jobs, live reader, auto OSD (DDC/CI).
 - src/Pages/*: UI pages (device, live meter, SDR, HDR wizard, verify, gamut 2D/3D, 3D LUT, profiles, log).
 - src/I18n.cs, src/i18n/*.json: UI strings; S.T("English","Ukrainian") in code, other languages keyed by SHA-1 prefix of the English text (tools/extract_strings.py).
+- src/Core/LutLoader.cs: sign-in loader (--load-luts) for every display's calibration curves; detects a disabled Windows Calibration Loader.
+- src/Pages/ProfilePrompt.cs: asks the user to press "Set profile" in Settings → Color management, shows/copies the profile path.

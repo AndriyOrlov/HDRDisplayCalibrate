@@ -95,8 +95,10 @@ namespace HDRDisplayCalibrate.Core
             var h = new List<byte>();
             BE(h, off); h.AddRange(Sig("SICC")); BE(h, 0x04400000); h.AddRange(Sig("mntr")); h.AddRange(Sig("RGB ")); h.AddRange(Sig("XYZ "));
             var now = DateTime.UtcNow; foreach (var v in new[] { now.Year, now.Month, now.Day, now.Hour, now.Minute, now.Second }) U16(h, v);
-            h.AddRange(Sig("acsp")); h.AddRange(Sig("MSFT")); BE(h, 0); BE(h, 0); BE(h, 0); BE(h, 0); BE(h, 0); BE(h, 0);
-            BE(h, 0); S15(h, Cm.D50.X); S15(h, Cm.D50.Y); S15(h, Cm.D50.Z); h.AddRange(Sig("MSFT"));
+            // 36 acsp, 40 platform, 44 flags, 48 manufacturer, 52 model, 56 attributes (8), 64 intent, 68 PCS illuminant, 80 creator
+            // (same header values as the profiles Windows' own HDR Calibration app writes; a shifted illuminant makes Windows ignore the profile)
+            h.AddRange(Sig("acsp")); h.AddRange(Sig("MSFT")); BE(h, 0); BE(h, 0); BE(h, 0); BE(h, 0); BE(h, 1); BE(h, 1);
+            S15(h, Cm.D50.X); S15(h, Cm.D50.Y); S15(h, Cm.D50.Z); h.AddRange(Sig("MSFT"));
             while (h.Count < 128) h.Add(0);
             var all = new List<byte>(h); BE(all, (uint)tags.Count); all.AddRange(table); all.AddRange(body);
             var arr = all.ToArray();

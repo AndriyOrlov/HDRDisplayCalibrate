@@ -33,6 +33,24 @@ namespace HDRDisplayCalibrate
             return new Border { Background = CardBg, BorderBrush = CardStroke, BorderThickness = new Thickness(1), CornerRadius = new CornerRadius(8), Padding = new Thickness(16, 14, 16, 14), Margin = new Thickness(0, 0, 0, 12), Child = sp };
         }
 
+        /// <summary>"What to do, in this order" card at the top of a page.</summary>
+        public static Border Guide(string title, params string[] steps)
+        {
+            var list = new StackPanel { Margin = new Thickness(0, 4, 0, 0) };
+            for (int i = 0; i < steps.Length; i++)
+            {
+                var g = new Grid { Margin = new Thickness(0, 3, 0, 3) };
+                g.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(26) });
+                g.ColumnDefinitions.Add(new ColumnDefinition());
+                g.Children.Add(new TextBlock { Text = (i + 1) + ".", Foreground = Accent, FontWeight = FontWeights.SemiBold });
+                var t = Text(steps[i]); Grid.SetColumn(t, 1); g.Children.Add(t);
+                list.Children.Add(g);
+            }
+            var head = Row(new TextBlock { Text = "", FontFamily = Icons, Foreground = Accent, VerticalAlignment = VerticalAlignment.Center }, H2(title));
+            head.Children[1].SetValue(FrameworkElement.MarginProperty, new Thickness(0));
+            return Card(head, list);
+        }
+
         public static StackPanel Stack(params UIElement[] c) { var s = new StackPanel(); foreach (var x in c) if (x != null) s.Children.Add(x); return s; }
         public static StackPanel Row(params UIElement[] c)
         {

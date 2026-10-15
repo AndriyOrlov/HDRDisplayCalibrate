@@ -26,6 +26,7 @@ A DisplayCAL-style app that also calibrates <b>Windows HDR</b>: it measures the 
 <h4 align="center">
   <a href="#-features">Features</a> ·
   <a href="#-screenshots">Screenshots</a> ·
+  <a href="#-tested-on-a-real-monitor">Test results</a> ·
   <a href="#-install">Install</a> ·
   <a href="#-hdr-in-windows-what-to-know">HDR notes</a> ·
   <a href="#-build">Build</a> ·
@@ -63,6 +64,30 @@ A DisplayCAL-style app that also calibrates <b>Windows HDR</b>: it measures the 
   <img src="docs/lut.png" width="49%" alt="3D LUT export">
 </p>
 
+## 🧪 Tested on a real monitor
+
+Full run on an **ASUS VG34VQL3A** (34" VA, DisplayHDR 400) with a **ColorMunki Display**, driven through the app's own UI.
+
+| | Result |
+|---|---|
+| **SDR** (D65, 120 cd/m², gamma 2.2, high quality, 600-patch XYZ LUT profile) | white ΔE 1.15 · greys ΔE avg 0.97 / max 1.56 · gamma 2.18 · contrast 2439:1 |
+| **Gamut** (from the new profile) | sRGB 98.8 % · Adobe RGB 89.2 % · DCI-P3 92.7 % · Rec.2020 67.9 % |
+| **HDR** (MHC2, peak 300 cd/m², roll-off from 186) | white x 0.3124 y 0.3304 (D65 0.3127 0.3290) · PQ tracking 93–97 % of target from 5 nits up · white ΔE 1.3–3.1 above 20 nits · peak 270 cd/m² |
+
+<p align="center">
+  <img src="docs/run/04-sdr-verify.png" width="49%" alt="SDR verification report">
+  <img src="docs/run/05-sdr-verify-charts.png" width="49%" alt="SDR verification charts">
+  <img src="docs/run/09-hdr-final.png" width="49%" alt="HDR final verification table">
+  <img src="docs/run/10-hdr-pq-tracking.png" width="49%" alt="HDR PQ tracking and white point error per level">
+  <img src="docs/run/06-gamut.png" width="49%" alt="Gamut coverage of the new profile">
+  <img src="docs/run/07-gamut-3d.png" width="49%" alt="3D gamut">
+</p>
+
+The run also found real problems, all fixed in 0.3.0: SDR profiles were written without their calibration curves (vcgt);
+HDR profiles had a shifted header field, so Windows ignored them; the display could go to sleep during a long
+measurement; an unreachable white luminance made dispcal chase it for hours. More screenshots are in
+[docs/run](docs/run).
+
 ## 📦 Install
 
 1. Install [ArgyllCMS](https://www.argyllcms.com/) 3.x. `C:\ArgyllCMS\bin`, `C:\Program Files\ArgyllCMS\bin` and a
@@ -76,8 +101,13 @@ Requires Windows 11 x64; HDR calibration needs an HDR display with Windows HDR o
 
 ## 🌈 HDR in Windows: what to know
 
-* An HDR (MHC2) profile takes effect only after you pick it in **Settings → Display → Color profile** while HDR is
-  on. The wizard installs it and opens that page.
+* An HDR (MHC2) profile takes effect only after you press **Set profile** for it in **Settings → Display → Color
+  management** while HDR is on. The wizard installs it, opens that page and shows the file (with *Show the profile
+  file* / *Copy path* for “Add profile” if Windows does not list it).
+* The same goes for SDR: Windows loads the calibration of the profile chosen there, also after a restart, so confirm
+  the new SDR profile there too.
+* Some calibration tools switch Windows' own *Calibration Loader* off. The Profiles page shows it and can load every
+  display's calibration at sign-in instead (*Load the calibration at Windows sign-in*).
 * Windows applies the SDR calibration curve (vcgt) on top of HDR output too. The last wizard step compensates for it.
 * Keep **Auto colour management (ACM)** off in SDR, otherwise Windows uses the HDR profile in SDR as well.
 * Calibrate with "SDR content brightness" at 100 % and the monitor's HDR brightness at maximum, then set the slider
@@ -151,6 +181,9 @@ ArgyllCMS (AGPL-3.0, by Graeme W. Gill) is not bundled; it is run as external co
 
 **Потрібно:** Windows 11, [ArgyllCMS](https://www.argyllcms.com/) і колориметр (i1Display Pro, ColorMunki Display, Spyder…).
 Завантажте `HDRDisplayCalibrate.exe` з [Releases](../../releases/latest) — один файл, без встановлення.
+
+**Перевірено на реальному моніторі** (ASUS VG34VQL3A + ColorMunki Display): SDR — білий ΔE 1,15, сірі ΔE сер. 0,97;
+HDR — білий D65 (x 0,3124 y 0,3304), відстеження PQ 93–97 %, пік 270 кд/м². Скриншоти — у [docs/run](docs/run).
 
 **HDR-профіль** починає діяти лише після вибору в **Параметри → Дисплей → Колірний профіль** при увімкненому HDR —
 майстер встановлює профіль і відкриває цю сторінку.

@@ -33,6 +33,12 @@ namespace HDRDisplayCalibrate.Pages
             S.T("Builds a native Windows HDR (MHC2) profile from colorimeter readings: correct PQ tracking up to your monitor's real peak, D65 white at every level, accurate colours, and the real peak/black reported to games. No background app and no HDR test patterns needed.",
                 "Будує рідний HDR-профіль Windows (MHC2) за замірами колориметра: правильне відстеження PQ до реального піку монітора, білий D65 на всіх рівнях, точні кольори і реальний пік/чорний для ігор. Без програм у фоні і без HDR-патернів."))
         {
+            Body.Children.Add(Ui.Guide(S.T("What to do", "Що робити"),
+                S.T("Calibrate SDR first: Windows also applies the SDR calibration curve in HDR, and step 5 compensates for it.", "Спершу відкалібруйте SDR: Windows накладає SDR-криву і в HDR, а крок 5 її компенсує."),
+                S.T("Turn HDR on, set “SDR content brightness” to 100 % and the monitor's own HDR brightness to maximum (the buttons below help).", "Увімкніть HDR, поставте «Яскравість SDR-вмісту» на 100 %, а яскравість HDR у меню монітора — на максимум (кнопки нижче допоможуть)."),
+                S.T("Run steps 1 to 5 in order. Each step installs a profile: in Settings → Display → Color management press “Set profile” for it, then OK in the app. If it is already marked Current, set another profile first and then this one.", "Виконайте кроки 1–5 по черзі. Кожен крок встановлює профіль: у Параметри → Дисплей → Керування кольором натисніть для нього «Установити профіль», потім OK у програмі. Якщо він уже позначений Current, спершу встановіть інший профіль, а потім цей."),
+                S.T("Keep the sensor in place and the Settings window away from the centre of the screen during measurements.", "Під час замірів не рухайте датчик і тримайте вікно Параметрів подалі від центру екрана."),
+                S.T("When step 5 is done, set “SDR content brightness” back to what you like for the desktop.", "Після кроку 5 поверніть «Яскравість SDR-вмісту» на зручну для робочого столу.")));
             Body.Children.Add(Ui.Card(Ui.H2(S.T("Before you start", "Перед початком")), _pre));
             Body.Children.Add(_steps);
             Body.Children.Add(_out);
@@ -99,12 +105,11 @@ namespace HDRDisplayCalibrate.Pages
         {
             var path = Path.Combine(_dir, file);
             p.Save(path);
-            ColorProfiles.Install(St.Display, path, true);
+            var installed = Path.Combine(ColorProfiles.ColorDir, ColorProfiles.Install(St.Display, path, true));
             await Dispatcher.InvokeAsync(() =>
             {
                 ColorProfiles.OpenDisplaySettings();
-                MessageBox.Show(S.F("In Settings → System → Display → (this monitor) → Color profile, choose:\n\n    {0}\n\nthen move the Settings window off the patch area and press OK.",
-                                    "У Параметри → Система → Дисплей → (цей монітор) → Колірний профіль виберіть:\n\n    {0}\n\nвідсуньте вікно Параметрів від патча і натисніть OK.", p.Description), "HDRDisplayCalibrate");
+                new ProfilePrompt(p.Description, installed).ShowDialog();
             });
             await Task.Delay(1500);
         }
