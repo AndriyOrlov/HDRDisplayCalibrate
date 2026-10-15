@@ -52,7 +52,6 @@
 "14079adc": "Colorimeter",
 "416b4b16": "Farbraum des Inhalts: Rec.709 / sRGB für die meisten Videos, Spiele und das Web; DCI-P3 oder Rec.2020 für Inhalte mit erweitertem Farbraum.",
 "d226ba2e": "Farbtemperatur, K",
-"a5a6ae17": "Farb-ΔE Mittel / Max",
 "7d9b8823": "Gleicht die SDR-Kalibrierkurve aus, die Windows auch in HDR anwendet, installiert das endgültige Profil und prüft es.",
 "4511fe86": "Laufende Messungen, während Sie das Monitormenü einstellen, oder automatische Einstellung über DDC/CI.",
 "53dd88f1": "Korrektur (.ccss / .ccmx)",
@@ -343,5 +342,9 @@
 "ba1a55f1": "ΔE zum Ziel {0:F2}",
 "df96477b": "ΔE2000 je Feld (Balkenfarbe = Feldfarbe; gestrichelte Linien bei 1, 2, 3)",
 "b0d40611": "„SDR-Inhaltshelligkeit“ = {0:F0} Nits",
-"086a6c6d": "⚠ ACM ist an: In SDR verwendet Windows dann das HDR-Profil (Advanced Color) statt der ICC-Kalibrierung. Für die SDR-Kalibrierung unter Einstellungen → Bildschirm → Farbprofil ausschalten."
+"086a6c6d": "⚠ ACM ist an: In SDR verwendet Windows dann das HDR-Profil (Advanced Color) statt der ICC-Kalibrierung. Für die SDR-Kalibrierung unter Einstellungen → Bildschirm → Farbprofil ausschalten.",
+"c17630d7": "Bei der aktuellen Monitorhelligkeit erreicht Weiß {0:F0} cd/m²; nach der Weißpunktkorrektur bleiben etwa {1:F0} cd/m², weniger als das Ziel von {2:F0} cd/m².\n\nJa: Helligkeit des Monitors über DDC/CI erhöhen\nNein: auf {1:F0} cd/m² kalibrieren\nAbbrechen: stoppen",
+"519ce5a2": "Farb-ΔE zu sRGB Mittel / Max",
+"6db0e86e": "Monitorhelligkeit wird erhöht…",
+"db3d4462": "Der Sensor hat kein Licht gesehen: Der Bildschirm ist in den Ruhezustand gegangen oder der Sensor sitzt nicht auf diesem Bildschirm. Erneut messen."
 }

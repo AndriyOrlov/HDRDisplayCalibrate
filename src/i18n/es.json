@@ -52,7 +52,6 @@
 "14079adc": "Colorímetro",
 "416b4b16": "Espacio de color del contenido: Rec.709 / sRGB para la mayoría de vídeos, juegos y la web; DCI-P3 o Rec.2020 para contenido de gama amplia.",
 "d226ba2e": "Temperatura de color, K",
-"a5a6ae17": "ΔE de color media / máx.",
 "7d9b8823": "Compensa la curva de calibración SDR que Windows también aplica en HDR, instala el perfil final y lo verifica.",
 "4511fe86": "Lecturas continuas mientras ajusta el menú del monitor, o ajuste automático por DDC/CI.",
 "53dd88f1": "Corrección (.ccss / .ccmx)",
@@ -343,5 +342,9 @@
 "ba1a55f1": "ΔE respecto al objetivo {0:F2}",
 "df96477b": "ΔE2000 por parche (color de la barra = color del parche; líneas discontinuas en 1, 2, 3)",
 "b0d40611": "«Brillo del contenido SDR» = {0:F0} nits",
-"086a6c6d": "⚠ ACM está activado: en SDR, Windows usa entonces el perfil HDR (color avanzado) en lugar de la calibración ICC. Desactívelo en Configuración → Pantalla → Perfil de color para la calibración SDR."
+"086a6c6d": "⚠ ACM está activado: en SDR, Windows usa entonces el perfil HDR (color avanzado) en lugar de la calibración ICC. Desactívelo en Configuración → Pantalla → Perfil de color para la calibración SDR.",
+"c17630d7": "Con el brillo actual del monitor, el blanco alcanza {0:F0} cd/m²; tras corregir el punto blanco quedarán unos {1:F0} cd/m², por debajo del objetivo de {2:F0} cd/m².\n\nSí: subir el brillo del propio monitor por DDC/CI\nNo: calibrar a {1:F0} cd/m²\nCancelar: detener",
+"519ce5a2": "ΔE de color vs sRGB media / máx.",
+"6db0e86e": "Subiendo el brillo del monitor…",
+"db3d4462": "El sensor no vio luz: la pantalla entró en suspensión o el sensor no está en esta pantalla. Vuelva a medir."
 }

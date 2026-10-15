@@ -159,7 +159,15 @@ namespace HDRDisplayCalibrate.Core
         public static void LutLinear(int display) => Dispwin($"-d{display}", "-c");
         public static void LutLoad(int display, string calOrIcc) => Dispwin($"-d{display}", calOrIcc);
         public static void LutSave(int display, string calPath) => Dispwin($"-d{display}", "-s", calPath);
-        public static int InstallProfile(int display, string icc) => Dispwin($"-d{display}", "-I", icc);
+        /// <summary>Installs the profile as the display's default, then loads its curves again: on installation Windows may
+        /// load the previously chosen profile's curves into the video LUT.</summary>
+        public static int InstallProfile(int display, string icc)
+        {
+            int code = Dispwin($"-d{display}", "-I", icc);
+            Thread.Sleep(2500);
+            Dispwin($"-d{display}", icc);
+            return code;
+        }
         public static void LoadInstalled(int display) => Dispwin($"-d{display}", "-L");
     }
 }

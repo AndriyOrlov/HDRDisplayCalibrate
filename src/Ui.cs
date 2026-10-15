@@ -61,6 +61,8 @@ namespace HDRDisplayCalibrate
             var l = Stack(Text(label), hint == null ? null : Caption(hint)); l.VerticalAlignment = VerticalAlignment.Center;
             g.Children.Add(l); Grid.SetColumn(control, 1); g.Children.Add(control);
             if (control is FrameworkElement fe) { fe.VerticalAlignment = VerticalAlignment.Center; if (fe.ToolTip == null) Tip(fe, tip); }
+            // screen readers and UI automation see the field's label as the control's name
+            if (string.IsNullOrEmpty(System.Windows.Automation.AutomationProperties.GetName(control))) System.Windows.Automation.AutomationProperties.SetName(control, label);
             Tip(l, tip);
             return g;
         }
@@ -72,6 +74,7 @@ namespace HDRDisplayCalibrate
             var b = new Button { Content = content, Padding = new Thickness(14, 6, 14, 6), Margin = new Thickness(0, 0, 8, 0), HorizontalAlignment = HorizontalAlignment.Left };
             if (accent) b.Style = (Style)Application.Current.TryFindResource("AccentButtonStyle") ?? b.Style;
             b.Click += (_, _) => click();
+            System.Windows.Automation.AutomationProperties.SetName(b, text);      // content is icon + text: give it a readable name
             return Tip(b, tip);
         }
 

@@ -53,6 +53,10 @@ namespace HDRDisplayCalibrate.Core
             int I(string n) => Array.IndexOf(f, n);
             var m = Regex.Match(text, "LUMINANCE_XYZ_CDM2\\s+\"([^\"]+)\"");
             whiteNits = m.Success ? double.Parse(m.Groups[1].Value.Split(' ')[1], Inv) : 100;
+            // all-black readings come back as NaN (normalised to a white of 0): the display was off or the sensor not on it
+            if (whiteNits <= 0 || Regex.IsMatch(File.ReadAllText(path), @"\s-?nan\b"))
+                throw new InvalidDataException(S.T("The sensor saw no light: the display went to sleep or the sensor is not on this screen. Measure again.",
+                                                   "Датчик не побачив світла: екран заснув або датчик не на цьому екрані. Заміряйте ще раз."));
             double k = whiteNits / 100.0;
             int r = I("RGB_R"), g = I("RGB_G"), b = I("RGB_B"), x = I("XYZ_X"), y = I("XYZ_Y"), z = I("XYZ_Z");
             return rows.Select(c => new Patch(double.Parse(c[r], Inv) / 100, double.Parse(c[g], Inv) / 100, double.Parse(c[b], Inv) / 100,

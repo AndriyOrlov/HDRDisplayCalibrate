@@ -59,9 +59,35 @@ namespace HDRDisplayCalibrate
         {
             if (Job != null) throw new InvalidOperationException(S.T("Another measurement is running", "Уже йде інший замір"));
             Job = new CancellationTokenSource(); Notify();
+            // a measurement can run for hours with nobody touching the PC: keep the display on and the PC awake
+            SetThreadExecutionState(EsContinuous | EsSystemRequired | EsDisplayRequired);
+            WakeDisplay();
             return Job.Token;
         }
-        public void EndJob() { Job?.Dispose(); Job = null; Notify(); }
+        public void EndJob() { Job?.Dispose(); Job = null; SetThreadExecutionState(EsContinuous); Notify(); }
+
+        [System.Runtime.InteropServices.DllImport("kernel32.dll")] static extern uint SetThreadExecutionState(uint flags);
+        const uint EsContinuous = 0x80000000, EsSystemRequired = 0x1, EsDisplayRequired = 0x2;
+
+        // keeping the display on does not turn an already sleeping one back on: a zero-length mouse move does
+        [System.Runtime.InteropServices.StructLayout(System.Runtime.InteropServices.LayoutKind.Explicit, Size = 40)]   // INPUT on x64
+        struct MouseInput
+        {
+            [System.Runtime.InteropServices.FieldOffset(0)] public uint type;
+            [System.Runtime.InteropServices.FieldOffset(8)] public int dx;
+            [System.Runtime.InteropServices.FieldOffset(12)] public int dy;
+            [System.Runtime.InteropServices.FieldOffset(16)] public uint data;
+            [System.Runtime.InteropServices.FieldOffset(20)] public uint flags;
+            [System.Runtime.InteropServices.FieldOffset(24)] public uint time;
+            [System.Runtime.InteropServices.FieldOffset(32)] public IntPtr extra;
+        }
+        [System.Runtime.InteropServices.DllImport("user32.dll")] static extern uint SendInput(uint n, MouseInput[] inputs, int size);
+        static void WakeDisplay()
+        {
+            var m = new[] { new MouseInput { type = 0, flags = 0x0001 } };      // INPUT_MOUSE, MOUSEEVENTF_MOVE by 0,0
+            SendInput(1, m, System.Runtime.InteropServices.Marshal.SizeOf<MouseInput>());
+            Thread.Sleep(1500);                                                 // give the panel time to light up
+        }
         public void Cancel() => Job?.Cancel();
     }
 

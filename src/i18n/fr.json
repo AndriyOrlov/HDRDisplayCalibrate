@@ -52,7 +52,6 @@
 "14079adc": "Colorimètre",
 "416b4b16": "Espace colorimétrique du contenu : Rec.709 / sRGB pour la plupart des vidéos, des jeux et du web ; DCI-P3 ou Rec.2020 pour un contenu à gamut étendu.",
 "d226ba2e": "Température de couleur, K",
-"a5a6ae17": "ΔE couleurs moy. / max",
 "7d9b8823": "Compense la courbe de calibrage SDR que Windows applique aussi en HDR, installe le profil final et le vérifie.",
 "4511fe86": "Mesures continues pendant que vous réglez le menu de l'écran, ou réglage automatique par DDC/CI.",
 "53dd88f1": "Correction (.ccss / .ccmx)",
@@ -343,5 +342,9 @@
 "ba1a55f1": "ΔE par rapport à la cible {0:F2}",
 "df96477b": "ΔE2000 par mire (couleur de la barre = couleur de la mire ; pointillés à 1, 2, 3)",
 "b0d40611": "« Luminosité du contenu SDR » = {0:F0} nits",
-"086a6c6d": "⚠ ACM est activé : en SDR, Windows utilise alors le profil HDR (couleur avancée) au lieu du calibrage ICC. Désactivez-le dans Paramètres → Affichage → Profil de couleur pour le calibrage SDR."
+"086a6c6d": "⚠ ACM est activé : en SDR, Windows utilise alors le profil HDR (couleur avancée) au lieu du calibrage ICC. Désactivez-le dans Paramètres → Affichage → Profil de couleur pour le calibrage SDR.",
+"c17630d7": "Avec la luminosité actuelle de l'écran, le blanc atteint {0:F0} cd/m² ; après la correction du point blanc, il restera environ {1:F0} cd/m², sous la cible de {2:F0} cd/m².\n\nOui : augmenter la luminosité de l'écran par DDC/CI\nNon : calibrer à {1:F0} cd/m²\nAnnuler : arrêter",
+"519ce5a2": "ΔE couleurs vs sRGB moy. / max",
+"6db0e86e": "Augmentation de la luminosité de l'écran…",
+"db3d4462": "Le capteur n'a vu aucune lumière : l'écran s'est mis en veille ou le capteur n'est pas sur cet écran. Mesurez à nouveau."
 }

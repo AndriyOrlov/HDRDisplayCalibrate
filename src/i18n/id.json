@@ -52,7 +52,6 @@
 "14079adc": "Kolorimeter",
 "416b4b16": "Ruang warna konten: Rec.709 / sRGB untuk sebagian besar video, game, dan web; DCI-P3 atau Rec.2020 untuk konten gamut lebar.",
 "d226ba2e": "Suhu warna, K",
-"a5a6ae17": "ΔE warna rata-rata / maks",
 "7d9b8823": "Mengompensasi kurva kalibrasi SDR yang juga diterapkan Windows di HDR, memasang profil akhir, dan memverifikasinya.",
 "4511fe86": "Pengukuran terus-menerus selama Anda mengatur menu monitor, atau penyesuaian otomatis lewat DDC/CI.",
 "53dd88f1": "Koreksi (.ccss / .ccmx)",
@@ -343,5 +342,9 @@
 "ba1a55f1": "ΔE ke target {0:F2}",
 "df96477b": "ΔE2000 per patch (warna batang = warna patch; garis putus-putus pada 1, 2, 3)",
 "b0d40611": "“Kecerahan konten SDR” = {0:F0} nit",
-"086a6c6d": "⚠ ACM aktif: dalam SDR Windows lalu memakai profil HDR (warna lanjutan) alih-alih kalibrasi ICC. Matikan di Pengaturan → Layar → Profil warna untuk kalibrasi SDR."
+"086a6c6d": "⚠ ACM aktif: dalam SDR Windows lalu memakai profil HDR (warna lanjutan) alih-alih kalibrasi ICC. Matikan di Pengaturan → Layar → Profil warna untuk kalibrasi SDR.",
+"c17630d7": "Pada kecerahan monitor saat ini, putih mencapai {0:F0} cd/m²; setelah koreksi titik putih tersisa sekitar {1:F0} cd/m², di bawah target {2:F0} cd/m².\n\nYa: naikkan kecerahan monitor lewat DDC/CI\nTidak: kalibrasi ke {1:F0} cd/m²\nBatal: hentikan",
+"519ce5a2": "ΔE warna vs sRGB rata-rata / maks",
+"6db0e86e": "Menaikkan kecerahan monitor…",
+"db3d4462": "Sensor tidak melihat cahaya: layar tertidur atau sensor tidak berada di layar ini. Ukur lagi."
 }

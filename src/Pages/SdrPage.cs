@@ -82,9 +82,39 @@ namespace HDRDisplayCalibrate.Pages
                 if (_ambient.IsChecked == true && !double.IsNaN(lux)) a.Add(string.Format(CultureInfo.InvariantCulture, "-a{0:0.#}", lux));
                 a.Add(name);
                 if (St.Setup.OwnWindow) Argyll.LutLinear(disp);
+                // the white point correction costs some light: check the target luminance can be reached at all,
+                // otherwise dispcal keeps chasing it for hours and the white point suffers
+                if (!double.IsNaN(nits) && St.Setup.OwnWindow)
+                {
+                    double native;
+                    using (var rd = new Jobs.LiveReader(fast: true)) native = (await rd.Read(1, 1, 1, ct)).Y;
+                    double reach = native * 0.95;
+                    if (nits > reach)
+                    {
+                        var ans = MessageBox.Show(S.F("At the current monitor brightness white reaches {0:F0} cd/m²; after the white point correction about {1:F0} cd/m² remain, below the target of {2:F0} cd/m².\n\nYes: raise the monitor's own brightness over DDC/CI\nNo: calibrate to {1:F0} cd/m²\nCancel: stop",
+                                                      "На поточній яскравості монітора білий дає {0:F0} кд/м²; після корекції точки білого залишиться близько {1:F0} кд/м², менше за ціль {2:F0} кд/м².\n\nТак: підняти яскравість самого монітора через DDC/CI\nНі: калібрувати на {1:F0} кд/м²\nСкасувати: зупинити", native, reach, nits),
+                                                  "HDRDisplayCalibrate", MessageBoxButton.YesNoCancel, MessageBoxImage.Warning);
+                        if (ans == MessageBoxResult.Cancel) throw new OperationCanceledException();
+                        if (ans == MessageBoxResult.Yes)
+                        {
+                            St.Report(S.T("Raising monitor brightness…", "Піднімаю яскравість монітора…"));
+                            var res = await Jobs.AutoOsd(d, null, nits / 0.95, dir, ct);
+                            Log.Write("brightness for calibration: " + res);
+                            if (St.Setup.OwnWindow) Argyll.LutLinear(disp);
+                        }
+                        else
+                        {
+                            int bi = a.FindIndex(x => x.StartsWith("-b"));
+                            a[bi] = string.Format(CultureInfo.InvariantCulture, "-b{0:0}", Math.Floor(reach));
+                        }
+                    }
+                }
                 var (code, outp) = await Jobs.RunMeasuring("dispcal", a, dir, S.T("Calibration", "Калібрування"), ct);
                 if (code != 0) throw new Exception(Jobs.LastError(outp) ?? "dispcal failed");
                 var cal = Path.Combine(dir, name + ".cal");
+                // with our own patch window dispcal has no VideoLUT access and marks the curves as "not for the LUT";
+                // we load them into the LUT ourselves, so mark them as LUT curves, otherwise colprof leaves vcgt out of the profile
+                File.WriteAllText(cal, File.ReadAllText(cal).Replace("VIDEO_LUT_CALIBRATION_POSSIBLE \"NO\"", "VIDEO_LUT_CALIBRATION_POSSIBLE \"YES\""));
                 Argyll.LutLoad(disp, cal);
                 string icc = null;
                 // 2. profile
@@ -96,6 +126,8 @@ namespace HDRDisplayCalibrate.Pages
                     var ra = St.Setup.Args(); ra.Add("-v"); ra.Add(name);
                     var (rc, ro) = await Jobs.RunMeasuring("dispread", ra, dir, S.T("Profile", "Профіль"), ct);
                     if (rc != 0) throw new Exception(Jobs.LastError(ro) ?? "dispread failed");
+                    // the patches were measured through these curves: attach them so the profile carries its calibration (vcgt)
+                    File.AppendAllText(Path.Combine(dir, name + ".ti3"), Environment.NewLine + File.ReadAllText(cal));
                     var cp = new List<string> { "-v", "-qh", _ptype.SelectedIndex == 0 && npatch >= 250 ? "-aX" : "-aS", "-D", name, "-C", "HDRDisplayCalibrate, ArgyllCMS", name };
                     var (cc, co) = await Argyll.RunAsync("colprof", cp, dir, S.T("Building profile", "Побудова профілю"), new Progress<Progress>(p => St.Report(S.T("Building profile…", "Будую профіль…"))), ct);
                     if (cc != 0) throw new Exception(Jobs.LastError(co) ?? "colprof failed");

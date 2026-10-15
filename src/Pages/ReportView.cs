@@ -30,7 +30,7 @@ namespace HDRDisplayCalibrate.Pages
             Tile(S.T("Black / contrast", "Чорний / контраст"), $"{r.BlackNits:F3} · {r.Contrast:F0}:1");
             Tile(S.T("Gamma (mid)", "Гамма (середні)"), Ui.F(r.GammaMid));
             Tile(S.T("Grey ΔE avg / max", "Сірий ΔE сер. / макс."), $"{r.GreyMeanDE:F2} / {r.GreyMaxDE:F2}", Grade(r.GreyMeanDE));
-            Tile(S.T("Colour ΔE avg / max", "Кольори ΔE сер. / макс."), $"{r.ColorMeanDE:F2} / {r.ColorMaxDE:F2}", Grade(r.ColorMeanDE));
+            Tile(S.T("Colour ΔE vs sRGB avg / max", "ΔE кольорів від sRGB сер. / макс."), $"{r.ColorMeanDE:F2} / {r.ColorMaxDE:F2}", Grade(r.ColorMeanDE));
             sp.Children.Add(tiles);
 
             var tone = new LineChart { XLabel = S.T("input level", "вхідний рівень"), YLabel = S.T("relative luminance", "відносна яскравість"), XMin = 0, XMax = 1, YMin = 0, YMax = 1 };

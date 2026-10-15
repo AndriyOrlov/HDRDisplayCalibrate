@@ -67,6 +67,10 @@
   "en": "ArgyllCMS was not found. Install ArgyllCMS (or DisplayCAL) and set its bin folder on the first page.",
   "uk": "Не знайдено ArgyllCMS. Встановіть ArgyllCMS (або DisplayCAL) і вкажіть папку bin на першій сторінці."
  },
+ "c17630d7": {
+  "en": "At the current monitor brightness white reaches {0:F0} cd/m²; after the white point correction about {1:F0} cd/m² remain, below the target of {2:F0} cd/m².\n\nYes: raise the monitor's own brightness over DDC/CI\nNo: calibrate to {1:F0} cd/m²\nCancel: stop",
+  "uk": "На поточній яскравості монітора білий дає {0:F0} кд/м²; після корекції точки білого залишиться близько {1:F0} кд/м², менше за ціль {2:F0} кд/м².\n\nТак: підняти яскравість самого монітора через DDC/CI\nНі: калібрувати на {1:F0} кд/м²\nСкасувати: зупинити"
+ },
  "6d9f4448": {
   "en": "auto (only reduce)",
   "uk": "авто (лише зменшувати)"
@@ -211,9 +215,9 @@
   "en": "Colour temperature, K",
   "uk": "Колірна температура, K"
  },
- "a5a6ae17": {
-  "en": "Colour ΔE avg / max",
-  "uk": "Кольори ΔE сер. / макс."
+ "519ce5a2": {
+  "en": "Colour ΔE vs sRGB avg / max",
+  "uk": "ΔE кольорів від sRGB сер. / макс."
  },
  "7d9b8823": {
   "en": "Compensates for the SDR calibration curve Windows also applies in HDR, installs the final profile and verifies it.",
@@ -887,6 +891,10 @@
   "en": "Quick (37 patches)",
   "uk": "Швидко (37 патчів)"
  },
+ "6db0e86e": {
+  "en": "Raising monitor brightness…",
+  "uk": "Піднімаю яскравість монітора…"
+ },
  "374cfdf2": {
   "en": "Reads the primaries from the colour profile Windows uses for this display now.",
   "uk": "Бере основні кольори з профілю, який Windows зараз використовує для цього дисплея."
@@ -1194,6 +1202,10 @@
  "6114c6ba": {
   "en": "The sensor is busy: {0} ({1}) is using it. Close it and try again.",
   "uk": "Датчик зайнятий: його використовує {0} ({1}). Закрийте і спробуйте ще раз."
+ },
+ "db3d4462": {
+  "en": "The sensor saw no light: the display went to sleep or the sensor is not on this screen. Measure again.",
+  "uk": "Датчик не побачив світла: екран заснув або датчик не на цьому екрані. Заміряйте ще раз."
  },
  "a241566e": {
   "en": "The tone curve the content was mastered for: BT.1886 for video, gamma 2.2 for PC content and games.",

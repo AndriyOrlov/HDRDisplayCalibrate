@@ -46,6 +46,7 @@ namespace HDRDisplayCalibrate.Pages
             };
             Body.Children.Add(Ui.Card(Ui.Field(S.Lang == "en" ? "Language" : S.T("Language", "Мова") + " · Language", lang,
                 tip: S.T("Interface language. The window reloads in the new language; a running measurement is cancelled.", "Мова інтерфейсу. Вікно перезавантажиться новою мовою; поточний замір буде скасовано."))));
+            System.Windows.Automation.AutomationProperties.SetName(_displays, S.T("Display", "Дисплей"));
             Ui.Tip(_displays, S.T("The screen to calibrate. Profiles, patches and DDC/CI all go to this display.", "Екран, який калібруємо. Профілі, патчі й DDC/CI стосуються саме цього дисплея."));
             Body.Children.Add(Ui.Card(Ui.H2(S.T("Display", "Дисплей")),
                 Ui.Row(_displays, Ui.Btn(S.T("Identify", "Показати номери"), Identify, false, "", tip: S.T("Shows which physical screen this is.", "Показує, який це фізичний екран.")), Ui.Btn(S.T("Refresh", "Оновити"), () => { St.RefreshDisplays(); OnShow(); }, false, "", tip: S.T("Looks for displays and colorimeters again, e.g. after plugging in the sensor or switching HDR.", "Заново шукає дисплеї та колориметри, напр. після підключення датчика чи перемикання HDR."))),
