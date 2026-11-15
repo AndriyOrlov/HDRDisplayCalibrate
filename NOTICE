@@ -21,3 +21,7 @@ Modifications by DMD61 (Victory61), 2026:
   in the profile prompt; white-screen warning before step 2; scroll to the next step; name of the final profile;
   closing window (SDR content brightness back to its previous value, test profiles deleted); report export to PDF or
   HTML; chart labels and legends no longer overlap.
+- Version 4 (src/Pages/HdrPage.cs, HdrDialogs.cs, ReportExport.cs): HDR colour check (24 colours, ΔE2000) in the final
+  verification; report saved automatically at the end (folder and PDF/HTML format chosen with the profile name);
+  work folder of the calibration emptied at the end; underscores instead of spaces in the profile name; larger text
+  in "Before you start"; reminder for removing colour profiles by hand (colorcpl and the colour folder).

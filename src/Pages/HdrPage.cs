@@ -47,9 +47,13 @@ namespace HDRDisplayCalibrate.Pages
                 S.T("Press “Refresh”: the rows below get a ✓. The sensor row stays “!”: that is normal.", "Натисніть «Оновити»: рядки нижче отримають ✓. Рядок датчика лишається «!»: це нормально."),
                 S.T("In step 1 press “Run”: a window then shows how to place the sensor.", "У кроці 1 натисніть «Виконати»: потім вікно покаже, як поставити датчик."));
             var sp = (StackPanel)before.Child;
+            // the four points a little larger than normal text, so they are read first
+            if (sp.Children.Count > 1 && sp.Children[1] is StackPanel list)
+                foreach (var g in list.Children.OfType<Grid>())
+                    foreach (var t in g.Children.OfType<TextBlock>()) t.FontSize = 15;
             sp.Children.Add(_pre);
             var nothing = Ui.Text(S.T("Nothing else needs to be touched.", "Більше нічого чіпати не треба."));
-            nothing.FontWeight = FontWeights.SemiBold; nothing.Margin = new Thickness(0, 8, 0, 0);
+            nothing.FontWeight = FontWeights.SemiBold; nothing.FontSize = 15; nothing.Margin = new Thickness(0, 8, 0, 0);
             sp.Children.Add(nothing);
             Body.Children.Add(before);
             Body.Children.Add(_steps);
@@ -134,7 +138,7 @@ namespace HDRDisplayCalibrate.Pages
             _steps.Children.Add(Step(4, S.T("Grey balance per channel", "Баланс сірого по каналах"),
                 S.T("Separate R/G/B curves keep the white D65 from shadows to highlights.", "Окремі криві R/G/B тримають білий D65 від тіней до світел."), Step4));
             _steps.Children.Add(Step(5, S.T("Finalize and verify", "Завершити й перевірити"),
-                S.T("Compensates for the SDR calibration curve Windows also applies in HDR, installs the final profile and verifies it.", "Компенсує SDR-криву, яку Windows застосовує і в HDR, встановлює фінальний профіль і перевіряє."), Step5));
+                S.T("Compensates for the SDR calibration curve Windows also applies in HDR, installs the final profile and verifies it, greys and 24 colours (skin, sky, foliage, saturated colours).", "Компенсує SDR-криву, яку Windows застосовує і в HDR, встановлює фінальний профіль і перевіряє його: сірі та 24 кольори (шкіра, небо, зелень, насичені кольори)."), Step5));
         }
 
         UIElement Step(int n, string title, string text, Action run, UIElement extra = null)
@@ -254,7 +258,7 @@ namespace HDRDisplayCalibrate.Pages
         }); }
 
         void Step5() { if (!Ready() || _v2 == null) { Need(4); return; } if (!ProbeGuide.Ask(ProbeGuide.Mode.Check)) return;
-            string finalName = ProfileNameDialog.Ask($"HDC_{St.Display.Model}_HDR_{DateTime.Now:yyyyMMdd_HHmm}");
+            var (finalName, reportDir, reportHtml) = ProfileNameDialog.Ask($"HDC_{St.Display.Model}_HDR_{DateTime.Now:yyyyMMdd_HHmm}");
             Next(0); RunJob(async ct =>
         {
             var d = St.Display; int disp = d.ArgyllNumber.Value;
@@ -270,17 +274,78 @@ namespace HDRDisplayCalibrate.Pages
             _final.Description = finalName;          // the name the user sees under "Color profile"
             await Activate(_final, finalName + ".icc");
             if (sdr != null) Argyll.LutLoad(disp, Path.Combine(ColorProfiles.ColorDir, sdr));   // real-world state: SDR LUT on top of HDR
-            var m = await Jobs.Measure(HdrPipeline.RampChart(_sdrWhite), _dir, "hdr_final", S.T("Verification", "Перевірка"), ct);
+            // final verification: the grey ramp plus the colour check, in one measurement
+            var ramp = HdrPipeline.RampChart(_sdrWhite);
+            var colourChart = ColourChart(_sdrWhite);
+            var all = await Jobs.Measure(ramp.Concat(colourChart).ToList(), _dir, "hdr_final", S.T("Verification", "Перевірка"), ct);
+            var m = all.Take(ramp.Count).ToList();
             Show(S.T("Final HDR profile", "Фінальний HDR-профіль"), m, (Ui.Num(_knee, 0), _final.MaxNits),
                  S.F("Installed and active. Games and apps now see peak {0:F0} cd/m² and black {1:F3} cd/m².",
                      "Встановлено й активно. Ігри та програми тепер бачать пік {0:F0} кд/м² і чорний {1:F3} кд/м².", _final.MaxNits, _final.MinNits));
+            if (all.Count == ramp.Count + colourChart.Count) ShowColours(all.Skip(ramp.Count).ToList());
             St.Report(S.T("HDR calibration done", "HDR калібрування завершено"), 1);
             double before = St.Cfg.Num(SdrKey(d), double.NaN);
             List<string> tests; lock (_tests) { tests = _tests.ToList(); _tests.Clear(); }
-            Dispatcher.Invoke(() => { FinishDialog.Run(St.Display ?? d, finalName, double.IsNaN(before) ? (double?)null : before, tests); Prereq(); });
+            Dispatcher.Invoke(() =>
+            {
+                // the report (values and charts) is kept as a PDF outside the work folder, which can then be emptied
+                var file = Path.Combine(reportDir, finalName + "_report" + (reportHtml ? ".html" : ".pdf"));
+                string saved = ReportExport.SaveAuto(file, reportHtml, S.T("HDR calibration", "HDR калібрування") + " — " + finalName, _out.Children.Cast<UIElement>().ToList()) ? file : null;
+                var work = _dir; _dir = null;     // the next calibration starts a new folder
+                FinishDialog.Run(St.Display ?? d, finalName, double.IsNaN(before) ? (double?)null : before, tests, saved, work);
+                Prereq();
+            });
         }); }
 
         void Track(string profile) { lock (_tests) _tests.Add(profile); }
+
+        // ------------------------------------------------------------ colour check (DMD61)
+        const double CheckNits = 100;   // colours are shown at a 100-nit white, below the roll-off, so tone mapping does not hide colour errors
+
+        static readonly (double r, double g, double b)[] CheckColours =
+        {
+            // ColorChecker-like skin, sky, foliage and mid tones (sRGB)
+            (0.451, 0.322, 0.267), (0.761, 0.588, 0.510), (0.384, 0.478, 0.616), (0.341, 0.424, 0.263), (0.522, 0.502, 0.694), (0.404, 0.741, 0.667),
+            (0.839, 0.494, 0.173), (0.314, 0.357, 0.651), (0.757, 0.353, 0.388), (0.369, 0.235, 0.424), (0.616, 0.737, 0.251), (0.878, 0.639, 0.180),
+            (0.220, 0.239, 0.588), (0.275, 0.580, 0.286), (0.686, 0.212, 0.235), (0.906, 0.780, 0.122), (0.733, 0.337, 0.584), (0.031, 0.522, 0.631),
+            // saturated colours
+            (1, 0, 0), (0, 1, 0), (0, 0, 1), (1, 1, 0), (0, 1, 1), (1, 0, 1),
+        };
+
+        /// <summary>The check colours scaled so that their white would be <see cref="CheckNits"/>, as SDR patch values.</summary>
+        static List<(double, double, double)> ColourChart(double sdrWhite)
+        {
+            double k = Math.Min(CheckNits, sdrWhite) / sdrWhite;
+            double Enc(double v) => Cm.SrgbOetf(Cm.SrgbEotf(v) * k);
+            return CheckColours.Select(c => (Enc(c.r), Enc(c.g), Enc(c.b))).ToList();
+        }
+
+        /// <summary>ΔE2000 of each check colour against what an exact display would show (Windows draws SDR content at the SDR white level).</summary>
+        void ShowColours(List<Patch> cm)
+        {
+            double refNits = Math.Min(CheckNits, _sdrWhite), k = refNits / _sdrWhite;
+            var white = Cm.D65 * refNits;
+            var res = cm.Select(p =>
+            {
+                var lin = new V3(Cm.SrgbEotf(p.R), Cm.SrgbEotf(p.G), Cm.SrgbEotf(p.B));
+                var target = Cm.SrgbToXyz * lin * _sdrWhite;
+                double de = Cm.DeltaE2000(Cm.Lab(target, white), Cm.Lab(p.Xyz, white));
+                byte B(double v) => (byte)Math.Round(Cm.SrgbOetf(v / k) * 255);   // the colour as it looks at full level
+                return (c: Color.FromRgb(B(lin.X), B(lin.Y), B(lin.Z)), target, meas: p.Xyz, de);
+            }).ToList();
+            double avg = res.Average(r => r.de), max = res.Max(r => r.de);
+            var bars = new DeltaEChart();
+            foreach (var r in res) bars.Bars.Add((r.c, r.de));
+            var rows = res.Select(r => new[] { $"#{r.c.R:X2}{r.c.G:X2}{r.c.B:X2}", Ui.F(r.target.Y, 1), Ui.F(r.meas.Y, 1), Ui.F(r.de, 2) });
+            var sum = new TextBlock { Text = S.F("ΔE2000 average {0:F2} · maximum {1:F2}", "ΔE2000 середнє {0:F2} · максимум {1:F2}", avg, max), FontSize = 20, FontWeight = FontWeights.SemiBold,
+                                      Foreground = avg < 1 ? Ui.Good : avg < 3 ? Ui.Warm : Ui.Bad, Margin = new Thickness(0, 4, 0, 6) };
+            Dispatcher.Invoke(() => _out.Children.Insert(Math.Min(1, _out.Children.Count), Ui.Card(
+                Ui.H2(S.T("Colour check", "Перевірка кольорів")),
+                Ui.Caption(S.F("24 colours (skin, sky, foliage, saturated colours) shown at a {0:F0} cd/m² white and compared with the exact values. Below 1 the difference cannot be seen, below 3 it is hard to see.",
+                               "24 кольори (шкіра, небо, зелень, насичені кольори) показано при білому {0:F0} кд/м² і порівняно з точними значеннями. Менше 1 — різниці не видно, менше 3 — її важко помітити.", refNits)),
+                sum, bars,
+                Ui.Table(new[] { S.T("Colour", "Колір"), S.T("target, cd/m²", "ціль, кд/м²"), S.T("measured, cd/m²", "виміряно, кд/м²"), "ΔE2000" }, rows))));
+        }
 
         void Export() => ReportExport.Export(S.T("HDR calibration", "HDR калібрування"),
             $"HDR_report_{St.Display?.Model}_{DateTime.Now:yyyyMMdd_HHmm}", _out.Children.Cast<UIElement>().ToList());

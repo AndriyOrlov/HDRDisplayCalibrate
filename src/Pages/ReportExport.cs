@@ -48,6 +48,25 @@ namespace HDRDisplayCalibrate.Pages
             catch (Exception e) { Core.Log.Write("ERROR export " + e); MessageBox.Show(e.Message, "HDRDisplayCalibrate"); }
         }
 
+        /// <summary>Saves the cards as PDF or HTML without asking (used at the end of the HDR wizard). Returns false on error.</summary>
+        public static bool SaveAuto(string file, bool html, string title, IEnumerable<UIElement> cards)
+        {
+            try
+            {
+                var parts = cards.OfType<FrameworkElement>().ToList();
+                foreach (var p in parts) p.UpdateLayout();
+                parts = parts.Where(c => c.ActualWidth > 0 && c.ActualHeight > 0).ToList();
+                if (parts.Count == 0) return false;
+                var images = new List<BitmapSource> { Header(title, parts.Max(p => p.ActualWidth)) };
+                images.AddRange(parts.Select(Render));
+                Directory.CreateDirectory(Path.GetDirectoryName(file));
+                if (html) WriteHtml(file, title, images); else WritePdf(file, images);
+                Core.Log.Write("report saved: " + file);
+                return true;
+            }
+            catch (Exception e) { Core.Log.Write("ERROR report " + e); return false; }
+        }
+
         /// <summary>Title, display and date drawn as the first picture of the report.</summary>
         static BitmapSource Header(string title, double width)
         {
