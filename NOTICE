@@ -14,3 +14,4 @@ Third-party software used at runtime (not bundled in this repository):
 Modifications by DMD61 (Victory61), 2026:
 - Guided sensor dialogs in the HDR wizard and in Verify & report (src/Pages/ProbeGuide.cs, HdrPage.cs, VerifyPage.cs).
 - The ArgyllCMS bundled next to the exe is always used first; the bin folder is read-only when it is bundled (src/Core/Argyll.cs, src/Pages/DevicePage.cs).
+- Italian translation of the interface (src/i18n/it.json, src/I18n.cs).

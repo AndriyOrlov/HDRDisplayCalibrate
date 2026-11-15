@@ -111,11 +111,11 @@ namespace HDRDisplayCalibrate.Pages
             At(new Rectangle { Width = 70, Height = 6, Fill = Ui.Muted }, 95, 200);
             c.Children.Add(new Line { X1 = 130, Y1 = 20, X2 = 130, Y2 = 79, Stroke = Ui.Accent, StrokeThickness = 2 });
             At(new Ellipse { Width = 34, Height = 34, Fill = Brushes.Black, Stroke = Ui.Accent, StrokeThickness = 3 }, 113, 78);
-            At(L(S.T("sensor in the centre", "датчик по центру"), Ui.Warm), 152, 87);
-            At(L(S.T("cable over the top", "кабель через верх"), Ui.Muted), 136, 30);
+            At(new TextBlock { Text = S.T("sensor in the centre", "датчик по центру"), FontSize = 12, Foreground = Ui.Warm, Width = 230, TextAlignment = TextAlignment.Center }, 15, 118);
+            At(new TextBlock { Text = S.T("cable over the top", "кабель через верх"), FontSize = 12, Foreground = Ui.Muted, Width = 110, TextAlignment = TextAlignment.Right }, 14, 30);
 
             // side view (screen leaning back: the top is further right than the bottom)
-            At(L(S.T("Side", "Збоку"), Ui.Muted), 440, 0);
+            At(L(S.T("Side", "Збоку"), Ui.Muted), 385, 0);
             c.Children.Add(new Line { X1 = 470, Y1 = 22, X2 = 455, Y2 = 170, Stroke = Ui.Muted, StrokeThickness = 8 });
             c.Children.Add(new Line { X1 = 456, Y1 = 170, X2 = 466, Y2 = 200, Stroke = Ui.Muted, StrokeThickness = 5 });
             At(new Rectangle { Width = 60, Height = 6, Fill = Ui.Muted }, 436, 200);
@@ -125,7 +125,7 @@ namespace HDRDisplayCalibrate.Pages
             c.Children.Add(new Line { X1 = 505, Y1 = 12, X2 = 505, Y2 = 110, Stroke = Ui.Accent, StrokeThickness = 2 });
             At(new Rectangle { Width = 16, Height = 26, Fill = Ui.Muted }, 497, 110);
             c.Children.Add(new Line { X1 = 437, Y1 = 106, X2 = 417, Y2 = 124, Stroke = Ui.Warm, StrokeThickness = 4 });
-            At(L(S.T("diffuser open", "розсіювач відкритий"), Ui.Warm), 300, 122);
+            At(new TextBlock { Text = S.T("diffuser open", "розсіювач відкритий"), FontSize = 12, Foreground = Ui.Warm, Width = 150, TextAlignment = TextAlignment.Right }, 262, 120);
             At(L(S.T("counterweight behind", "противага позаду"), Ui.Muted), 520, 115);
             return c;
         }

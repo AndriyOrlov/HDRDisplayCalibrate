@@ -1,5 +1,6 @@
 // HDRDisplayCalibrate — SDR/HDR display calibration for Windows.
 // Copyright 2026 Andrii Orlov (DeadSue). Licensed under the Apache License, Version 2.0.
+// Modified 2026 by DMD61 (Victory61): Italian added to the language list (i18n/it.json).
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -21,7 +22,7 @@ namespace HDRDisplayCalibrate
         public static readonly (string code, string name)[] Languages =
         {
             ("en", "English"), ("uk", "Українська"), ("zh", "中文（简体）"), ("hi", "हिन्दी"), ("es", "Español"),
-            ("ar", "العربية"), ("fr", "Français"), ("bn", "বাংলা"), ("pt", "Português"), ("de", "Deutsch"), ("id", "Bahasa Indonesia"),
+            ("ar", "العربية"), ("fr", "Français"), ("bn", "বাংলা"), ("pt", "Português"), ("de", "Deutsch"), ("id", "Bahasa Indonesia"), ("it", "Italiano"),
         };
 
         public static string Lang { get; private set; } = "en";
