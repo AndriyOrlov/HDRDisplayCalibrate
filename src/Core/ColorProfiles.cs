@@ -1,5 +1,6 @@
 // HDRDisplayCalibrate — SDR/HDR display calibration for Windows.
 // Copyright 2026 Andrii Orlov (DeadSue). Licensed under the Apache License, Version 2.0.
+// Modified 2026 by DMD61 (Victory61): Uninstall (test profiles clean-up) and OpenHdrSettings.
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -16,6 +17,7 @@ namespace HDRDisplayCalibrate.Core
         public static string ColorDir => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.System), @"spool\drivers\color");
 
         [DllImport("mscms.dll", CharSet = CharSet.Unicode)] static extern bool InstallColorProfileW(string machine, string path);
+        [DllImport("mscms.dll", CharSet = CharSet.Unicode, SetLastError = true)] static extern bool UninstallColorProfileW(string machine, string profile, bool delete);
         [DllImport("mscms.dll", CharSet = CharSet.Unicode)] static extern int ColorProfileAddDisplayAssociation(int scope, string profile, Native.LUID adapter, uint sourceId, bool setDefault, bool advancedColor);
         [DllImport("mscms.dll", CharSet = CharSet.Unicode)] static extern int ColorProfileRemoveDisplayAssociation(int scope, string profile, Native.LUID adapter, uint sourceId, bool advancedColor);
         [DllImport("mscms.dll", CharSet = CharSet.Unicode)] static extern int ColorProfileSetDisplayDefaultAssociation(int scope, string profile, int type, int subType, Native.LUID adapter, uint sourceId);
@@ -84,6 +86,23 @@ namespace HDRDisplayCalibrate.Core
             }
             catch { return null; }
         }
+
+        /// <summary>
+        /// Takes a profile off the display's HDR (or SDR) list and deletes its file from the colour folder.
+        /// Returns false when the file could not be deleted (for example without administrator rights).
+        /// </summary>
+        public static bool Uninstall(DisplayTarget d, string name, bool hdr)
+        {
+            try { Remove(d, name, hdr); } catch { }
+            var file = Path.Combine(ColorDir, name);
+            if (UninstallColorProfileW(null, name, true) && !File.Exists(file)) { Log.Write($"profile {name} removed"); return true; }
+            try { if (File.Exists(file)) File.Delete(file); } catch (Exception e) { Log.Write($"profile {name} not deleted: {e.Message}"); }
+            return !File.Exists(file);
+        }
+
+        /// <summary>Opens Settings → Display → HDR, where the "SDR content brightness" slider is.</summary>
+        public static void OpenHdrSettings() =>
+            System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo("ms-settings:display-hdr") { UseShellExecute = true });
 
         /// <summary>Opens Settings → Display, where an HDR profile must be picked for Windows to apply it.</summary>
         public static void OpenDisplaySettings() =>

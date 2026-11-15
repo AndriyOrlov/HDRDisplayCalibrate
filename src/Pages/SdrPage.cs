@@ -1,5 +1,6 @@
 // HDRDisplayCalibrate — SDR/HDR display calibration for Windows.
 // Copyright 2026 Andrii Orlov (DeadSue). Licensed under the Apache License, Version 2.0.
+// Modified 2026 by DMD61 (Victory61): the page switches Windows HDR off by itself (SDR calibration needs it off).
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -57,6 +58,27 @@ namespace HDRDisplayCalibrate.Pages
             Body.Children.Add(_result);
             var rl = St.Cfg.Num("room_lux", double.NaN);
             if (!double.IsNaN(rl)) _lux.Text = rl.ToString("0.#", CultureInfo.InvariantCulture);
+        }
+
+        bool _switching;
+
+        /// <summary>SDR calibration is done with Windows HDR off: the page switches it off by itself.</summary>
+        public override void OnShow()
+        {
+            var d = St.Display;
+            if (d == null || St.Job != null || _switching) return;
+            Displays.RefreshColor(d);
+            if (d.HdrOn) TurnHdrOff(d);
+        }
+
+        async void TurnHdrOff(DisplayTarget d)
+        {
+            _switching = true;
+            St.Report(S.T("Turning Windows HDR off for the SDR calibration…", "Вимикаю Windows HDR для SDR-калібрування…"));
+            try { Displays.SetHdr(d, false); await System.Threading.Tasks.Task.Delay(6000); St.RefreshDisplays(); }
+            catch (Exception e) { Log.Write("HDR off: " + e.Message); }
+            finally { _switching = false; }
+            St.Report(S.T("Windows HDR is off", "Windows HDR вимкнено"), 0);
         }
 
         void FromRoom() => RunJob(async ct =>

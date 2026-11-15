@@ -209,7 +209,7 @@ namespace HDRDisplayCalibrate
                 });
                 return;
             }
-            int page = e.Args.Length > 1 && e.Args[0] == "--page" && int.TryParse(e.Args[1], out var pg) ? pg : 0;
+            int page = e.Args.Length > 1 && e.Args[0] == "--page" && int.TryParse(e.Args[1], out var pg) ? pg : -1;   // −1: by the monitor (DMD61)
             new MainWindow(page).Show();
         }
     }

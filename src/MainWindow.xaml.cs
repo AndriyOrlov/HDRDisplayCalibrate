@@ -1,5 +1,7 @@
 // HDRDisplayCalibrate — SDR/HDR display calibration for Windows.
 // Copyright 2026 Andrii Orlov (DeadSue). Licensed under the Apache License, Version 2.0.
+// Modified 2026 by DMD61 (Victory61): opens on HDR calibration for an HDR monitor and on SDR calibration otherwise;
+// HDR calibration is greyed out for a monitor without HDR.
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
@@ -27,7 +29,10 @@ namespace HDRDisplayCalibrate
         readonly Dictionary<int, Page> _made = new();
         public int Page => Math.Max(0, Nav.SelectedIndex);
 
-        public MainWindow(int startPage = 0)
+        const int SdrPageIndex = 2, HdrPageIndex = 3;
+
+        /// <summary>startPage −1: choose by the monitor (HDR calibration if it supports HDR, SDR calibration if not).</summary>
+        public MainWindow(int startPage = -1)
         {
             InitializeComponent();
             CancelButton.Content = S.T("Cancel (Esc)", "Скасувати (Esc)");
@@ -73,6 +78,14 @@ namespace HDRDisplayCalibrate
                 if (AppState.I.Job == null) StatusBar.IsIndeterminate = false;
                 var d = AppState.I.Display;
                 TitleDisplay.Text = d == null ? "" : $"· {d.Name}{(d.HdrOn ? " · HDR" : "")}";
+                // a monitor without HDR cannot be calibrated in HDR
+                if (Nav.Items.Count > HdrPageIndex && Nav.Items[HdrPageIndex] is ListBoxItem hi)
+                {
+                    bool can = d == null || d.HdrSupported;
+                    hi.IsEnabled = can;
+                    Ui.Tip(hi, can ? _pages[HdrPageIndex].tip : S.T("This monitor does not support HDR.", "Цей монітор не підтримує HDR."));
+                    if (!can && Nav.SelectedIndex == HdrPageIndex) Nav.SelectedIndex = SdrPageIndex;
+                }
             });
             AppState.I.Status += onStatus; AppState.I.Changed += onChanged;
             Closed += (_, _) =>          // a window replaced by a language reload stops listening
@@ -87,6 +100,8 @@ namespace HDRDisplayCalibrate
                 if (Core.Argyll.Bin == null)
                     MessageBox.Show(S.T("ArgyllCMS was not found. Install ArgyllCMS (or DisplayCAL) and set its bin folder on the first page.",
                                         "Не знайдено ArgyllCMS. Встановіть ArgyllCMS (або DisplayCAL) і вкажіть папку bin на першій сторінці."), "HDRDisplayCalibrate");
+                var d0 = AppState.I.Display;
+                if (startPage < 0) startPage = d0 == null ? 0 : d0.HdrSupported ? HdrPageIndex : SdrPageIndex;
                 Nav.SelectedIndex = Math.Clamp(startPage, 0, _pages.Count - 1);
             };
             Closing += (_, _) => AppState.I.Cancel();

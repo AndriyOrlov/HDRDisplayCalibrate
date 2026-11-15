@@ -1,6 +1,6 @@
 // HDRDisplayCalibrate — SDR/HDR display calibration for Windows.
 // Copyright 2026 Andrii Orlov (DeadSue). Licensed under the Apache License, Version 2.0.
-// Modified 2026 by DMD61 (Victory61): guided sensor dialogs before and after the measurement (ProbeGuide).
+// Modified 2026 by DMD61 (Victory61): guided sensor dialogs before and after the measurement (ProbeGuide); report export.
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -28,7 +28,7 @@ namespace HDRDisplayCalibrate.Pages
                 Ui.Field(S.T("Target white", "Цільовий білий"), _wp.View, tip: S.T("The white point the results are compared with.", "Точка білого, з якою порівнюються результати.")),
                 Ui.Field(S.T("Target tone curve", "Цільова крива"), _curve, tip: S.T("The tone curve the results are compared with.", "Тонова крива, з якою порівнюються результати.")),
                 Ui.Field(S.T("Patch set", "Набір патчів"), _size, tip: S.T("How many colours to measure: a quick check, the standard report, or an extended set with random colours.", "Скільки кольорів міряти: швидка перевірка, стандартний звіт або розширений набір із випадковими кольорами.")), _raw,
-                Ui.Row(Ui.Btn(S.T("Measure", "Заміряти"), Run, true, "", tip: S.T("Measures the patches on the screen and builds the report. Esc cancels.", "Міряє патчі на екрані й будує звіт. Esc скасовує.")), Ui.Btn(S.T("Open .ti3…", "Відкрити .ti3…"), Open, false, "", tip: S.T("Builds a report from an existing ArgyllCMS measurement file (.ti3).", "Будує звіт з наявного файлу замірів ArgyllCMS (.ti3).")))));
+                Ui.Row(Ui.Btn(S.T("Measure", "Заміряти"), Run, true, "", tip: S.T("Measures the patches on the screen and builds the report. Esc cancels.", "Міряє патчі на екрані й будує звіт. Esc скасовує.")), Ui.Btn(S.T("Open .ti3…", "Відкрити .ti3…"), Open, false, "", tip: S.T("Builds a report from an existing ArgyllCMS measurement file (.ti3).", "Будує звіт з наявного файлу замірів ArgyllCMS (.ti3).")), Ui.Btn(S.T("Export report", "Експортувати звіт"), () => ReportExport.Export(S.T("Verify & report", "Перевірка і звіт"), $"Verify_report_{St.Display?.Model}_{System.DateTime.Now:yyyyMMdd_HHmm}", _result.Children.Cast<UIElement>().ToList()), false, "\uE74E", tip: S.T("Saves the report below (values, tables and charts) as a PDF or HTML file.", "Зберігає звіт нижче (значення, таблиці й графіки) у файл PDF або HTML.")))));
             Body.Children.Add(_result);
         }
 

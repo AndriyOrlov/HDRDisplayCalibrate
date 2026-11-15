@@ -15,3 +15,9 @@ Modifications by DMD61 (Victory61), 2026:
 - Guided sensor dialogs in the HDR wizard and in Verify & report (src/Pages/ProbeGuide.cs, HdrPage.cs, VerifyPage.cs).
 - The ArgyllCMS bundled next to the exe is always used first; the bin folder is read-only when it is bundled (src/Core/Argyll.cs, src/Pages/DevicePage.cs).
 - Italian translation of the interface (src/i18n/it.json, src/I18n.cs).
+- Version 3 (src/Pages/HdrPage.cs, HdrDialogs.cs, ProfilePrompt.cs, ReportExport.cs, SdrPage.cs, MainWindow.xaml.cs,
+  Core/ColorProfiles.cs, Charts.cs, App.xaml.cs): opens on HDR or SDR calibration according to the monitor and switches
+  Windows HDR on/off by itself; short "Before you start" box with the OSD brightness read over DDC/CI; numbered steps
+  in the profile prompt; white-screen warning before step 2; scroll to the next step; name of the final profile;
+  closing window (SDR content brightness back to its previous value, test profiles deleted); report export to PDF or
+  HTML; chart labels and legends no longer overlap.

@@ -39,7 +39,7 @@ namespace HDRDisplayCalibrate.Pages
                 body.Children.Add(Diagram());
                 body.Children.Add(Numbered(
                     S.T("Tilt the screen slightly back.", "Злегка відхиліть екран назад."),
-                    S.T("Open the diffuser (turn it aside): the sensor must be uncovered to measure a screen.", "Відкрийте розсіювач (відверніть убік): щоб міряти екран, датчик має бути відкритим."),
+                    S.T("Turn the lens cover (diffuser) aside so the lens is uncovered: the sensor cannot measure a screen through it.", "Поверніть кришку об'єктива (розсіювач) убік, щоб відкрити лінзу: крізь неї датчик не може міряти екран."),
                     S.T("Put the sensor flat against the glass in the centre of the screen.", "Притуліть датчик до скла по центру екрана."),
                     S.T("Hang the cable over the top edge with the counterweight behind the monitor, so the sensor stays still.", "Перекиньте кабель через верхній край, противагу — за монітор, щоб датчик не рухався."),
                     S.T("Leave it there until the app tells you it can be removed.", "Залиште його там, доки програма не скаже, що його можна зняти.")));
@@ -54,6 +54,7 @@ namespace HDRDisplayCalibrate.Pages
                 body.Children.Add(Diagram());
                 body.Children.Add(Ui.Text(S.T("Do not move it between steps: every step must be measured at the same spot. Keep the Settings window away from the centre.",
                                               "Не рухайте його між кроками: усі кроки треба міряти в тому самому місці. Тримайте вікно Параметрів подалі від центру.")));
+                if (!string.IsNullOrEmpty(extra)) body.Children.Add(Note(extra));
                 body.Children.Add(Note(S.T("The measurement takes a few minutes: do not touch anything until the step is done.",
                                            "Замір триває кілька хвилин: нічого не торкайтеся, доки крок не завершиться.")));
                 ok = Ui.Btn(S.T("Yes, continue", "Так, продовжити"), () => { DialogResult = true; }, true);
@@ -62,7 +63,7 @@ namespace HDRDisplayCalibrate.Pages
             else
             {
                 body.Children.Add(Ui.H2(S.T("Measurement finished — you can remove the sensor", "Замір завершено — датчик можна зняти")));
-                body.Children.Add(Ui.Text(S.T("Close the diffuser to protect the sensor.", "Закрийте розсіювач, щоб захистити датчик.")));
+                body.Children.Add(Ui.Text(S.T("Turn the lens cover back over the lens to protect it.", "Поверніть кришку назад на лінзу, щоб захистити її.")));
                 if (!string.IsNullOrEmpty(extra)) body.Children.Add(Note(extra));
                 ok = Ui.Btn("OK", () => { DialogResult = true; }, true);
             }
@@ -125,7 +126,7 @@ namespace HDRDisplayCalibrate.Pages
             c.Children.Add(new Line { X1 = 505, Y1 = 12, X2 = 505, Y2 = 110, Stroke = Ui.Accent, StrokeThickness = 2 });
             At(new Rectangle { Width = 16, Height = 26, Fill = Ui.Muted }, 497, 110);
             c.Children.Add(new Line { X1 = 437, Y1 = 106, X2 = 417, Y2 = 124, Stroke = Ui.Warm, StrokeThickness = 4 });
-            At(new TextBlock { Text = S.T("diffuser open", "розсіювач відкритий"), FontSize = 12, Foreground = Ui.Warm, Width = 150, TextAlignment = TextAlignment.Right }, 262, 120);
+            At(new TextBlock { Text = S.T("lens cover turned aside", "кришка лінзи вбік"), FontSize = 12, Foreground = Ui.Warm, Width = 170, TextAlignment = TextAlignment.Right }, 242, 120);
             At(L(S.T("counterweight behind", "противага позаду"), Ui.Muted), 520, 115);
             return c;
         }
