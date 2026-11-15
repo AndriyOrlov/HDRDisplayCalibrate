@@ -83,22 +83,27 @@ namespace HDRDisplayCalibrate.Pages
             return rtb;
         }
 
-        /// <summary>Draws an element through a VisualBrush, so its position on the page does not matter.</summary>
+        /// <summary>
+        /// Draws an element directly (a VisualBrush stays empty for cards that were never on screen).
+        /// RenderTargetBitmap includes the element's offset inside its parent, so the bitmap is made that much
+        /// larger and then cropped back to the element.
+        /// </summary>
         static BitmapSource Render(FrameworkElement el)
         {
-            double w = Math.Ceiling(el.ActualWidth), h = Math.Ceiling(el.ActualHeight);
             const double scale = 2;   // sharper text and lines in the file
-            var dv = new DrawingVisual();
-            using (var dc = dv.RenderOpen())
-            {
-                dc.DrawRectangle(new SolidColorBrush(Bg), null, new Rect(0, 0, w, h));
-                var box = new Rect(0, 0, el.ActualWidth, el.ActualHeight);
-                dc.DrawRectangle(new VisualBrush(el) { Stretch = Stretch.Fill, ViewboxUnits = BrushMappingMode.Absolute, Viewbox = box }, null, box);
-            }
-            var rtb = new RenderTargetBitmap((int)(w * scale), (int)(h * scale), 96 * scale, 96 * scale, PixelFormats.Pbgra32);
-            rtb.Render(dv);
-            rtb.Freeze();
-            return rtb;
+            var off = VisualTreeHelper.GetOffset(el);
+            double w = Math.Ceiling(el.ActualWidth), h = Math.Ceiling(el.ActualHeight);
+            int fw = (int)Math.Ceiling((off.X + w) * scale), fh = (int)Math.Ceiling((off.Y + h) * scale);
+            var rtb = new RenderTargetBitmap(fw, fh, 96 * scale, 96 * scale, PixelFormats.Pbgra32);
+            var bg = new DrawingVisual();
+            using (var dc = bg.RenderOpen()) dc.DrawRectangle(new SolidColorBrush(Bg), null, new Rect(0, 0, off.X + w, off.Y + h));
+            rtb.Render(bg);
+            rtb.Render(el);
+            var crop = new Int32Rect((int)Math.Floor(off.X * scale), (int)Math.Floor(off.Y * scale), (int)(w * scale), (int)(h * scale));
+            crop.Width = Math.Min(crop.Width, fw - crop.X); crop.Height = Math.Min(crop.Height, fh - crop.Y);
+            var cb = new CroppedBitmap(rtb, crop);
+            cb.Freeze();
+            return cb;
         }
 
         static byte[] Encode(BitmapSource b, bool jpeg)
