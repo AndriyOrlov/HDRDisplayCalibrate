@@ -1,5 +1,6 @@
 // HDRDisplayCalibrate — SDR/HDR display calibration for Windows.
 // Copyright 2026 Andrii Orlov (DeadSue). Licensed under the Apache License, Version 2.0.
+// Modified 2026 by DMD61 (Victory61): guided sensor dialogs before/between/after the steps (ProbeGuide).
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -127,7 +128,7 @@ namespace HDRDisplayCalibrate.Pages
         }
 
         // ------------------------------------------------------------ steps
-        void Step1() { if (!Ready()) return; RunJob(async ct =>
+        void Step1() { if (!Ready()) return; if (!ProbeGuide.Ask(ProbeGuide.Mode.Place)) return; RunJob(async ct =>
         {
             await Activate(Named(new Mhc2Profile(), "neutral"), $"HDC_{St.Display.Model}_neutral_{DateTime.Now:HHmmss}.icc");
             _base = await Ramp("hdr_base", ct);
@@ -136,7 +137,7 @@ namespace HDRDisplayCalibrate.Pages
             St.Report(S.T("Step 1 done", "Крок 1 виконано"), 1);
         }); }
 
-        void Step2() { if (!Ready() || _base == null) { Need(1); return; } RunJob(async ct =>
+        void Step2() { if (!Ready() || _base == null) { Need(1); return; } if (!ProbeGuide.Ask(ProbeGuide.Mode.Check)) return; RunJob(async ct =>
         {
             await Activate(Named(HdrPipeline.ProbeProfile(), "probe x8"), $"HDC_{St.Display.Model}_probe_{DateTime.Now:HHmmss}.icc");
             _probe = await Ramp("hdr_probe", ct);
@@ -151,7 +152,7 @@ namespace HDRDisplayCalibrate.Pages
             St.Report(S.T("Step 2 done", "Крок 2 виконано"), 1);
         }); }
 
-        void Step3() { if (!Ready() || _resp == null) { Need(2); return; } RunJob(async ct =>
+        void Step3() { if (!Ready() || _resp == null) { Need(2); return; } if (!ProbeGuide.Ask(ProbeGuide.Mode.Check)) return; RunJob(async ct =>
         {
             double peak = 0, knee = 0;
             Dispatcher.Invoke(() => { peak = Ui.Num(_peak, _resp.ClipOut * 0.85); knee = Ui.Num(_knee, peak * 0.62); });
@@ -165,7 +166,7 @@ namespace HDRDisplayCalibrate.Pages
             St.Report(S.T("Step 3 done", "Крок 3 виконано"), 1);
         }); }
 
-        void Step4() { if (!Ready() || _v1m == null) { Need(3); return; } RunJob(async ct =>
+        void Step4() { if (!Ready() || _v1m == null) { Need(3); return; } if (!ProbeGuide.Ask(ProbeGuide.Mode.Check)) return; RunJob(async ct =>
         {
             _v2 = Named(HdrPipeline.GreyBalance(_v1, _v1m, _resp, _sdrWhite, _v1.MaxNits), "v2");
             await Activate(_v2, $"HDC_{St.Display.Model}_v2_{DateTime.Now:HHmmss}.icc");
@@ -174,7 +175,7 @@ namespace HDRDisplayCalibrate.Pages
             St.Report(S.T("Step 4 done", "Крок 4 виконано"), 1);
         }); }
 
-        void Step5() { if (!Ready() || _v2 == null) { Need(4); return; } RunJob(async ct =>
+        void Step5() { if (!Ready() || _v2 == null) { Need(4); return; } if (!ProbeGuide.Ask(ProbeGuide.Mode.Check)) return; RunJob(async ct =>
         {
             var d = St.Display; int disp = d.ArgyllNumber.Value;
             var sdr = ColorProfiles.Default(d, false);
@@ -193,6 +194,9 @@ namespace HDRDisplayCalibrate.Pages
                  S.F("Installed and active. Games and apps now see peak {0:F0} cd/m² and black {1:F3} cd/m². You can set “SDR content brightness” back (e.g. ~10 for 120 cd/m² desktop).",
                      "Встановлено й активно. Ігри та програми тепер бачать пік {0:F0} кд/м² і чорний {1:F3} кд/м². «Яскравість SDR-вмісту» можна повернути (напр. ~10 для робочого столу 120 кд/м²).", _final.MaxNits, _final.MinNits));
             St.Report(S.T("HDR calibration done", "HDR калібрування завершено"), 1);
+            Dispatcher.Invoke(() => ProbeGuide.Ask(ProbeGuide.Mode.Remove,
+                S.T("HDR calibration is complete and the final profile is active. Set “SDR content brightness” back to what you like for the desktop, and leave the monitor's own brightness where it was during calibration.",
+                    "HDR калібрування завершено, фінальний профіль активний. Поверніть «Яскравість SDR-вмісту» на зручну для робочого столу, а власну яскравість монітора залиште такою, як під час калібрування.")));
         }); }
 
         static void Need(int step) => MessageBox.Show(S.F("Run step {0} first.", "Спершу виконайте крок {0}.", step));

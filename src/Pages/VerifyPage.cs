@@ -1,5 +1,6 @@
 // HDRDisplayCalibrate — SDR/HDR display calibration for Windows.
 // Copyright 2026 Andrii Orlov (DeadSue). Licensed under the Apache License, Version 2.0.
+// Modified 2026 by DMD61 (Victory61): guided sensor dialogs before and after the measurement (ProbeGuide).
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -34,6 +35,7 @@ namespace HDRDisplayCalibrate.Pages
         void Run()
         {
             var d = St.Display; if (d?.ArgyllNumber is not int disp) return;
+            if (!ProbeGuide.Ask(ProbeGuide.Mode.Place)) return;
             int si = _size.SelectedIndex;
             RunJob(async ct =>
             {
@@ -49,6 +51,7 @@ namespace HDRDisplayCalibrate.Pages
                 }
                 finally { if (raw) Argyll.LoadInstalled(disp); }
                 St.Report(S.T("Verification done", "Перевірку завершено"), 1);
+                Dispatcher.Invoke(() => ProbeGuide.Ask(ProbeGuide.Mode.Remove));
             });
         }
 

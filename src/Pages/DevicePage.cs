@@ -1,5 +1,6 @@
 // HDRDisplayCalibrate — SDR/HDR display calibration for Windows.
 // Copyright 2026 Andrii Orlov (DeadSue). Licensed under the Apache License, Version 2.0.
+// Modified 2026 by DMD61 (Victory61): the bin folder is shown read-only when ArgyllCMS is bundled with the app.
 using System;
 using System.Linq;
 using System.Threading.Tasks;
@@ -78,8 +79,11 @@ namespace HDRDisplayCalibrate.Pages
             _type.SelectedIndex = St.Setup.DisplayType is "r" or "c" ? 1 : 0;
             _patches.SelectedIndex = (int)St.Setup.Patches;
             _corr.Text = St.Setup.Correction; _video.IsChecked = St.Setup.VideoRange;
-            _argyll.Text = St.Cfg.Str("argyll_bin", Argyll.Bin ?? "");
-            _argyllState.Text = Argyll.Bin != null ? "✓ " + Argyll.Bin : "✗ " + S.T("not found", "не знайдено");
+            var bundled = Argyll.Bundled;
+            _argyll.Text = bundled ?? St.Cfg.Str("argyll_bin", Argyll.Bin ?? "");
+            _argyll.IsReadOnly = bundled != null;
+            _argyllState.Text = bundled != null ? "✓ " + S.T("ArgyllCMS included with the app — no setting needed", "ArgyllCMS входить до складу програми — налаштування не потрібне")
+                : Argyll.Bin != null ? "✓ " + Argyll.Bin : "✗ " + S.T("not found", "не знайдено");
             ShowInfo();
             _loading = false;
         }

@@ -1,5 +1,6 @@
 // HDRDisplayCalibrate — SDR/HDR display calibration for Windows.
 // Copyright 2026 Andrii Orlov (DeadSue). Licensed under the Apache License, Version 2.0.
+// Modified 2026 by DMD61 (Victory61): the ArgyllCMS bundled next to the exe (Argyll\bin) always wins over any other folder.
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -50,10 +51,21 @@ namespace HDRDisplayCalibrate.Core
     {
         public static string Bin { get; private set; }
 
+        /// <summary>ArgyllCMS shipped with the app (Argyll\bin next to the exe), or null if it is not there.</summary>
+        public static string Bundled
+        {
+            get
+            {
+                var d = Path.Combine(AppContext.BaseDirectory, "Argyll", "bin");
+                return File.Exists(Path.Combine(d, "dispcal.exe")) ? d : null;
+            }
+        }
+
         public static string Find(string configured)
         {
             bool Ok(string d) => !string.IsNullOrWhiteSpace(d) && File.Exists(Path.Combine(d, "dispcal.exe"));
-            var cands = new List<string> { configured, Path.Combine(AppContext.BaseDirectory, "Argyll", "bin"), @"C:\Program Files\ArgyllCMS\bin", @"C:\ArgyllCMS\bin" };
+            // the bundled copy comes first, so a stale "bin folder" setting can never point to another ArgyllCMS
+            var cands = new List<string> { Bundled, configured, @"C:\Program Files\ArgyllCMS\bin", @"C:\ArgyllCMS\bin" };
             foreach (var (root, sub) in new[] {
                 (Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), @"DisplayCAL\dl"),
                 (@"C:\", ""), (@"C:\Program Files", "") })

@@ -10,3 +10,7 @@ project must keep this NOTICE file and credit the original author:
 Third-party software used at runtime (not bundled in this repository):
 - ArgyllCMS by Graeme W. Gill (AGPL-3.0), invoked as external command-line tools.
 - .NET / WPF by Microsoft and the .NET Foundation (MIT).
+
+Modifications by DMD61 (Victory61), 2026:
+- Guided sensor dialogs in the HDR wizard and in Verify & report (src/Pages/ProbeGuide.cs, HdrPage.cs, VerifyPage.cs).
+- The ArgyllCMS bundled next to the exe is always used first; the bin folder is read-only when it is bundled (src/Core/Argyll.cs, src/Pages/DevicePage.cs).
