@@ -121,26 +121,6 @@ namespace HDRDisplayCalibrate
             DwmSetWindowAttribute(h, 20, ref on, 4);     // dark title bar
             DwmSetWindowAttribute(h, 38, ref mica, 4);   // Mica backdrop
         }
-
-        /// <summary>DMD61: after the Desktop Window Manager restarts it forgets the dark title bar and the Mica backdrop,
-        /// and the window is drawn white. Set them again and make every window draw itself anew.</summary>
-        public static void AfterDwmRestart()
-        {
-            foreach (Window w in Application.Current.Windows)
-            {
-                try
-                {
-                    var h = new WindowInteropHelper(w).Handle;
-                    if (h == IntPtr.Zero) continue;
-                    if (w is MainWindow) ApplyDwm(h);
-                    var state = w.WindowState;
-                    if (state != WindowState.Minimized) { w.WindowState = WindowState.Minimized; w.WindowState = state; }
-                    w.InvalidateVisual(); w.UpdateLayout();
-                    if (w is MainWindow) w.Activate();
-                }
-                catch { }
-            }
-        }
         [DllImport("user32.dll")] static extern bool RegisterHotKey(IntPtr h, int id, uint mods, uint vk);
         [DllImport("user32.dll")] static extern bool UnregisterHotKey(IntPtr h, int id);
         const int EscHotkey = 0xE5C;
