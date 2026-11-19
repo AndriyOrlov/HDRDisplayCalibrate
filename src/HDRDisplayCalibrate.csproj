@@ -11,7 +11,7 @@
     <ApplicationHighDpiMode>PerMonitorV2</ApplicationHighDpiMode>
     <NoWarn>WPF0001;CA1416</NoWarn>
     <VersionPrefix>0.3.0</VersionPrefix>
-    <VersionSuffix>DMD61.7</VersionSuffix>
+    <VersionSuffix>DMD61.8</VersionSuffix>
     <Authors>Andrii Orlov (DeadSue)</Authors>
     <Copyright>Copyright 2026 Andrii Orlov (DeadSue)</Copyright>
     <Product>HDRDisplayCalibrate</Product>

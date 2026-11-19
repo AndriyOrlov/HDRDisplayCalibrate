@@ -44,3 +44,5 @@ Modifications by DMD61 (Victory61), 2026:
 - Version 7 = 0.3.0-DMD61.7 (everything above since version 6, plus): notice before the SDR calibration turns HDR off;
   the app reopens itself after clearing the HDR correction; version shown in the title bar and in the report
   (src/App.xaml.cs, MainWindow.xaml.cs, Pages/ReportExport.cs, Pages/SdrPage.cs, HDRDisplayCalibrate.csproj).
+- Version 8 = 0.3.0-DMD61.8: the notice before the SDR calibration says "if Windows asks for administrator permission"
+  (with UAC off Windows gives it without asking) (src/Pages/SdrPage.cs).
