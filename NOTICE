@@ -31,4 +31,5 @@ Modifications by DMD61 (Victory61), 2026:
   "Test patterns" page for checking a calibration by eye, also as an independent check (grey ramp, grey steps, shadow
   and highlight detail, colour ramps, saturations, reference colours, full screens); the end of the HDR and SDR
   calibration suggests it (also on the page, with a button that opens Test patterns); the default name of the final HDR profile starts with "HDRDisplayCalibrate"; the white screen of step 2
-  (temporary probe profile) is explained in the step card.
+  (temporary probe profile) is explained in the step card; in Verify & report the LUT switch is marked as SDR only and greyed out
+  with Windows HDR on (src/Pages/VerifyPage.cs).

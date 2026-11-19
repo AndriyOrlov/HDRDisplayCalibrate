@@ -30,10 +30,12 @@ namespace HDRDisplayCalibrate.Pages
         {
             Body.Children.Add(Ui.Card(
                 Ui.Text(S.T("How to use them", "Як користуватися"), 15),
-                Ui.Caption(S.T("The patterns open full screen on the display chosen in “Display & sensor”, with the colour profile that is active now. Next pattern: click, → or Space. Previous: right click or ←. Close: Esc.",
-                               "Шаблони відкриваються на весь екран на дисплеї, вибраному в «Дисплей і датчик», з колірним профілем, який активний зараз. Наступний шаблон: клік, → або пробіл. Попередній: правий клік або ←. Закрити: Esc.")),
-                Ui.Caption(S.T("Below, for each pattern: what it shows, how it looks when the calibration is right (✓) and what a defect looks like (✗). The same lines appear at the bottom of the pattern; they disappear after a few seconds and come back when you move the mouse.",
-                               "Нижче для кожного шаблону: що він показує, який вигляд має при правильному калібруванні (✓) і як виглядає дефект (✗). Ці самі рядки з'являються внизу шаблону; вони зникають за кілька секунд і повертаються, коли ви рухаєте мишею.")),
+                Ui.Caption(S.T("The patterns open full screen on the display chosen in “Display & sensor”, with the colour profile that is active now. Nothing is written over them, so read here what to look at before opening a pattern.",
+                               "Шаблони відкриваються на весь екран на дисплеї, вибраному в «Дисплей і датчик», з колірним профілем, який активний зараз. Поверх них нічого не пишеться, тож прочитайте тут, на що дивитися, перш ніж відкрити шаблон.")),
+                Ui.Text(S.T("Keys inside a pattern: next pattern = click, → or Space · previous = right click or ← · close and return here = Esc.",
+                            "Клавіші всередині шаблону: наступний = клік, → або пробіл · попередній = правий клік або ← · закрити й повернутися сюди = Esc."), 14),
+                Ui.Caption(S.T("Below, for each pattern: what it shows, how it looks when the calibration is right (✓) and what a defect looks like (✗).",
+                               "Нижче для кожного шаблону: що він показує, який вигляд має при правильному калібруванні (✓) і як виглядає дефект (✗).")),
                 Ui.Caption(S.T("The patterns are shown as normal desktop content: they check greys, colours, shadows and shades, not the HDR highlights above the desktop white.",
                                "Шаблони показуються як звичайний вміст робочого столу: вони перевіряють сірі, кольори, тіні й переходи, але не HDR-світла понад білий робочого столу.")),
                 Ui.Row(Ui.Btn(S.T("Show all patterns", "Показати всі шаблони"), () => Show(0), true, "\uE768",
@@ -276,11 +278,7 @@ namespace HDRDisplayCalibrate.Pages
         readonly List<TestPattern> _all = Patterns.All;
         readonly List<(TestPattern p, int n, Func<int, int, FrameworkElement> make)> _screens = new();
         readonly Grid _root = new();
-        readonly Border _hint = new() { Background = new SolidColorBrush(Color.FromArgb(200, 0, 0, 0)), Padding = new Thickness(14, 8, 14, 8), Margin = new Thickness(16), HorizontalAlignment = HorizontalAlignment.Left, VerticalAlignment = VerticalAlignment.Bottom, MaxWidth = 900 };
-        readonly TextBlock _hintText = new() { Foreground = Brushes.White, FontSize = 15, TextWrapping = TextWrapping.Wrap };
-        readonly DispatcherTimer _hide = new() { Interval = TimeSpan.FromSeconds(12) };
         int _i;
-        Point _lastMouse = new(double.NaN, double.NaN);
 
         [DllImport("user32.dll")] static extern bool SetWindowPos(IntPtr h, IntPtr after, int x, int y, int cx, int cy, uint flags);
         static readonly IntPtr HwndTopmost = new(-1);
@@ -296,7 +294,6 @@ namespace HDRDisplayCalibrate.Pages
             WindowStyle = WindowStyle.None; ResizeMode = ResizeMode.NoResize; Topmost = true; ShowInTaskbar = false;
             Background = Brushes.Black; Title = "HDRDisplayCalibrate patterns"; Cursor = Cursors.None;
             WindowStartupLocation = WindowStartupLocation.Manual; Left = -32000; Top = -32000; Width = 200; Height = 200;
-            _hint.Child = _hintText;
             Content = _root;
 
             SourceInitialized += (_, _) =>
@@ -318,34 +315,17 @@ namespace HDRDisplayCalibrate.Pages
             };
             MouseLeftButtonUp += (_, _) => Go(1);
             MouseRightButtonUp += (_, _) => Go(-1);
-            MouseMove += (_, e) =>
-            {
-                var pt = e.GetPosition(this);
-                if (!double.IsNaN(_lastMouse.X) && (pt - _lastMouse).Length > 4) ShowHint();
-                _lastMouse = pt;
-            };
-            _hide.Tick += (_, _) => { _hide.Stop(); _hint.Visibility = Visibility.Collapsed; };
-            Closed += (_, _) => _hide.Stop();
         }
 
         void Go(int step) { _i = (_i + step + _screens.Count) % _screens.Count; Paint(); }
 
         void Paint()
         {
-            var (p, n, make) = _screens[_i];
+            var (_, _, make) = _screens[_i];
             var (_, _, w, h) = _d.Bounds;
             _root.Children.Clear();
             _root.Children.Add(make(w, h));
-            _root.Children.Add(_hint);
-            int number = _all.IndexOf(p) + 1;
-            string part = p.Screens.Length > 1 ? $" ({n + 1}/{p.Screens.Length})" : "";
-            _hintText.Text = $"{number}/{_all.Count} · {p.Title}{part}\n" +
-                             "✓  " + S.T("Calibration OK:", "Калібрування в порядку:") + " " + p.Ok + "\n" +
-                             "✗  " + S.T("Defect:", "Дефект:") + " " + p.Bad + "\n" +
-                             S.T("Next: click or →   ·   Previous: right click or ←   ·   Close: Esc", "Далі: клік або →   ·   Назад: правий клік або ←   ·   Закрити: Esc");
-            ShowHint();
         }
 
-        void ShowHint() { _hint.Visibility = Visibility.Visible; _hide.Stop(); _hide.Start(); }
     }
 }

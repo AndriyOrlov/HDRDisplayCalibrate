@@ -1,6 +1,7 @@
 // HDRDisplayCalibrate — SDR/HDR display calibration for Windows.
 // Copyright 2026 Andrii Orlov (DeadSue). Licensed under the Apache License, Version 2.0.
-// Modified 2026 by DMD61 (Victory61): guided sensor dialogs before and after the measurement (ProbeGuide); report export.
+// Modified 2026 by DMD61 (Victory61): guided sensor dialogs before and after the measurement (ProbeGuide); report export;
+// the LUT switch is marked as SDR only and greyed out with Windows HDR on.
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -17,7 +18,10 @@ namespace HDRDisplayCalibrate.Pages
         readonly WhitePicker _wp = new();
         readonly ComboBox _curve = Ui.Combo(new[] { "2.2", "2.4", "BT.1886", "sRGB", "L*" });
         readonly ComboBox _size = Ui.Combo(new[] { S.T("Quick (37 patches)", "Швидко (37 патчів)"), S.T("Standard (63 patches)", "Стандарт (63 патчі)"), S.T("Extended (63 + 160 random)", "Розширено (63 + 160 випадкових)") }, 1);
-        readonly CheckBox _raw = Ui.Check(S.T("Measure the bare display (switch the calibration LUT off)", "Міряти «голий» дисплей (вимкнути калібрувальний LUT)"), tip: S.T("Switches the calibration curve off while measuring, to see how the panel performs without it.", "Вимикає калібрувальну криву на час заміру, щоб побачити, який вигляд має панель без неї."));
+        readonly CheckBox _raw = Ui.Check(S.T("Measure the bare display (switch the calibration LUT off) — SDR only", "Міряти «голий» дисплей (вимкнути калібрувальний LUT) — лише SDR"), tip: S.T("Switches the calibration curve off while measuring, to see how the panel performs without it.", "Вимикає калібрувальну криву на час заміру, щоб побачити, який вигляд має панель без неї."));
+        // DMD61: the LUT switch concerns SDR only; with Windows HDR on it is greyed out
+        readonly TextBlock _rawNote = Ui.Caption(S.T("Only for SDR verification (Windows HDR off): it switches off the video card curve of the SDR profile. With Windows HDR on it has no use: to measure without corrections, choose “sRGB IEC61966-2.1” under Colour profile in the Windows display settings.",
+            "Лише для перевірки SDR (HDR Windows вимкнено): вимикає криву відеокарти SDR-профілю. Коли HDR Windows увімкнено, вона не потрібна: щоб міряти без корекцій, виберіть «sRGB IEC61966-2.1» у «Колірний профіль» у параметрах дисплея Windows."));
         readonly StackPanel _result = new();
         static readonly string[] CurveIds = { "2.2", "2.4", "bt1886", "srgb", "lstar" };
 
@@ -27,9 +31,16 @@ namespace HDRDisplayCalibrate.Pages
             Body.Children.Add(Ui.Card(
                 Ui.Field(S.T("Target white", "Цільовий білий"), _wp.View, tip: S.T("The white point the results are compared with.", "Точка білого, з якою порівнюються результати.")),
                 Ui.Field(S.T("Target tone curve", "Цільова крива"), _curve, tip: S.T("The tone curve the results are compared with.", "Тонова крива, з якою порівнюються результати.")),
-                Ui.Field(S.T("Patch set", "Набір патчів"), _size, tip: S.T("How many colours to measure: a quick check, the standard report, or an extended set with random colours.", "Скільки кольорів міряти: швидка перевірка, стандартний звіт або розширений набір із випадковими кольорами.")), _raw,
+                Ui.Field(S.T("Patch set", "Набір патчів"), _size, tip: S.T("How many colours to measure: a quick check, the standard report, or an extended set with random colours.", "Скільки кольорів міряти: швидка перевірка, стандартний звіт або розширений набір із випадковими кольорами.")), _raw, _rawNote,
                 Ui.Row(Ui.Btn(S.T("Measure", "Заміряти"), Run, true, "", tip: S.T("Measures the patches on the screen and builds the report. Esc cancels.", "Міряє патчі на екрані й будує звіт. Esc скасовує.")), Ui.Btn(S.T("Open .ti3…", "Відкрити .ti3…"), Open, false, "", tip: S.T("Builds a report from an existing ArgyllCMS measurement file (.ti3).", "Будує звіт з наявного файлу замірів ArgyllCMS (.ti3).")), Ui.Btn(S.T("Export report", "Експортувати звіт"), () => ReportExport.Export(S.T("Verify & report", "Перевірка і звіт"), $"Verify_report_{St.Display?.Model}_{System.DateTime.Now:yyyyMMdd_HHmm}", _result.Children.Cast<UIElement>().ToList()), false, "\uE74E", tip: S.T("Saves the report below (values, tables and charts) as a PDF or HTML file.", "Зберігає звіт нижче (значення, таблиці й графіки) у файл PDF або HTML.")))));
             Body.Children.Add(_result);
+        }
+
+        public override void OnShow()
+        {
+            bool hdr = St.Display?.HdrOn == true;
+            _raw.IsEnabled = !hdr;
+            if (hdr) _raw.IsChecked = false;
         }
 
         void Run()

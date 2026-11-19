@@ -546,5 +546,10 @@
  "9217e6ac": "Calibrazione corretta:",
  "bae0ea3e": "Difetto:",
  "f5714577": "Qui sotto, per ogni pattern: cosa mostra, come si vede quando la calibrazione è corretta (✓) e come si presenta un difetto (✗). Le stesse righe compaiono in basso sul pattern; spariscono dopo qualche secondo e ricompaiono quando muovi il mouse.",
- "3d04dda4": "In questo passo il programma attiva un profilo di prova temporaneo («probe x8») che schiarisce tutto lo schermo per trovare la luminosità massima reale del monitor. Lo schermo diventa quasi tutto bianco e icone e testi si leggono a fatica: è normale e dura qualche minuto. Resta così fino al Passo 3, quando sceglierai il profilo v1 e tutto tornerà normale. Alla fine il programma lo elimina insieme agli altri profili di prova."
+ "3d04dda4": "In questo passo il programma attiva un profilo di prova temporaneo («probe x8») che schiarisce tutto lo schermo per trovare la luminosità massima reale del monitor. Lo schermo diventa quasi tutto bianco e icone e testi si leggono a fatica: è normale e dura qualche minuto. Resta così fino al Passo 3, quando sceglierai il profilo v1 e tutto tornerà normale. Alla fine il programma lo elimina insieme agli altri profili di prova.",
+ "17b76a44": "Misura lo schermo senza correzioni (disattiva il LUT di calibrazione) — solo SDR",
+ "cc1aa1ff": "Solo per la verifica SDR (HDR di Windows spento): disattiva la curva della scheda video del profilo SDR. Con l'HDR di Windows acceso non serve: per misurare senza correzioni scegli «sRGB IEC61966-2.1» in Profilo colori nelle impostazioni dello schermo di Windows.",
+ "42a6686a": "I pattern si aprono a schermo intero sullo schermo scelto in «Schermo e sonda», con il profilo colore attivo in questo momento. Sopra i pattern non compare nessuna scritta, quindi leggi qui cosa guardare prima di aprire un pattern.",
+ "8c306b34": "Tasti dentro il pattern: pattern successivo = clic, → o barra spaziatrice · precedente = clic destro o ← · chiudi e torna qui = Esc.",
+ "a9272096": "Qui sotto, per ogni pattern: cosa mostra, come si vede quando la calibrazione è corretta (✓) e come si presenta un difetto (✗)."
 }
