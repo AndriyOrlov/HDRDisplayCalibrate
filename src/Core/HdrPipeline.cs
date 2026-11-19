@@ -91,7 +91,7 @@ namespace HDRDisplayCalibrate.Core
                 double want = r.Black + Target(L, knee, peak) * (1 - r.Black / peak);
                 lut[i] = i == 0 ? 0 : Math.Max(Cm.PqInv(r.Inverse(want)), lut[i - 1]);
             }
-            return lut;
+            return SmoothLuts(new[] { lut, lut, lut })[1];   // mod by DMD61: no steps from the probe noise
         }
 
         /// <summary>Measured primaries (xy) at a level, for the profile's reported gamut.</summary>
@@ -146,7 +146,60 @@ namespace HDRDisplayCalibrate.Core
                 }
                 res.Luts[c] = lut;
             }
+            res.Luts = SmoothLuts(res.Luts);                     // mod by DMD61: no steps or coloured bands
             return res;
+        }
+
+        /// <summary>
+        /// mod by DMD61. The curves are built by inverting the measured response point by point, so the probe noise
+        /// leaves flat stretches and sudden jumps in them (visible as banding, coloured where the three channels jump at
+        /// different levels). The green curve is smoothed and kept rising; each channel keeps its own correction as a
+        /// smoothed offset from green. Black clipping at the start and the peak at the end are kept as they were.
+        /// </summary>
+        public static double[][] SmoothLuts(double[][] luts, double sigma = 20, double sigmaOffset = 40)
+        {
+            int n = luts[1].Length;
+            var green = Rising(Gauss(luts[1], sigma, true));
+            int lead = 0; while (lead < n && luts.All(l => l[lead] <= 0)) lead++;
+            var res = new double[3][];
+            for (int c = 0; c < 3; c++)
+            {
+                var src = luts[c]; double top = src.Max();
+                var offset = Gauss(src.Select((v, i) => v - luts[1][i]).ToArray(), sigmaOffset, false);
+                var v = Rising(green.Select((g, i) => Math.Max(g + offset[i], 0)).ToArray());
+                for (int i = 0; i < n; i++) v[i] = i < lead ? 0 : Math.Min(v[i], top);
+                res[c] = v;
+            }
+            return res;
+        }
+
+        static double[] Rising(double[] a)
+        {
+            var o = (double[])a.Clone();
+            for (int i = 1; i < o.Length; i++) o[i] = Math.Max(o[i], o[i - 1]);
+            return o;
+        }
+
+        /// <summary>Gaussian smoothing; the ends continue the curve (odd mirror) or repeat the last value.</summary>
+        static double[] Gauss(double[] a, double sigma, bool oddMirror)
+        {
+            int n = a.Length, rad = (int)(4 * sigma + 0.5);
+            var w = Enumerable.Range(-rad, 2 * rad + 1).Select(k => Math.Exp(-0.5 * k * k / (sigma * sigma))).ToArray();
+            double sum = w.Sum();
+            double At(int j)
+            {
+                if (j >= 0 && j < n) return a[j];
+                if (!oddMirror) return a[Math.Clamp(j, 0, n - 1)];
+                return j < 0 ? 2 * a[0] - a[Math.Min(-j, n - 1)] : 2 * a[n - 1] - a[Math.Max(2 * (n - 1) - j, 0)];
+            }
+            var o = new double[n];
+            for (int i = 0; i < n; i++)
+            {
+                double s = 0;
+                for (int k = -rad; k <= rad; k++) s += w[k + rad] * At(i + k);
+                o[i] = s / sum;
+            }
+            return o;
         }
 
         /// <summary>Pre-compensates for the SDR video LUT that Windows keeps applying on top of the HDR signal.</summary>
