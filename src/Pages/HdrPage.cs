@@ -215,7 +215,20 @@ namespace HDRDisplayCalibrate.Pages
         }
 
         // ------------------------------------------------------------ steps
-        void Step1() { if (!Ready()) return; if (!ProbeGuide.Ask(ProbeGuide.Mode.Place)) return; Next(0); lock (_tests) _tests.Clear(); _tip.Children.Clear(); RunJob(async ct =>
+        void Step1() { if (!Ready()) return;
+            // DMD61: the calibration does not start with the SDR content brightness below 100
+            var dd = St.Display; try { Displays.RefreshColor(dd); } catch { }
+            if (dd.HdrOn && FinishDialog.Slider(dd.SdrWhiteNits) < 100)
+            {
+                if (MessageBox.Show(S.F("“SDR content brightness” is at {0} ({1:F0} nits). For a complete calibration it must be at 100: the program measures the grey scale up to that level, and with a lower value the highlights would not be measured properly.\n\nOpen the Windows HDR settings now? Move the slider all the way to the right (100), then press Run in step 1 again.", "«Яскравість SDR-вмісту» зараз {0} ({1:F0} ніт). Для повного калібрування вона має бути 100: програма міряє сіру шкалу до цього рівня, а з меншим значенням світла не будуть виміряні як слід.\n\nВідкрити параметри HDR Windows зараз? Пересуньте повзунок до кінця праворуч (100), потім знову натисніть «Виконати» у кроці 1.", FinishDialog.Slider(dd.SdrWhiteNits), dd.SdrWhiteNits),
+                                    "HDRDisplayCalibrate", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
+                    try { ColorProfiles.OpenHdrSettings(); } catch { }
+                Prereq();
+                return;
+            }
+            if (!ProbeGuide.Ask(ProbeGuide.Mode.Place)) return; Next(0); lock (_tests) _tests.Clear(); _tip.Children.Clear();
+            _out.Children.Clear();   // DMD61: the results (and the report) hold only the new calibration
+            RunJob(async ct =>
         {
             Track(await Activate(Named(new Mhc2Profile(), "neutral"), $"HDC_{St.Display.Model}_neutral_{DateTime.Now:HHmmss}.icc"));
             _base = await Ramp("hdr_base", ct);

@@ -551,5 +551,6 @@
  "cc1aa1ff": "Solo per la verifica SDR (HDR di Windows spento): disattiva la curva della scheda video del profilo SDR. Con l'HDR di Windows acceso non serve: per misurare senza correzioni scegli «sRGB IEC61966-2.1» in Profilo colori nelle impostazioni dello schermo di Windows.",
  "42a6686a": "I pattern si aprono a schermo intero sullo schermo scelto in «Schermo e sonda», con il profilo colore attivo in questo momento. Sopra i pattern non compare nessuna scritta, quindi leggi qui cosa guardare prima di aprire un pattern.",
  "8c306b34": "Tasti dentro il pattern: pattern successivo = clic, → o barra spaziatrice · precedente = clic destro o ← · chiudi e torna qui = Esc.",
- "a9272096": "Qui sotto, per ogni pattern: cosa mostra, come si vede quando la calibrazione è corretta (✓) e come si presenta un difetto (✗)."
+ "a9272096": "Qui sotto, per ogni pattern: cosa mostra, come si vede quando la calibrazione è corretta (✓) e come si presenta un difetto (✗).",
+ "5434c08b": "«Luminosità contenuto SDR» è a {0} ({1:F0} nit). Per una calibrazione completa deve essere a 100: il programma misura la scala di grigi fino a quel livello, e con un valore più basso le alte luci non verrebbero misurate bene.\n\nAprire adesso le impostazioni HDR di Windows? Porta il cursore tutto a destra (100), poi premi di nuovo Avvia al Passo 1."
 }

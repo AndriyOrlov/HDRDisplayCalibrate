@@ -32,4 +32,5 @@ Modifications by DMD61 (Victory61), 2026:
   and highlight detail, colour ramps, saturations, reference colours, full screens); the end of the HDR and SDR
   calibration suggests it (also on the page, with a button that opens Test patterns); the default name of the final HDR profile starts with "HDRDisplayCalibrate"; the white screen of step 2
   (temporary probe profile) is explained in the step card; in Verify & report the LUT switch is marked as SDR only and greyed out
-  with Windows HDR on (src/Pages/VerifyPage.cs).
+  with Windows HDR on (src/Pages/VerifyPage.cs); step 1 does not start with "SDR content brightness" below 100,
+  and it clears the results of the previous calibration so the report holds only the new one.
