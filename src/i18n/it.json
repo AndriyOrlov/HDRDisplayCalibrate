@@ -545,5 +545,6 @@
  "5b6b8385": "Macchie, nuvole, bande verticali o orizzontali, bordi nettamente più scuri, o zone con una tinta diversa (rosata, verdastra) dal resto. Sono limiti del pannello: la calibrazione non può correggerli.",
  "9217e6ac": "Calibrazione corretta:",
  "bae0ea3e": "Difetto:",
- "f5714577": "Qui sotto, per ogni pattern: cosa mostra, come si vede quando la calibrazione è corretta (✓) e come si presenta un difetto (✗). Le stesse righe compaiono in basso sul pattern; spariscono dopo qualche secondo e ricompaiono quando muovi il mouse."
+ "f5714577": "Qui sotto, per ogni pattern: cosa mostra, come si vede quando la calibrazione è corretta (✓) e come si presenta un difetto (✗). Le stesse righe compaiono in basso sul pattern; spariscono dopo qualche secondo e ricompaiono quando muovi il mouse.",
+ "3d04dda4": "In questo passo il programma attiva un profilo di prova temporaneo («probe x8») che schiarisce tutto lo schermo per trovare la luminosità massima reale del monitor. Lo schermo diventa quasi tutto bianco e icone e testi si leggono a fatica: è normale e dura qualche minuto. Resta così fino al Passo 3, quando sceglierai il profilo v1 e tutto tornerà normale. Alla fine il programma lo elimina insieme agli altri profili di prova."
 }

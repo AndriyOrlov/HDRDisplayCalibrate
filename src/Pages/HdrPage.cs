@@ -131,7 +131,8 @@ namespace HDRDisplayCalibrate.Pages
             _steps.Children.Add(Step(1, S.T("Measure the monitor as it is", "Заміряти монітор як є"),
                 S.T("Installs a neutral HDR profile and measures 40 grey levels spread evenly in PQ plus primaries (~5 min).", "Встановлює нейтральний HDR-профіль і міряє 40 рівнів сірого, рівномірно по PQ, плюс основні кольори (~5 хв)."), Step1));
             _steps.Children.Add(Step(2, S.T("Find the real peak", "Знайти реальний пік"),
-                S.T("A temporary ×8 probe profile pushes the same patches up to ~3800 nits of signal to find where the monitor clips (~4 min).", "Тимчасовий профіль-зонд ×8 доводить ті самі патчі до ~3800 ніт сигналу, щоб знайти, де монітор обрізає (~4 хв)."), Step2));
+                S.T("A temporary ×8 probe profile pushes the same patches up to ~3800 nits of signal to find where the monitor clips (~4 min).", "Тимчасовий профіль-зонд ×8 доводить ті самі патчі до ~3800 ніт сигналу, щоб знайти, де монітор обрізає (~4 хв)."), Step2,
+                WarningNote(WhiteScreenWarning)));   // DMD61: always visible, not only in the dialog
             _steps.Children.Add(Step(3, S.T("Build and check the first profile", "Побудувати й перевірити перший профіль"),
                 S.T("Matrix for D65 and sRGB/Rec.2020 primaries, PQ curve with a soft roll-off to the peak.", "Матриця для D65 і основних кольорів, PQ-крива з плавним зрізом до піку."), Step3,
                 Ui.Row(Ui.Text(S.T("Peak, nits", "Пік, ніт")), Ui.Tip(_peak, S.T("Peak luminance written into the profile, cd/m². Step 2 fills it in; a lower value keeps the brightest highlights more neutral.", "Пікова яскравість, яка записується в профіль, кд/м². Крок 2 заповнює її сам; менше значення робить найяскравіші світла нейтральнішими.")),
@@ -140,6 +141,16 @@ namespace HDRDisplayCalibrate.Pages
                 S.T("Separate R/G/B curves keep the white D65 from shadows to highlights.", "Окремі криві R/G/B тримають білий D65 від тіней до світел."), Step4));
             _steps.Children.Add(Step(5, S.T("Finalize and verify", "Завершити й перевірити"),
                 S.T("Compensates for the SDR calibration curve Windows also applies in HDR, installs the final profile and verifies it, greys and 24 colours (skin, sky, foliage, saturated colours).", "Компенсує SDR-криву, яку Windows застосовує і в HDR, встановлює фінальний профіль і перевіряє його: сірі та 24 кольори (шкіра, небо, зелень, насичені кольори)."), Step5));
+        }
+
+        /// <summary>DMD61: the white screen of step 2, explained (shown in the step card and in the dialog before it starts).</summary>
+        static string WhiteScreenWarning => S.T("In this step the program activates a temporary test profile (“probe x8”) that brightens the whole screen to find the real peak of the monitor. The screen turns almost completely white and icons and text are hard to read: this is normal and lasts a few minutes. It stays like this until step 3, when you choose the v1 profile and everything returns to normal. At the end the program deletes it together with the other test profiles.",
+            "На цьому кроці програма вмикає тимчасовий тестовий профіль («probe x8»), який висвітлює весь екран, щоб знайти реальний пік монітора. Екран стає майже повністю білим, а значки й текст важко прочитати: це нормально і триває кілька хвилин. Так буде до кроку 3, коли ви виберете профіль v1 і все повернеться до норми. Наприкінці програма видаляє його разом з іншими тестовими профілями.");
+
+        static UIElement WarningNote(string text)
+        {
+            var t = Ui.Text("⚠  " + text, 13);
+            return new Border { BorderBrush = Ui.Warm, BorderThickness = new Thickness(3, 0, 0, 0), Padding = new Thickness(10, 6, 6, 6), Margin = new Thickness(0, 8, 0, 4), Child = t };
         }
 
         UIElement Step(int n, string title, string text, Action run, UIElement extra = null)
@@ -215,8 +226,7 @@ namespace HDRDisplayCalibrate.Pages
         }); }
 
         void Step2() { if (!Ready() || _base == null) { Need(1); return; }
-            if (!ProbeGuide.Ask(ProbeGuide.Mode.Check, S.T("In this step the screen turns almost completely white, and icons and text cannot be read. That is normal and lasts a few minutes.",
-                                                          "На цьому кроці екран стає майже повністю білим, а значки й текст не можна прочитати. Це нормально і триває кілька хвилин."))) return;
+            if (!ProbeGuide.Ask(ProbeGuide.Mode.Check, WhiteScreenWarning)) return;
             Next(0); RunJob(async ct =>
         {
             Track(await Activate(Named(HdrPipeline.ProbeProfile(), "probe x8"), $"HDC_{St.Display.Model}_probe_{DateTime.Now:HHmmss}.icc"));
