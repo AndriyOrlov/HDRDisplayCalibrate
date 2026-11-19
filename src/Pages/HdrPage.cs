@@ -24,7 +24,7 @@ namespace HDRDisplayCalibrate.Pages
     /// </summary>
     public sealed class HdrPage : Page
     {
-        readonly StackPanel _pre = new(), _steps = new(), _out = new();
+        readonly StackPanel _pre = new(), _steps = new(), _out = new(), _tip = new();   // _tip: check by eye suggested at the end (DMD61)
         readonly TextBox _peak = Ui.Box(""), _knee = Ui.Box("");
         readonly List<Border> _cards = new();
         readonly List<TextBlock> _banners = new();
@@ -57,6 +57,7 @@ namespace HDRDisplayCalibrate.Pages
             sp.Children.Add(nothing);
             Body.Children.Add(before);
             Body.Children.Add(_steps);
+            Body.Children.Add(_tip);
             Body.Children.Add(Ui.Row(Ui.Btn(S.T("Export report", "Експортувати звіт"), Export, false, "\uE74E", tip: S.T("Saves the results below (values, tables and charts) as a PDF or HTML file.", "Зберігає результати нижче (значення, таблиці й графіки) у файл PDF або HTML."))));
             Body.Children.Add(_out);
             BuildSteps();
@@ -203,7 +204,7 @@ namespace HDRDisplayCalibrate.Pages
         }
 
         // ------------------------------------------------------------ steps
-        void Step1() { if (!Ready()) return; if (!ProbeGuide.Ask(ProbeGuide.Mode.Place)) return; Next(0); lock (_tests) _tests.Clear(); RunJob(async ct =>
+        void Step1() { if (!Ready()) return; if (!ProbeGuide.Ask(ProbeGuide.Mode.Place)) return; Next(0); lock (_tests) _tests.Clear(); _tip.Children.Clear(); RunJob(async ct =>
         {
             Track(await Activate(Named(new Mhc2Profile(), "neutral"), $"HDC_{St.Display.Model}_neutral_{DateTime.Now:HHmmss}.icc"));
             _base = await Ramp("hdr_base", ct);
@@ -292,6 +293,7 @@ namespace HDRDisplayCalibrate.Pages
                 var file = Path.Combine(reportDir, finalName + "_report" + (reportHtml ? ".html" : ".pdf"));
                 string saved = ReportExport.SaveAuto(file, reportHtml, S.T("HDR calibration", "HDR калібрування") + " — " + finalName, _out.Children.Cast<UIElement>().ToList()) ? file : null;
                 var work = _dir; _dir = null;     // the next calibration starts a new folder
+                _tip.Children.Clear(); _tip.Children.Add(PatternsPage.Suggestion());   // stays on the page after the closing window
                 FinishDialog.Run(St.Display ?? d, finalName, double.IsNaN(before) ? (double?)null : before, tests, saved, work);
                 Prereq();
             });

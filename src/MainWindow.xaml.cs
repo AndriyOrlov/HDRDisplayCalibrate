@@ -31,6 +31,13 @@ namespace HDRDisplayCalibrate
         public int Page => Math.Max(0, Nav.SelectedIndex);
 
         const int SdrPageIndex = 2, HdrPageIndex = 3;
+        public const int PatternsPageIndex = 5;   // DMD61
+
+        /// <summary>Opens a page of the main window (used by the end of a calibration to open Test patterns).</summary>
+        public static void ShowPage(int index)
+        {
+            if (Application.Current.MainWindow is MainWindow m) m.Nav.SelectedIndex = index;
+        }
 
         /// <summary>startPage −1: choose by the monitor (HDR calibration if it supports HDR, SDR calibration if not).</summary>
         public MainWindow(int startPage = -1)

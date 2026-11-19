@@ -30,4 +30,4 @@ Modifications by DMD61 (Victory61), 2026:
 - Version 6 (src/Pages/PatternsPage.cs, MainWindow.xaml.cs, App.xaml.cs, HdrDialogs.cs, SdrPage.cs, HdrPage.cs, i18n/it.json):
   "Test patterns" page for checking a calibration by eye, also as an independent check (grey ramp, grey steps, shadow
   and highlight detail, colour ramps, saturations, reference colours, full screens); the end of the HDR and SDR
-  calibration suggests it; the default name of the final HDR profile starts with "HDRDisplayCalibrate".
+  calibration suggests it (also on the page, with a button that opens Test patterns); the default name of the final HDR profile starts with "HDRDisplayCalibrate".
