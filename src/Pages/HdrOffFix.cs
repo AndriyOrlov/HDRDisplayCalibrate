@@ -26,6 +26,8 @@ namespace HDRDisplayCalibrate.Pages
         {
             if (!Needed(hdrProfile)) return;
             AppState.I.Report(S.T("Clearing the HDR colour correction that Windows keeps after HDR is turned off: the screen goes black for a moment…", "Скидаю HDR-корекцію кольору, яку Windows залишає після вимкнення HDR: екран на мить стане чорним…"));
+            var main = Application.Current.MainWindow;
+            main?.Hide();   // the old window would be drawn white after the DWM restart: keep it out of sight
             bool ok = await Task.Run(() =>
             {
                 try
@@ -39,11 +41,12 @@ namespace HDRDisplayCalibrate.Pages
             if (ok)
             {
                 // after the DWM restart this window is drawn white (dark backdrop lost): open the app again on the same page
-                await Task.Delay(3000);
+                await Task.Delay(2000);
                 try { Process.Start(new ProcessStartInfo(Environment.ProcessPath, "--page " + page) { UseShellExecute = true }); Application.Current.Shutdown(); }
-                catch (Exception e) { Log.Write("restart app: " + e.Message); }
+                catch (Exception e) { Log.Write("restart app: " + e.Message); main?.Show(); }
                 return;
             }
+            main?.Show();
             MessageBox.Show(S.T("Windows keeps the HDR colour correction active after HDR is turned off, so the SDR colours are wrong until it is cleared, and an SDR calibration would come out wrong.\n\nSign out of Windows and back in, then come back to the SDR calibration.", "Windows залишає HDR-корекцію кольору активною після вимкнення HDR, тож кольори SDR неправильні, доки її не скинуто, і SDR-калібрування вийшло б неправильним.\n\nВийдіть із Windows і увійдіть знову, потім поверніться до SDR-калібрування."),
                 "HDRDisplayCalibrate", MessageBoxButton.OK, MessageBoxImage.Warning);
         }
