@@ -572,5 +572,6 @@
  "35c1aaef": "Quando in seguito spegni l'HDR con l'interruttore di Windows, disconnettiti da Windows e riconnettiti: Windows lascia attiva anche in SDR la correzione colore del profilo HDR, e fino ad allora i colori SDR appaiono sbagliati (slavati o solarizzati). Da SDR a HDR non serve fare niente.",
  "1ddb5d1d": "5. Passaggio da HDR a SDR",
  "5aa1a673": "La calibrazione SDR si fa con l'HDR di Windows spento. Ora il programma lo spegne: il monitor può diventare nero per qualche secondo. Non toccare niente finché lo schermo non torna.",
- "f164f158": "La calibrazione SDR si fa con l'HDR di Windows spento. Ora il programma:\n\n1. spegne l'HDR di Windows: il monitor può diventare nero per qualche secondo;\n2. rimuove la correzione colore HDR che Windows lascia attiva: se Windows chiede il permesso di amministratore, rispondi Sì;\n3. dopo qualche secondo si chiude e si riapre su questa pagina.\n\nNon toccare niente finché la finestra non ricompare."
+ "f164f158": "La calibrazione SDR si fa con l'HDR di Windows spento. Ora il programma:\n\n1. spegne l'HDR di Windows: il monitor può diventare nero per qualche secondo;\n2. rimuove la correzione colore HDR che Windows lascia attiva: se Windows chiede il permesso di amministratore, rispondi Sì;\n3. dopo qualche secondo si chiude e si riapre su questa pagina.\n\nNon toccare niente finché la finestra non ricompare.",
+ "bf8a930c": "Il registro è ancora vuoto: si riempie mentre il programma lavora."
 }

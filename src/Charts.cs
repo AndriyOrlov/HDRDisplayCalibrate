@@ -131,7 +131,8 @@ namespace HDRDisplayCalibrate
             Point P(double x, double y) => new(l + (Tx(x) - x0) / (x1 - x0) * (w - l - r), h - b - (Ty(y) - y0) / (y1 - y0) * (h - b - t));
             IEnumerable<double> Ticks(double a, double z, bool log)
             {
-                if (log) { for (int e = (int)Math.Floor(a); e <= Math.Ceiling(z); e++) yield return Math.Pow(10, e); yield break; }
+                // DMD61: only the decades inside the plotted range (those outside were drawn over the caption and the axis names)
+                if (log) { for (int e = (int)Math.Ceiling(a - 1e-9); e <= Math.Floor(z + 1e-9); e++) yield return Math.Pow(10, e); yield break; }
                 double step = Math.Pow(10, Math.Floor(Math.Log10((z - a) / 5)));
                 if ((z - a) / step > 10) step *= 2; if ((z - a) / step > 10) step *= 2.5;
                 for (double v = Math.Ceiling(a / step) * step; v <= z + 1e-9; v += step) yield return v;

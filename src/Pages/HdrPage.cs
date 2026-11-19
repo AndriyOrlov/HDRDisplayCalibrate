@@ -102,16 +102,21 @@ namespace HDRDisplayCalibrate.Pages
             if (d.HdrOn && St.Job == null && FinishDialog.Slider(d.SdrWhiteNits) < 100) { St.Cfg.Set(SdrKey(d), d.SdrWhiteNits); try { St.Cfg.Save(); } catch { } }
             bool sdrOk = FinishDialog.Slider(d.SdrWhiteNits) >= 100;
             string osdMark = "!", osdText = NoDdc;
-            try
+            // DMD61: DDC/CI often does not answer the first time: try up to three times before showing "!"
+            for (int attempt = 0; attempt < 3 && osdText == NoDdc; attempt++)
             {
-                using var x = Ddc.Open(d);
-                if (x?.Get(Ddc.Brightness) is { } b)
+                try
                 {
-                    osdMark = b.cur >= b.max ? "✓" : "!";
-                    osdText = b.cur >= b.max ? S.F("{0} (maximum)", "{0} (максимум)", b.cur) : S.F("now {0}: set it to {1}", "зараз {0}: поставте {1}", b.cur, b.max);
+                    using var x = Ddc.Open(d);
+                    if (x?.Get(Ddc.Brightness) is { } b)
+                    {
+                        osdMark = b.cur >= b.max ? "✓" : "!";
+                        osdText = b.cur >= b.max ? S.F("{0} (maximum)", "{0} (максимум)", b.cur) : S.F("now {0}: set it to {1}", "зараз {0}: поставте {1}", b.cur, b.max);
+                    }
                 }
+                catch { }
+                if (osdText == NoDdc) System.Threading.Thread.Sleep(150);
             }
-            catch { }
             _pre.Children.Add(Ui.Table(new[] { "", "", "" }, new[]
             {
                 new[] { d.HdrOn ? "✓" : "✗", S.T("Windows HDR is on for this display", "Windows HDR увімкнено для цього дисплея"), d.HdrOn ? "" : S.T("required", "обов'язково") },

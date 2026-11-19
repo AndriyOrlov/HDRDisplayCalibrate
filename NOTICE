@@ -46,3 +46,6 @@ Modifications by DMD61 (Victory61), 2026:
   (src/App.xaml.cs, MainWindow.xaml.cs, Pages/ReportExport.cs, Pages/SdrPage.cs, HDRDisplayCalibrate.csproj).
 - Version 8 = 0.3.0-DMD61.8: the notice before the SDR calibration says "if Windows asks for administrator permission"
   (with UAC off Windows gives it without asking) (src/Pages/SdrPage.cs).
+- Version 9 = 0.3.0-DMD61.9: log-scale charts draw only the decades inside the plotted range (no more labels over
+  the captions); the OSD brightness is read over DDC/CI up to three times before "!" is shown; the Log page is full
+  width and shows the end of the log file at once (src/Charts.cs, Pages/HdrPage.cs, Pages/ProfilesPage.cs).

@@ -92,10 +92,25 @@ namespace HDRDisplayCalibrate.Pages
 
     public sealed class LogPage : Page
     {
-        readonly TextBox _box = new() { IsReadOnly = true, FontFamily = new System.Windows.Media.FontFamily("Cascadia Mono, Consolas"), FontSize = 12, TextWrapping = TextWrapping.NoWrap, VerticalScrollBarVisibility = ScrollBarVisibility.Auto, HorizontalScrollBarVisibility = ScrollBarVisibility.Auto, Height = 600 };
+        readonly TextBox _box = new() { IsReadOnly = true, FontFamily = new System.Windows.Media.FontFamily("Cascadia Mono, Consolas"), FontSize = 12, TextWrapping = TextWrapping.NoWrap, VerticalScrollBarVisibility = ScrollBarVisibility.Auto, HorizontalScrollBarVisibility = ScrollBarVisibility.Auto, Height = 600, MinWidth = 900, HorizontalAlignment = HorizontalAlignment.Stretch };   // DMD61: full width
         public LogPage() : base(S.T("Log", "Журнал"), null)
         {
             Body.Children.Add(_box);
+            // DMD61: show the end of the log file at once instead of an empty box
+            try
+            {
+                var file = Path.Combine(Paths.Home, "log.txt");
+                if (File.Exists(file))
+                {
+                    using var fs = new FileStream(file, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+                    using var rd = new StreamReader(fs);
+                    var lines = rd.ReadToEnd().Split('\n');
+                    _box.Text = string.Join("\n", lines.Skip(Math.Max(0, lines.Length - 300)).Select(l => l.TrimEnd('\r')));
+                    _box.ScrollToEnd();
+                }
+            }
+            catch { }
+            if (_box.Text.Length == 0) _box.Text = S.T("Nothing logged yet: the log fills in while the program works.", "Журнал поки порожній: він заповнюється, поки програма працює.") + "\n";
             Body.Children.Add(Ui.Row(Ui.Btn(S.T("Open log file", "Відкрити файл журналу"), () => Process.Start(new ProcessStartInfo(Path.Combine(Paths.Home, "log.txt")) { UseShellExecute = true }), tip: S.T("Opens the program's detailed log, useful when reporting a problem.", "Відкриває детальний журнал програми — знадобиться, якщо повідомляєте про проблему.")),
                                      Ui.Btn(S.T("Measurements folder", "Тека замірів"), () => Process.Start("explorer.exe", Paths.Docs), tip: S.T("Opens the folder with all measurements, profiles, reports and LUTs.", "Відкриває теку з усіма замірами, профілями, звітами та LUT."))));
             Log.Line += s => Dispatcher.BeginInvoke(() => { _box.AppendText(s + "\n"); if (_box.LineCount > 4000) _box.Clear(); _box.ScrollToEnd(); });
