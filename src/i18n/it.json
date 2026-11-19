@@ -565,5 +565,10 @@
  "14dfcff0": "Luce della stanza misurata: {0:F1} lx. Ruota di nuovo il diffusore di lato prima di misurare lo schermo.",
  "e3fc1c85": "ruota il diffusore sulla lente",
  "d596ed88": "sonda in piedi sulla scrivania, diffusore verso di te",
- "0f6442fa": "Metti la sonda in piedi sulla scrivania davanti al monitor, con il diffusore rivolto verso di te (verso dove stai seduto)."
+ "0f6442fa": "Metti la sonda in piedi sulla scrivania davanti al monitor, con il diffusore rivolto verso di te (verso dove stai seduto).",
+ "7aad353c": "Rimuovo la correzione colore HDR che Windows lascia attiva dopo lo spegnimento dell'HDR: lo schermo diventa nero per un attimo…",
+ "556655b9": "Colori SDR ripristinati",
+ "b7b6e06f": "Windows lascia attiva la correzione colore HDR dopo lo spegnimento dell'HDR, quindi i colori SDR restano sbagliati finché non viene rimossa, e una calibrazione SDR verrebbe sbagliata.\n\nDisconnettiti da Windows e riconnettiti, poi torna alla calibrazione SDR.",
+ "35c1aaef": "Quando in seguito spegni l'HDR con l'interruttore di Windows, disconnettiti da Windows e riconnettiti: Windows lascia attiva anche in SDR la correzione colore del profilo HDR, e fino ad allora i colori SDR appaiono sbagliati (slavati o solarizzati). Da SDR a HDR non serve fare niente.",
+ "1ddb5d1d": "5. Passaggio da HDR a SDR"
 }

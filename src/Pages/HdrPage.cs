@@ -316,7 +316,7 @@ namespace HDRDisplayCalibrate.Pages
                 var file = Path.Combine(reportDir, finalName + "_report" + (reportHtml ? ".html" : ".pdf"));
                 string saved = ReportExport.SaveAuto(file, reportHtml, S.T("HDR calibration", "HDR калібрування") + " — " + finalName, _out.Children.Cast<UIElement>().ToList()) ? file : null;
                 var work = _dir; _dir = null;     // the next calibration starts a new folder
-                _tip.Children.Clear(); _tip.Children.Add(PatternsPage.Suggestion());   // stays on the page after the closing window
+                _tip.Children.Clear(); _tip.Children.Add(PatternsPage.Suggestion()); _tip.Children.Add(WarningNote(HdrOffFix.SwitchNote));   // stays on the page after the closing window
                 FinishDialog.Run(St.Display ?? d, finalName, double.IsNaN(before) ? (double?)null : before, tests, saved, work);
                 Prereq();
             });

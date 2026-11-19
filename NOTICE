@@ -36,3 +36,8 @@ Modifications by DMD61 (Victory61), 2026:
   and it clears the results of the previous calibration so the report holds only the new one.
 - Guided sensor dialogs also in SDR calibration and Live meter, and a guide for the room light measurement
   (sensor on the desk, diffuser over the lens) (src/Pages/ProbeGuide.cs, SdrPage.cs, LivePage.cs).
+- After the app turns Windows HDR off (SDR calibration, Display & sensor), it restarts the Desktop Window Manager
+  through an elevated copy of itself ("--restart-dwm"), because Windows keeps the HDR (MHC2) colour correction loaded
+  until then and the SDR colours (and an SDR calibration) would be wrong (src/Pages/HdrOffFix.cs, App.xaml.cs,
+  SdrPage.cs, DevicePage.cs); the end of the HDR calibration says to sign out and back in after switching HDR off by
+  hand (HdrDialogs.cs, HdrPage.cs).

@@ -76,7 +76,8 @@ namespace HDRDisplayCalibrate.Pages
         {
             _switching = true;
             St.Report(S.T("Turning Windows HDR off for the SDR calibration…", "Вимикаю Windows HDR для SDR-калібрування…"));
-            try { Displays.SetHdr(d, false); await System.Threading.Tasks.Task.Delay(6000); St.RefreshDisplays(); }
+            string hdrProfile = null; try { hdrProfile = ColorProfiles.Default(d, true); } catch { }
+            try { Displays.SetHdr(d, false); await System.Threading.Tasks.Task.Delay(6000); await HdrOffFix.Run(hdrProfile); St.RefreshDisplays(); }   // DMD61
             catch (Exception e) { Log.Write("HDR off: " + e.Message); }
             finally { _switching = false; }
             St.Report(S.T("Windows HDR is off", "Windows HDR вимкнено"), 0);
