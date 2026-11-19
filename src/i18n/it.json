@@ -552,5 +552,18 @@
  "42a6686a": "I pattern si aprono a schermo intero sullo schermo scelto in «Schermo e sonda», con il profilo colore attivo in questo momento. Sopra i pattern non compare nessuna scritta, quindi leggi qui cosa guardare prima di aprire un pattern.",
  "8c306b34": "Tasti dentro il pattern: pattern successivo = clic, → o barra spaziatrice · precedente = clic destro o ← · chiudi e torna qui = Esc.",
  "a9272096": "Qui sotto, per ogni pattern: cosa mostra, come si vede quando la calibrazione è corretta (✓) e come si presenta un difetto (✗).",
- "5434c08b": "«Luminosità contenuto SDR» è a {0} ({1:F0} nit). Per una calibrazione completa deve essere a 100: il programma misura la scala di grigi fino a quel livello, e con un valore più basso le alte luci non verrebbero misurate bene.\n\nAprire adesso le impostazioni HDR di Windows? Porta il cursore tutto a destra (100), poi premi di nuovo Avvia al Passo 1."
+ "5434c08b": "«Luminosità contenuto SDR» è a {0} ({1:F0} nit). Per una calibrazione completa deve essere a 100: il programma misura la scala di grigi fino a quel livello, e con un valore più basso le alte luci non verrebbero misurate bene.\n\nAprire adesso le impostazioni HDR di Windows? Porta il cursore tutto a destra (100), poi premi di nuovo Avvia al Passo 1.",
+ "d423e73f": "Misura la luce della stanza",
+ "808e4441": "Togli la sonda dallo schermo.",
+ "f4971834": "Ruota la protezione (diffusore bianco) davanti alla lente: al contrario di quando si misura lo schermo.",
+ "d257612a": "Appoggia la sonda sulla scrivania accanto al monitor, dove stai seduto, con il diffusore rivolto verso l'alto.",
+ "014079cd": "Non coprirla con la mano o con il corpo, e lascia la luce della stanza come la tieni di solito quando usi il PC.",
+ "6e711ebe": "Dopo la misura, ruota di nuovo il diffusore di lato prima di misurare lo schermo.",
+ "51d799fd": "Sonda pronta — misura",
+ "076fc7a6": "luce della stanza",
+ "432ef4f4": "sonda sulla scrivania, diffusore sulla lente, rivolto verso l'alto",
+ "14dfcff0": "Luce della stanza misurata: {0:F1} lx. Ruota di nuovo il diffusore di lato prima di misurare lo schermo.",
+ "e3fc1c85": "ruota il diffusore sulla lente",
+ "d596ed88": "sonda in piedi sulla scrivania, diffusore verso di te",
+ "0f6442fa": "Metti la sonda in piedi sulla scrivania davanti al monitor, con il diffusore rivolto verso di te (verso dove stai seduto)."
 }

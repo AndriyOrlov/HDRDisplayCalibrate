@@ -1,6 +1,7 @@
 // HDRDisplayCalibrate — SDR/HDR display calibration for Windows.
 // Copyright 2026 Andrii Orlov (DeadSue). Licensed under the Apache License, Version 2.0.
-// Modified 2026 by DMD61 (Victory61): the page switches Windows HDR off by itself (SDR calibration needs it off).
+// Modified 2026 by DMD61 (Victory61): the page switches Windows HDR off by itself (SDR calibration needs it off);
+// guided sensor dialogs (place / remove, room light).
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -81,14 +82,15 @@ namespace HDRDisplayCalibrate.Pages
             St.Report(S.T("Windows HDR is off", "Windows HDR вимкнено"), 0);
         }
 
-        void FromRoom() => RunJob(async ct =>
+        void FromRoom() { if (!ProbeGuide.Ask(ProbeGuide.Mode.Ambient)) return; RunJob(async ct =>   // DMD61: guide for the room light
         {
             var (lux, _) = await Jobs.Ambient(ct);
             _lux.Text = lux.ToString("0.#", CultureInfo.InvariantCulture);
             double sug = lux <= 2 ? 100 : lux >= 1000 ? 220 : Cm.Interp(Math.Log10(lux), new[] { Math.Log10(2), 1, Math.Log10(50), Math.Log10(150), Math.Log10(400), 3 }, new[] { 100.0, 120, 140, 160, 185, 220 });
             _nits.Text = sug.ToString("0", CultureInfo.InvariantCulture);
             St.Report(S.F("Room {0:F1} lx → {1:F0} cd/m²", "Кімната {0:F1} лк → {1:F0} кд/м²", lux, sug), 1);
-        });
+            Dispatcher.Invoke(() => MessageBox.Show(S.F("Room light measured: {0:F1} lx. Turn the diffuser aside again before measuring the screen.", "Освітлення кімнати заміряно: {0:F1} лк. Знову поверніть розсіювач убік, перш ніж міряти екран.", lux), "HDRDisplayCalibrate"));
+        }); }
 
         void Run()
         {
@@ -100,6 +102,7 @@ namespace HDRDisplayCalibrate.Pages
             string name = string.IsNullOrWhiteSpace(_name.Text) ? $"{d.Model}_{DateTime.Now:yyyy-MM-dd}" : _name.Text.Trim();
             name = string.Join("_", name.Split(Path.GetInvalidFileNameChars())).Replace(' ', '_');
             int npatch = _patches.SelectedIndex == 0 ? 0 : int.Parse((string)_patches.SelectedItem);
+            if (!ProbeGuide.Ask(ProbeGuide.Mode.Place)) return;   // DMD61: where and how to place the sensor
             RunJob(async ct =>
             {
                 var dir = Paths.Session(name);
@@ -189,6 +192,7 @@ namespace HDRDisplayCalibrate.Pages
                 St.Report(S.T("SDR calibration done", "SDR калібрування завершено") + (icc != null ? " · " + Path.GetFileName(icc) : ""), 1);
                 // DMD61: suggest the independent check by eye
                 Dispatcher.Invoke(() => _result.Children.Add(PatternsPage.Suggestion()));
+                Dispatcher.Invoke(() => ProbeGuide.Ask(ProbeGuide.Mode.Remove));   // DMD61
             });
         }
     }

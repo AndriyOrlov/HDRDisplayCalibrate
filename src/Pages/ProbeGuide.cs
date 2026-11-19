@@ -1,7 +1,8 @@
 // HDRDisplayCalibrate — SDR/HDR display calibration for Windows.
 // Copyright 2026 Andrii Orlov (DeadSue). Licensed under the Apache License, Version 2.0.
 // Added 2026 by DMD61 (Victory61): guided sensor dialogs (place / check / remove), modelled on the
-// step-by-step prompts of commercial calibration software, so the HDR wizard can be followed without a manual.
+// step-by-step prompts of commercial calibration software, so the HDR wizard can be followed without a manual;
+// room light measurement (sensor on the desk, diffuser over the lens).
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -15,7 +16,7 @@ namespace HDRDisplayCalibrate.Pages
     /// </summary>
     public sealed class ProbeGuide : Window
     {
-        public enum Mode { Place, Check, Remove }
+        public enum Mode { Place, Check, Remove, Ambient }
 
         /// <summary>Shows the dialog for the given moment; returns false if the user cancelled.</summary>
         public static bool Ask(Mode mode, string extra = null)
@@ -60,6 +61,19 @@ namespace HDRDisplayCalibrate.Pages
                 ok = Ui.Btn(S.T("Yes, continue", "Так, продовжити"), () => { DialogResult = true; }, true);
                 cancel = Ui.Btn(S.T("Cancel", "Скасувати"), () => { DialogResult = false; });
             }
+            else if (mode == Mode.Ambient)
+            {
+                body.Children.Add(Ui.H2(S.T("Measure the room light", "Заміряйте освітлення кімнати")));
+                body.Children.Add(AmbientDiagram());
+                body.Children.Add(Numbered(
+                    S.T("Take the sensor off the screen.", "Зніміть датчик з екрана."),
+                    S.T("Turn the lens cover (white diffuser) over the lens: the opposite of when the screen is measured.", "Поверніть кришку (білий розсіювач) на лінзу — навпаки, ніж під час заміру екрана."),
+                    S.T("Stand the sensor on the desk in front of the monitor, with the diffuser facing you (towards where you sit).", "Поставте датчик на стіл перед монітором розсіювачем до себе (туди, де ви сидите)."),
+                    S.T("Do not cover it with your hand or body, and keep the room light as you normally have it when you use the PC.", "Не затуляйте його рукою чи тілом і залиште світло в кімнаті таким, як зазвичай під час роботи за ПК.")));
+                body.Children.Add(Note(S.T("After the measurement, turn the diffuser aside again before measuring the screen.", "Після заміру знову поверніть розсіювач убік, перш ніж міряти екран.")));
+                ok = Ui.Btn(S.T("Sensor ready — measure", "Датчик готовий — заміряти"), () => { DialogResult = true; }, true);
+                cancel = Ui.Btn(S.T("Cancel", "Скасувати"), () => { DialogResult = false; });
+            }
             else
             {
                 body.Children.Add(Ui.H2(S.T("Measurement finished — you can remove the sensor", "Замір завершено — датчик можна зняти")));
@@ -97,6 +111,42 @@ namespace HDRDisplayCalibrate.Pages
             BorderBrush = Ui.Warm, BorderThickness = new Thickness(3, 0, 0, 0), Padding = new Thickness(10, 6, 6, 6), Margin = new Thickness(0, 8, 0, 0),
             Child = Ui.Text(text)
         };
+
+        /// <summary>Room light, two pictures: 1) turn the diffuser over the lens; 2) the sensor standing on the desk in front of
+        /// the monitor, diffuser facing the user.</summary>
+        static UIElement AmbientDiagram()
+        {
+            var c = new Canvas { Width = 640, Height = 230, Margin = new Thickness(0, 6, 0, 10), HorizontalAlignment = HorizontalAlignment.Left };
+            void At(UIElement e, double x, double y) { Canvas.SetLeft(e, x); Canvas.SetTop(e, y); c.Children.Add(e); }
+            var panel = new SolidColorBrush(Color.FromRgb(0x2B, 0x2B, 0x2B));
+            var body = new SolidColorBrush(Color.FromRgb(0x5A, 0x5A, 0x5A));
+            TextBlock Num(string n) => new() { Text = n, FontSize = 15, FontWeight = FontWeights.Bold, Foreground = Ui.Accent };
+
+            // 1. turn the diffuser over the lens
+            At(new Rectangle { Width = 250, Height = 190, Fill = panel, RadiusX = 6, RadiusY = 6 }, 0, 0);
+            At(Num("1"), 10, 6);
+            At(new Rectangle { Width = 90, Height = 110, Fill = body, Stroke = Ui.Muted, StrokeThickness = 2, RadiusX = 14, RadiusY = 14 }, 80, 50);
+            At(new Ellipse { Width = 44, Height = 44, Fill = Brushes.Black, Stroke = Ui.Muted, StrokeThickness = 2 }, 103, 83);           // lens
+            At(new Ellipse { Width = 50, Height = 50, Fill = Brushes.White, Opacity = 0.92 }, 100, 80);                                    // diffuser now over the lens
+            At(new Ellipse { Width = 50, Height = 50, Stroke = Ui.Muted, StrokeThickness = 2, StrokeDashArray = new DoubleCollection { 3, 3 } }, 168, 80);   // where it was
+            c.Children.Add(new Path { Data = Geometry.Parse("M 195,72 A 50,40 0 0 0 128,58"), Stroke = Ui.Warm, StrokeThickness = 4 });
+            c.Children.Add(new Path { Data = Geometry.Parse("M 120,58 L 134,48 L 133,66 Z"), Fill = Ui.Warm });
+            c.Children.Add(new Line { X1 = 125, Y1 = 160, X2 = 125, Y2 = 186, Stroke = Ui.Muted, StrokeThickness = 3 });                  // cable
+            At(new TextBlock { Text = S.T("turn the diffuser over the lens", "поверніть розсіювач на лінзу"), FontSize = 12, Foreground = Ui.Warm, Width = 230, TextAlignment = TextAlignment.Center }, 10, 196);
+
+            // 2. sensor standing on the desk in front of the monitor, diffuser facing you
+            At(new Rectangle { Width = 370, Height = 190, Fill = panel, RadiusX = 6, RadiusY = 6 }, 270, 0);
+            At(Num("2"), 280, 6);
+            At(new Rectangle { Width = 230, Height = 130, Stroke = Ui.Muted, StrokeThickness = 4, RadiusX = 4, RadiusY = 4 }, 330, 18);   // monitor
+            At(new Rectangle { Width = 10, Height = 22, Fill = Ui.Muted }, 440, 148);
+            At(new Rectangle { Width = 80, Height = 6, Fill = Ui.Muted }, 405, 168);
+            At(new Rectangle { Width = 340, Height = 6, Fill = body }, 285, 174);                                                        // desk
+            At(new Rectangle { Width = 46, Height = 52, Fill = body, Stroke = Ui.Accent, StrokeThickness = 2, RadiusX = 8, RadiusY = 8 }, 500, 122);   // sensor upright
+            At(new Ellipse { Width = 26, Height = 26, Fill = Brushes.White }, 510, 134);                                                   // diffuser facing you
+            c.Children.Add(new Path { Data = Geometry.Parse("M 546,140 C 575,130 580,95 556,80"), Stroke = Ui.Muted, StrokeThickness = 3 });   // cable
+            At(new TextBlock { Text = S.T("sensor standing on the desk, diffuser facing you", "датчик стоїть на столі, розсіювачем до вас"), FontSize = 12, Foreground = Ui.Accent, Width = 360, TextAlignment = TextAlignment.Center }, 275, 196);
+            return c;
+        }
 
         /// <summary>Front and side view: sensor in the centre, diffuser open, cable over the top, counterweight behind.</summary>
         static UIElement Diagram()
