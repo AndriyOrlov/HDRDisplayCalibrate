@@ -56,9 +56,7 @@ namespace HDRDisplayCalibrate
             SourceInitialized += (_, _) =>
             {
                 var h = new WindowInteropHelper(this).Handle;
-                int on = 1, mica = 2;
-                DwmSetWindowAttribute(h, 20, ref on, 4);     // dark title bar
-                DwmSetWindowAttribute(h, 38, ref mica, 4);   // Mica backdrop
+                ApplyDwm(h);
                 HwndSource.FromHwnd(h).AddHook((IntPtr hw, int msg, IntPtr wp, IntPtr lp, ref bool handled) =>
                 {
                     if (msg == 0x0312 && wp.ToInt32() == EscHotkey) { AppState.I.Cancel(); handled = true; }   // WM_HOTKEY
@@ -116,6 +114,33 @@ namespace HDRDisplayCalibrate
         }
 
         [DllImport("dwmapi.dll")] static extern int DwmSetWindowAttribute(IntPtr h, int attr, ref int val, int size);
+
+        static void ApplyDwm(IntPtr h)
+        {
+            int on = 1, mica = 2;
+            DwmSetWindowAttribute(h, 20, ref on, 4);     // dark title bar
+            DwmSetWindowAttribute(h, 38, ref mica, 4);   // Mica backdrop
+        }
+
+        /// <summary>DMD61: after the Desktop Window Manager restarts it forgets the dark title bar and the Mica backdrop,
+        /// and the window is drawn white. Set them again and make every window draw itself anew.</summary>
+        public static void AfterDwmRestart()
+        {
+            foreach (Window w in Application.Current.Windows)
+            {
+                try
+                {
+                    var h = new WindowInteropHelper(w).Handle;
+                    if (h == IntPtr.Zero) continue;
+                    if (w is MainWindow) ApplyDwm(h);
+                    var state = w.WindowState;
+                    if (state != WindowState.Minimized) { w.WindowState = WindowState.Minimized; w.WindowState = state; }
+                    w.InvalidateVisual(); w.UpdateLayout();
+                    if (w is MainWindow) w.Activate();
+                }
+                catch { }
+            }
+        }
         [DllImport("user32.dll")] static extern bool RegisterHotKey(IntPtr h, int id, uint mods, uint vk);
         [DllImport("user32.dll")] static extern bool UnregisterHotKey(IntPtr h, int id);
         const int EscHotkey = 0xE5C;
