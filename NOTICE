@@ -27,3 +27,7 @@ Modifications by DMD61 (Victory61), 2026:
   in "Before you start"; reminder for removing colour profiles by hand (colorcpl and the colour folder).
 - Version 5 (src/Core/HdrPipeline.cs): the grey curves of the HDR profiles are smoothed and always rising, so the
   probe noise no longer leaves steps in them (banding, coloured where the three channels jumped at different levels).
+- Version 6 (src/Pages/PatternsPage.cs, MainWindow.xaml.cs, App.xaml.cs, HdrDialogs.cs, SdrPage.cs, HdrPage.cs, i18n/it.json):
+  "Test patterns" page for checking a calibration by eye, also as an independent check (grey ramp, grey steps, shadow
+  and highlight detail, colour ramps, saturations, reference colours, full screens); the end of the HDR and SDR
+  calibration suggests it; the default name of the final HDR profile starts with "HDRDisplayCalibrate".

@@ -1,7 +1,7 @@
 // HDRDisplayCalibrate — SDR/HDR display calibration for Windows.
 // Copyright 2026 Andrii Orlov (DeadSue). Licensed under the Apache License, Version 2.0.
 // Modified 2026 by DMD61 (Victory61): opens on HDR calibration for an HDR monitor and on SDR calibration otherwise;
-// HDR calibration is greyed out for a monitor without HDR.
+// HDR calibration is greyed out for a monitor without HDR; Test patterns page.
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
@@ -21,6 +21,7 @@ namespace HDRDisplayCalibrate
             ("", S.T("SDR calibration", "SDR калібрування"), S.T("Grey scale, white point and an ICC profile for normal (SDR) mode.", "Сіра шкала, точка білого та ICC-профіль для звичайного (SDR) режиму."), () => new SdrPage()),
             ("", S.T("HDR calibration", "HDR калібрування"), S.T("Step-by-step Windows HDR calibration into a native MHC2 profile.", "Покрокове калібрування Windows HDR у рідний MHC2-профіль."), () => new HdrPage()),
             ("", S.T("Verify & report", "Перевірка і звіт"), S.T("Check how accurate the display is now: ΔE, gamma, contrast.", "Перевірка, наскільки точний дисплей зараз: ΔE, гамма, контраст."), () => new VerifyPage()),
+            ("\uE790", S.T("Test patterns", "Тестові шаблони"), S.T("Patterns for checking the calibration by eye, after a calibration or at any time.", "Шаблони для перевірки калібрування на око — після калібрування або будь-коли."), () => new PatternsPage()),   // DMD61
             ("", S.T("Gamut", "Гамут"), S.T("Which colour standards the display can show, in 2D and 3D.", "Які колірні стандарти дисплей може показати — у 2D і 3D."), () => new GamutPage()),
             ("", S.T("3D LUT", "3D-LUT"), S.T("Export the calibration as a 3D LUT for madVR, Resolve, OBS or ReShade.", "Експорт калібрування як 3D-LUT для madVR, Resolve, OBS чи ReShade."), () => new LutPage()),
             ("", S.T("Profiles", "Профілі"), S.T("The display's SDR and HDR profiles, video card LUT tools.", "SDR і HDR профілі дисплея, інструменти LUT відеокарти."), () => new ProfilesPage()),

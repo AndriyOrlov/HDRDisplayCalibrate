@@ -187,6 +187,9 @@ namespace HDRDisplayCalibrate.Pages
                     });
                 }
                 St.Report(S.T("SDR calibration done", "SDR калібрування завершено") + (icc != null ? " · " + Path.GetFileName(icc) : ""), 1);
+                // DMD61: suggest the independent check by eye
+                Dispatcher.Invoke(() => _result.Children.Add(Ui.Card(Ui.Text(S.T("If you wish, you can check the result by eye in the “Test patterns” section: shades, neutral greys, shadows, highlights and colours.",
+                    "За бажанням результат можна перевірити на око в розділі «Тестові шаблони»: переходи, нейтральний сірий, тіні, світла й кольори.")))));
             });
         }
     }

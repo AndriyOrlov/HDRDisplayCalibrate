@@ -258,7 +258,7 @@ namespace HDRDisplayCalibrate.Pages
         }); }
 
         void Step5() { if (!Ready() || _v2 == null) { Need(4); return; } if (!ProbeGuide.Ask(ProbeGuide.Mode.Check)) return;
-            var (finalName, reportDir, reportHtml) = ProfileNameDialog.Ask($"HDC_{St.Display.Model}_HDR_{DateTime.Now:yyyyMMdd_HHmm}");
+            var (finalName, reportDir, reportHtml) = ProfileNameDialog.Ask($"HDRDisplayCalibrate_{St.Display.Model}_HDR_{DateTime.Now:yyyyMMdd_HHmm}");   // DMD61: the default name recalls the program
             Next(0); RunJob(async ct =>
         {
             var d = St.Display; int disp = d.ArgyllNumber.Value;

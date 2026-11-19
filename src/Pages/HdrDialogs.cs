@@ -145,6 +145,9 @@ namespace HDRDisplayCalibrate.Pages
                 Section(S.T("3. Clean-up", "3. Прибирання")),
                 del, clean,
                 ManualHelp(),
+                Section(S.T("4. Check by eye (optional)", "4. Перевірка на око (за бажанням)")),
+                Ui.Text(S.T("If you wish, you can check the result by eye in the “Test patterns” section: shades, neutral greys, shadows, highlights and colours.",
+                            "За бажанням результат можна перевірити на око в розділі «Тестові шаблони»: переходи, нейтральний сірий, тіні, світла й кольори.")),
                 ok);
             body.Margin = new Thickness(24, 20, 24, 20); body.MaxWidth = 680;
             Content = body;

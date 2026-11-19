@@ -70,7 +70,7 @@ namespace HDRDisplayCalibrate
             if (e.Args.Length > 0 && e.Args[0] == "--wheel-test")
             {
                 // a wheel turn over the 3D gamut zooms the camera and does not scroll the page
-                var mw = new MainWindow(5); mw.Show();
+                var mw = new MainWindow(6); mw.Show();
                 _ = Dispatcher.InvokeAsync(async () =>
                 {
                     await System.Threading.Tasks.Task.Delay(1500);
