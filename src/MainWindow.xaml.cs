@@ -83,7 +83,7 @@ namespace HDRDisplayCalibrate
                 }
                 if (AppState.I.Job == null) StatusBar.IsIndeterminate = false;
                 var d = AppState.I.Display;
-                TitleDisplay.Text = d == null ? "" : $"· {d.Name}{(d.HdrOn ? " · HDR" : "")}";
+                TitleDisplay.Text = $"{App.ModVersion}" + (d == null ? "" : $" · {d.Name}{(d.HdrOn ? " · HDR" : "")}");   // DMD61: version shown
                 // a monitor without HDR cannot be calibrated in HDR
                 if (Nav.Items.Count > HdrPageIndex && Nav.Items[HdrPageIndex] is ListBoxItem hi)
                 {

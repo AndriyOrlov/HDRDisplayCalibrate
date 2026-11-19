@@ -69,7 +69,15 @@ namespace HDRDisplayCalibrate.Pages
             var d = St.Display;
             if (d == null || St.Job != null || _switching) return;
             Displays.RefreshColor(d);
-            if (d.HdrOn) TurnHdrOff(d);
+            if (d.HdrOn)
+            {
+                // DMD61: say what is about to happen before the screen goes black; Cancel goes back to HDR calibration
+                string hp = null; try { hp = ColorProfiles.Default(d, true); } catch { }
+                var text = HdrOffFix.Needed(hp) ? S.T("SDR calibration is done with Windows HDR off. The program will now:\n\n1. turn Windows HDR off: the monitor may go black for a few seconds;\n2. clear the HDR colour correction that Windows keeps: Windows asks for administrator permission, answer Yes;\n3. close and reopen itself on this page after a few seconds.\n\nDo not touch anything until the window is back.", "SDR-калібрування роблять з вимкненим HDR Windows. Зараз програма:\n\n1. вимкне HDR Windows: монітор може на кілька секунд стати чорним;\n2. скине HDR-корекцію кольору, яку залишає Windows: Windows попросить дозвіл адміністратора, відповідайте «Так»;\n3. за кілька секунд закриється й знову відкриється на цій сторінці.\n\nНічого не торкайтеся, доки вікно не повернеться.") : S.T("SDR calibration is done with Windows HDR off. The program will now turn it off: the monitor may go black for a few seconds. Do not touch anything until the screen is back.", "SDR-калібрування роблять з вимкненим HDR Windows. Зараз програма його вимкне: монітор може на кілька секунд стати чорним. Нічого не торкайтеся, доки екран не повернеться.");
+                if (MessageBox.Show(text, "HDRDisplayCalibrate", MessageBoxButton.OKCancel, MessageBoxImage.Information) != MessageBoxResult.OK)
+                { MainWindow.ShowPage(3); return; }
+                TurnHdrOff(d);
+            }
         }
 
         async void TurnHdrOff(DisplayTarget d)

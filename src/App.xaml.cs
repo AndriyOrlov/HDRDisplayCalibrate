@@ -8,6 +8,9 @@ namespace HDRDisplayCalibrate
 {
     public partial class App : Application
     {
+        /// <summary>DMD61: version of this modified build (base 0.3.0 by Andrii Orlov, modification 7). Shown in the title bar and the report.</summary>
+        public const string ModVersion = "0.3.0-DMD61.7";
+
         /// <summary>Rebuilds the main window in another language, on the same page.</summary>
         public void Reload(string lang)
         {

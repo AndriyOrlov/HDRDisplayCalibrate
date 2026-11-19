@@ -73,7 +73,7 @@ namespace HDRDisplayCalibrate.Pages
             var d = AppState.I.Display;
             var sp = new StackPanel { Width = width, Background = new SolidColorBrush(Bg) };
             sp.Children.Add(new TextBlock { Text = title, FontSize = 24, FontWeight = FontWeights.SemiBold, Foreground = Brushes.White, Margin = new Thickness(16, 14, 16, 2) });
-            sp.Children.Add(new TextBlock { Text = $"{d?.Name} ({d?.Model}) · {DateTime.Now.ToString("g", CultureInfo.CurrentCulture)} · HDRDisplayCalibrate (mod by DMD61)", FontSize = 12, Foreground = Ui.Muted, Margin = new Thickness(16, 0, 16, 14) });
+            sp.Children.Add(new TextBlock { Text = $"{d?.Name} ({d?.Model}) · {DateTime.Now.ToString("g", CultureInfo.CurrentCulture)} · HDRDisplayCalibrate (mod by DMD61, {App.ModVersion})", FontSize = 12, Foreground = Ui.Muted, Margin = new Thickness(16, 0, 16, 14) });
             sp.Measure(new Size(width, double.PositiveInfinity));
             sp.Arrange(new Rect(0, 0, width, sp.DesiredSize.Height));
             sp.UpdateLayout();

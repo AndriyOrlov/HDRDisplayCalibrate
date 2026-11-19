@@ -41,3 +41,6 @@ Modifications by DMD61 (Victory61), 2026:
   until then and the SDR colours (and an SDR calibration) would be wrong (src/Pages/HdrOffFix.cs, App.xaml.cs,
   SdrPage.cs, DevicePage.cs); the end of the HDR calibration says to sign out and back in after switching HDR off by
   hand (HdrDialogs.cs, HdrPage.cs).
+- Version 7 = 0.3.0-DMD61.7 (everything above since version 6, plus): notice before the SDR calibration turns HDR off;
+  the app reopens itself after clearing the HDR correction; version shown in the title bar and in the report
+  (src/App.xaml.cs, MainWindow.xaml.cs, Pages/ReportExport.cs, Pages/SdrPage.cs, HDRDisplayCalibrate.csproj).
