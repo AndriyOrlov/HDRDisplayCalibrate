@@ -49,3 +49,5 @@ Modifications by DMD61 (Victory61), 2026:
 - Version 9 = 0.3.0-DMD61.9: log-scale charts draw only the decades inside the plotted range (no more labels over
   the captions); the OSD brightness is read over DDC/CI up to three times before "!" is shown; the Log page is full
   width and shows the end of the log file at once (src/Charts.cs, Pages/HdrPage.cs, Pages/ProfilesPage.cs).
+- Version 10 = 0.3.0-DMD61.10: the ArgyllCMS card on the Display & probe page is hidden when ArgyllCMS is bundled
+  with the app; it appears only when the bin folder has to be set by hand (src/Pages/DevicePage.cs).
