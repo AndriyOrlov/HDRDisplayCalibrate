@@ -1,5 +1,6 @@
 // HDRDisplayCalibrate — SDR/HDR display calibration for Windows.
 // Copyright 2026 Andrii Orlov (DeadSue). Licensed under the Apache License, Version 2.0.
+// Modified 2026 by DMD61 (Victory61): guided sensor dialogs (place, room light).
 using System;
 using System.Globalization;
 using System.Linq;
@@ -45,7 +46,12 @@ namespace HDRDisplayCalibrate.Pages
                                "Поки йде замір, калібрування дисплея вимкнене (лінійний LUT). Після зупинки воно повертається."))));
         }
 
-        void MeasurePrimaries() => RunJob(async ct =>
+        /// <summary>DMD61: the sensor guide is shown once per visit of the page, before the first reading.</summary>
+        bool _guided;
+        bool Guide() { if (_guided) return true; if (!ProbeGuide.Ask(ProbeGuide.Mode.Place)) return false; _guided = true; return true; }
+        public override void OnShow() { base.OnShow(); _guided = false; }
+
+        void MeasurePrimaries() { if (!Guide()) return; RunJob(async ct =>
         {
             if (St.Display?.ArgyllNumber is int n) Argyll.LutLinear(n);
             try
@@ -59,11 +65,12 @@ namespace HDRDisplayCalibrate.Pages
             }
             finally { if (St.Display?.ArgyllNumber is int m) Argyll.LoadInstalled(m); }
             St.Report(S.T("Primaries measured", "Основні кольори виміряно"), 1);
-        });
+        }); }
 
         void Toggle()
         {
             if (_running) { _running = false; return; }
+            if (!Guide()) return;
             _running = true; ((TextBlock)((StackPanel)_start.Content).Children[1]).Text = S.T("Stop", "Стоп");
             RunJob(async ct =>
             {
@@ -144,16 +151,16 @@ namespace HDRDisplayCalibrate.Pages
             return g;
         }
 
-        void AutoOsd() => RunJob(async ct =>
+        void AutoOsd() { if (!Guide()) return; RunJob(async ct =>
         {
             double n = Ui.Num(_nits, double.NaN);
             var res = await Jobs.AutoOsd(St.Display, _wp.Xy(), double.IsNaN(n) ? null : n, Paths.Session("auto_osd"), ct);
             _sub.Text = S.T("Auto OSD done: ", "Авто-OSD готово: ") + res;
             if (St.Display?.ArgyllNumber is int m) Argyll.LoadInstalled(m);
             St.Report(S.T("Auto OSD done", "Авто-OSD готово"), 1);
-        });
+        }); }
 
-        void Room() => RunJob(async ct =>
+        void Room() { if (!ProbeGuide.Ask(ProbeGuide.Mode.Ambient)) return; RunJob(async ct =>   // DMD61: guide for the room light
         {
             St.Report(S.T("Measuring room light (diffuser over the lens)…", "Міряю освітлення кімнати (розсіювач на лінзі)…"));
             var (lux, cct) = await Jobs.Ambient(ct);
@@ -161,6 +168,7 @@ namespace HDRDisplayCalibrate.Pages
             _room.Text = S.F("Room: {0:F1} lx, {1:F0} K → suggested white {2:F0} cd/m²", "Кімната: {0:F1} лк, {1:F0} K → рекомендований білий {2:F0} кд/м²", lux, cct, sug);
             St.Cfg.Set("room_lux", lux); St.Cfg.Set("room_cct", cct); St.Cfg.Save();
             St.Report(_room.Text, 1);
-        });
+            Dispatcher.Invoke(() => MessageBox.Show(S.F("Room light measured: {0:F1} lx. Turn the diffuser aside again before measuring the screen.", "Освітлення кімнати заміряно: {0:F1} лк. Знову поверніть розсіювач убік, перш ніж міряти екран.", lux), "HDRDisplayCalibrate"));
+        }); }
     }
 }

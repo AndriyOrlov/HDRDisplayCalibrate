@@ -1,5 +1,7 @@
 // HDRDisplayCalibrate — SDR/HDR display calibration for Windows.
 // Copyright 2026 Andrii Orlov (DeadSue). Licensed under the Apache License, Version 2.0.
+// Modified 2026 by DMD61 (Victory61): the ArgyllCMS card is hidden when ArgyllCMS is bundled with the app (shown only when it must be set by hand);
+// after turning HDR off, the HDR colour correction kept by Windows is cleared (HdrOffFix).
 using System;
 using System.Linq;
 using System.Threading.Tasks;
@@ -20,6 +22,8 @@ namespace HDRDisplayCalibrate.Pages
         readonly TextBox _corr = Ui.Box("", 380), _argyll = Ui.Box("", 420);
         readonly CheckBox _video = Ui.Check(S.T("TV / video levels 16–235", "ТВ / відеорівні 16–235"), tip: S.T("Tick only if the display receives a video-range signal (16–235), e.g. a TV on HDMI set to limited range. PC monitors use the full range 0–255.", "Позначте, лише якщо дисплей отримує відеодіапазон 16–235, напр. ТВ по HDMI з обмеженим діапазоном. Монітори на ПК працюють у повному 0–255."));
         readonly TextBlock _argyllState = Ui.Caption("");
+        Button _apply;
+        FrameworkElement _argyllCard;
         bool _loading;
 
         public DevicePage() : base(S.T("Display & sensor", "Дисплей і датчик"),
@@ -60,8 +64,8 @@ namespace HDRDisplayCalibrate.Pages
                 Ui.Field(S.T("Show patches in", "Показувати патчі"), _patches,
                     S.T("Own window works full screen or as a window you can drag and resize; OLED/plasma with ABL prefer a window", "Власне вікно: на весь екран або перетягуване вікно; для OLED/плазми з ABL краще вікно"), tip: S.T("Where the test colours appear: our own window (full screen, or a window you can move and resize) or ArgyllCMS's window. A smaller window helps OLED and plasma screens that dim large bright areas.", "Де показуються тестові кольори: у власному вікні програми (на весь екран або у вікні, яке можна рухати й змінювати) чи у вікні ArgyllCMS. Менше вікно допомагає OLED і плазмі, які притемнюють великі яскраві ділянки.")),
                 Ui.Btn(S.T("Preview patch window (5 s)", "Показати вікно патчів (5 с)"), PreviewPatches, false, "", tip: S.T("Shows the patch window on the selected display for 5 seconds so you can place the sensor.", "Показує вікно патча на вибраному дисплеї на 5 секунд, щоб ви поставили датчик."))));
-            Body.Children.Add(Ui.Card(Ui.H2("ArgyllCMS"),
-                Ui.Field(S.T("bin folder", "Папка bin"), Ui.Row(_argyll, Ui.Btn(S.T("Apply", "Застосувати"), () => { St.Cfg.Set("argyll_bin", _argyll.Text.Trim()); St.Cfg.Save(); Argyll.Find(_argyll.Text.Trim()); St.RefreshDisplays(); OnShow(); }, tip: S.T("Use this ArgyllCMS folder and search for displays and instruments again.", "Використати цю теку ArgyllCMS і заново знайти дисплеї та прилади."))), tip: S.T("Folder with the ArgyllCMS tools (dispcal.exe, spotread.exe…). C:\\ArgyllCMS\\bin, Program Files and a DisplayCAL download are found automatically.", "Тека з інструментами ArgyllCMS (dispcal.exe, spotread.exe…). C:\\ArgyllCMS\\bin, Program Files і завантаження DisplayCAL знаходяться автоматично.")),
+            Body.Children.Add(_argyllCard = Ui.Card(Ui.H2("ArgyllCMS"),
+                Ui.Field(S.T("bin folder", "Папка bin"), Ui.Row(_argyll, _apply = Ui.Btn(S.T("Apply", "Застосувати"), () => { St.Cfg.Set("argyll_bin", _argyll.Text.Trim()); St.Cfg.Save(); Argyll.Find(_argyll.Text.Trim()); St.RefreshDisplays(); OnShow(); }, tip: S.T("Use this ArgyllCMS folder and search for displays and instruments again.", "Використати цю теку ArgyllCMS і заново знайти дисплеї та прилади."))), tip: S.T("Folder with the ArgyllCMS tools (dispcal.exe, spotread.exe…). C:\\ArgyllCMS\\bin, Program Files and a DisplayCAL download are found automatically.", "Тека з інструментами ArgyllCMS (dispcal.exe, spotread.exe…). C:\\ArgyllCMS\\bin, Program Files і завантаження DisplayCAL знаходяться автоматично.")),
                 _argyllState));
         }
 
@@ -78,8 +82,13 @@ namespace HDRDisplayCalibrate.Pages
             _type.SelectedIndex = St.Setup.DisplayType is "r" or "c" ? 1 : 0;
             _patches.SelectedIndex = (int)St.Setup.Patches;
             _corr.Text = St.Setup.Correction; _video.IsChecked = St.Setup.VideoRange;
-            _argyll.Text = St.Cfg.Str("argyll_bin", Argyll.Bin ?? "");
-            _argyllState.Text = Argyll.Bin != null ? "✓ " + Argyll.Bin : "✗ " + S.T("not found", "не знайдено");
+            var bundled = Argyll.Bundled;
+            _argyll.Text = bundled ?? St.Cfg.Str("argyll_bin", Argyll.Bin ?? "");
+            _argyll.IsReadOnly = bundled != null;
+            if (_apply != null) _apply.Visibility = bundled != null ? Visibility.Collapsed : Visibility.Visible;
+            if (_argyllCard != null) _argyllCard.Visibility = bundled != null ? Visibility.Collapsed : Visibility.Visible;
+            _argyllState.Text = bundled != null ? "✓ " + S.T("ArgyllCMS included with the app — no setting needed", "ArgyllCMS входить до складу програми — налаштування не потрібне")
+                : Argyll.Bin != null ? "✓ " + Argyll.Bin : "✗ " + S.T("not found", "не знайдено");
             ShowInfo();
             _loading = false;
         }
@@ -105,7 +114,7 @@ namespace HDRDisplayCalibrate.Pages
             }, new double[] { 230, 600 }));
             if (d.HdrSupported)
                 _info.Children.Add(Ui.Row(Ui.Btn(d.HdrOn ? S.T("Turn HDR off", "Вимкнути HDR") : S.T("Turn HDR on", "Увімкнути HDR"),
-                    async () => { Displays.SetHdr(d, !d.HdrOn); await Task.Delay(6000); St.RefreshDisplays(); OnShow(); }, false, "", tip: S.T("Switches Windows HDR for this display. The monitor may show its own message for a few seconds.", "Перемикає Windows HDR для цього дисплея. Монітор може кілька секунд показувати своє повідомлення."))));
+                    async () => { bool off = d.HdrOn; string hp = null; try { hp = ColorProfiles.Default(d, true); } catch { } Displays.SetHdr(d, !d.HdrOn); await Task.Delay(6000); if (off) await HdrOffFix.Run(hp, 0); St.RefreshDisplays(); OnShow(); }, false, "", tip: S.T("Switches Windows HDR for this display. The monitor may show its own message for a few seconds.", "Перемикає Windows HDR для цього дисплея. Монітор може кілька секунд показувати своє повідомлення."))));
             if (d.AcmOn && !d.HdrOn)
                 _info.Children.Add(new TextBlock { Text = S.T("⚠ ACM is on: in SDR Windows then uses the HDR (advanced colour) profile instead of the ICC calibration. Turn it off in Settings → Display → Color profile for SDR calibration.",
                                                               "⚠ ACM увімкнено: у SDR Windows тоді бере HDR-профіль замість ICC-калібрування. Для SDR-калібрування вимкніть його в Параметри → Дисплей → Колірний профіль."), Foreground = Ui.Warm, TextWrapping = TextWrapping.Wrap, Margin = new Thickness(0, 8, 0, 0) });

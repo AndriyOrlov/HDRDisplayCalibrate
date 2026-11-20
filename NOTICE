@@ -10,3 +10,44 @@ project must keep this NOTICE file and credit the original author:
 Third-party software used at runtime (not bundled in this repository):
 - ArgyllCMS by Graeme W. Gill (AGPL-3.0), invoked as external command-line tools.
 - .NET / WPF by Microsoft and the .NET Foundation (MIT).
+
+Modifications by DMD61 (Victory61), 2026:
+- Guided sensor dialogs in the HDR wizard and in Verify & report (src/Pages/ProbeGuide.cs, HdrPage.cs, VerifyPage.cs).
+- The ArgyllCMS bundled next to the exe is always used first; the bin folder is read-only when it is bundled (src/Core/Argyll.cs, src/Pages/DevicePage.cs).
+- Italian translation of the interface (src/i18n/it.json, src/I18n.cs).
+- Version 3 (src/Pages/HdrPage.cs, HdrDialogs.cs, ProfilePrompt.cs, ReportExport.cs, SdrPage.cs, MainWindow.xaml.cs,
+  Core/ColorProfiles.cs, Charts.cs, App.xaml.cs): opens on HDR or SDR calibration according to the monitor and switches
+  Windows HDR on/off by itself; short "Before you start" box with the OSD brightness read over DDC/CI; numbered steps
+  in the profile prompt; white-screen warning before step 2; scroll to the next step; name of the final profile;
+  closing window (SDR content brightness back to its previous value, test profiles deleted); report export to PDF or
+  HTML; chart labels and legends no longer overlap.
+- Version 4 (src/Pages/HdrPage.cs, HdrDialogs.cs, ReportExport.cs): HDR colour check (24 colours, ΔE2000) in the final
+  verification; report saved automatically at the end (folder and PDF/HTML format chosen with the profile name);
+  work folder of the calibration emptied at the end; underscores instead of spaces in the profile name; larger text
+  in "Before you start"; reminder for removing colour profiles by hand (colorcpl and the colour folder).
+- Version 5 (src/Core/HdrPipeline.cs): the grey curves of the HDR profiles are smoothed and always rising, so the
+  probe noise no longer leaves steps in them (banding, coloured where the three channels jumped at different levels).
+- Version 6 (src/Pages/PatternsPage.cs, MainWindow.xaml.cs, App.xaml.cs, HdrDialogs.cs, SdrPage.cs, HdrPage.cs, i18n/it.json):
+  "Test patterns" page for checking a calibration by eye, also as an independent check (grey ramp, grey steps, shadow
+  and highlight detail, colour ramps, saturations, reference colours, full screens); the end of the HDR and SDR
+  calibration suggests it (also on the page, with a button that opens Test patterns); the default name of the final HDR profile starts with "HDRDisplayCalibrate"; the white screen of step 2
+  (temporary probe profile) is explained in the step card; in Verify & report the LUT switch is marked as SDR only and greyed out
+  with Windows HDR on (src/Pages/VerifyPage.cs); step 1 does not start with "SDR content brightness" below 100,
+  and it clears the results of the previous calibration so the report holds only the new one.
+- Guided sensor dialogs also in SDR calibration and Live meter, and a guide for the room light measurement
+  (sensor on the desk, diffuser over the lens) (src/Pages/ProbeGuide.cs, SdrPage.cs, LivePage.cs).
+- After the app turns Windows HDR off (SDR calibration, Display & sensor), it restarts the Desktop Window Manager
+  through an elevated copy of itself ("--restart-dwm"), because Windows keeps the HDR (MHC2) colour correction loaded
+  until then and the SDR colours (and an SDR calibration) would be wrong (src/Pages/HdrOffFix.cs, App.xaml.cs,
+  SdrPage.cs, DevicePage.cs); the end of the HDR calibration says to sign out and back in after switching HDR off by
+  hand (HdrDialogs.cs, HdrPage.cs).
+- Version 7 = 0.3.0-DMD61.7 (everything above since version 6, plus): notice before the SDR calibration turns HDR off;
+  the app reopens itself after clearing the HDR correction; version shown in the title bar and in the report
+  (src/App.xaml.cs, MainWindow.xaml.cs, Pages/ReportExport.cs, Pages/SdrPage.cs, HDRDisplayCalibrate.csproj).
+- Version 8 = 0.3.0-DMD61.8: the notice before the SDR calibration says "if Windows asks for administrator permission"
+  (with UAC off Windows gives it without asking) (src/Pages/SdrPage.cs).
+- Version 9 = 0.3.0-DMD61.9: log-scale charts draw only the decades inside the plotted range (no more labels over
+  the captions); the OSD brightness is read over DDC/CI up to three times before "!" is shown; the Log page is full
+  width and shows the end of the log file at once (src/Charts.cs, Pages/HdrPage.cs, Pages/ProfilesPage.cs).
+- Version 10 = 0.3.0-DMD61.10: the ArgyllCMS card on the Display & probe page is hidden when ArgyllCMS is bundled
+  with the app; it appears only when the bin folder has to be set by hand (src/Pages/DevicePage.cs).

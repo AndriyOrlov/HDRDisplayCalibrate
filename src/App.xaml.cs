@@ -8,6 +8,9 @@ namespace HDRDisplayCalibrate
 {
     public partial class App : Application
     {
+        /// <summary>DMD61: version of this modified build (base 0.3.0 by Andrii Orlov, modification 9). Shown in the title bar and the report.</summary>
+        public const string ModVersion = "0.3.0-DMD61.10";
+
         /// <summary>Rebuilds the main window in another language, on the same page.</summary>
         public void Reload(string lang)
         {
@@ -32,6 +35,7 @@ namespace HDRDisplayCalibrate
                 try { Core.Argyll.Find(Core.Settings.Load().Str("argyll_bin")); if (Core.Argyll.Bin != null) Core.LutLoader.LoadAll(); } catch (Exception ex) { Core.Log.Write("loader: " + ex.Message); }
                 Shutdown(); return;
             }
+            if (e.Args.Length > 0 && e.Args[0] == "--restart-dwm") { Pages.HdrOffFix.KillDwm(); Shutdown(); return; }   // DMD61
             if (e.Args.Length > 0 && e.Args[0] == "--selftest") { SelfTest.Run(e.Args.Skip(1).ToArray()); Shutdown(); return; }
             if (e.Args.Length > 1 && e.Args[0] == "--render3d")
             {
@@ -70,7 +74,7 @@ namespace HDRDisplayCalibrate
             if (e.Args.Length > 0 && e.Args[0] == "--wheel-test")
             {
                 // a wheel turn over the 3D gamut zooms the camera and does not scroll the page
-                var mw = new MainWindow(5); mw.Show();
+                var mw = new MainWindow(6); mw.Show();
                 _ = Dispatcher.InvokeAsync(async () =>
                 {
                     await System.Threading.Tasks.Task.Delay(1500);
@@ -209,7 +213,7 @@ namespace HDRDisplayCalibrate
                 });
                 return;
             }
-            int page = e.Args.Length > 1 && e.Args[0] == "--page" && int.TryParse(e.Args[1], out var pg) ? pg : 0;
+            int page = e.Args.Length > 1 && e.Args[0] == "--page" && int.TryParse(e.Args[1], out var pg) ? pg : -1;   // −1: by the monitor (DMD61)
             new MainWindow(page).Show();
         }
     }

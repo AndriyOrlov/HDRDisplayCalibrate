@@ -96,6 +96,7 @@ namespace HDRDisplayCalibrate
                 labelled.Add(at);
             }
             double ly = 8;
+            if (Triangles.Count > 0) dc.DrawRoundedRectangle(LineChart.LegendBg, null, new Rect(w - 196, ly - 3, 190, Triangles.Count * 18 + 6), 4, 4);
             foreach (var t in Triangles)
             {
                 double lx = w - 190;
@@ -116,10 +117,12 @@ namespace HDRDisplayCalibrate
         public string XLabel = "", YLabel = "";
 
         public LineChart() { Height = 300; FlowDirection = FlowDirection.LeftToRight; }
+        internal static readonly Brush LegendBg = new SolidColorBrush(Color.FromArgb(215, 32, 32, 36));
 
         protected override void OnRender(DrawingContext dc)
         {
-            double w = ActualWidth, h = ActualHeight, l = 52, b = 34, t = 10, r = 12;
+            // top margin holds the Y axis name, bottom margin the tick labels and then the X axis name, so no text overlaps
+            double w = ActualWidth, h = ActualHeight, l = 52, b = 44, t = 26, r = 12;
             var all = Data.SelectMany(s => s.Pts).Where(p => (!LogX || p.x > 0) && (!LogY || p.y > 0)).ToList();
             if (all.Count == 0) return;
             double Tx(double v) => LogX ? Math.Log10(v) : v; double Ty(double v) => LogY ? Math.Log10(v) : v;
@@ -128,7 +131,8 @@ namespace HDRDisplayCalibrate
             Point P(double x, double y) => new(l + (Tx(x) - x0) / (x1 - x0) * (w - l - r), h - b - (Ty(y) - y0) / (y1 - y0) * (h - b - t));
             IEnumerable<double> Ticks(double a, double z, bool log)
             {
-                if (log) { for (int e = (int)Math.Floor(a); e <= Math.Ceiling(z); e++) yield return Math.Pow(10, e); yield break; }
+                // DMD61: only the decades inside the plotted range (those outside were drawn over the caption and the axis names)
+                if (log) { for (int e = (int)Math.Ceiling(a - 1e-9); e <= Math.Floor(z + 1e-9); e++) yield return Math.Pow(10, e); yield break; }
                 double step = Math.Pow(10, Math.Floor(Math.Log10((z - a) / 5)));
                 if ((z - a) / step > 10) step *= 2; if ((z - a) / step > 10) step *= 2.5;
                 for (double v = Math.Ceiling(a / step) * step; v <= z + 1e-9; v += step) yield return v;
@@ -136,8 +140,9 @@ namespace HDRDisplayCalibrate
             string Fmt(double v) => Math.Abs(v) >= 100 ? v.ToString("0", CultureInfo.InvariantCulture) : Math.Abs(v) >= 1 ? v.ToString("0.#", CultureInfo.InvariantCulture) : v.ToString("0.###", CultureInfo.InvariantCulture);
             foreach (var v in Ticks(x0, x1, LogX)) { var p = P(v, LogY ? Math.Pow(10, y0) : y0); dc.DrawLine(new Pen(Draw.Grid, 1), p, new Point(p.X, t)); dc.DrawText(Draw.Txt(Fmt(v), 10, Draw.Label), p + new Vector(-10, 4)); }
             foreach (var v in Ticks(y0, y1, LogY)) { var p = P(LogX ? Math.Pow(10, x0) : x0, v); dc.DrawLine(new Pen(Draw.Grid, 1), p, new Point(w - r, p.Y)); dc.DrawText(Draw.Txt(Fmt(v), 10, Draw.Label), p + new Vector(-l + 6, -7)); }
-            dc.DrawText(Draw.Txt(XLabel, 11, Draw.Label), new Point(w - r - 120, h - 16));
-            dc.DrawText(Draw.Txt(YLabel, 11, Draw.Label), new Point(l + 4, t));
+            var xl = Draw.Txt(XLabel, 11, Draw.Label);
+            dc.DrawText(xl, new Point(w - r - xl.Width, h - 16));
+            dc.DrawText(Draw.Txt(YLabel, 11, Draw.Label), new Point(l - 46, 4));
             dc.PushClip(new RectangleGeometry(new Rect(l, t, w - l - r, h - b - t)));
             foreach (var s in Data)
             {
@@ -147,7 +152,9 @@ namespace HDRDisplayCalibrate
                 if (s.Markers) foreach (var p in pts) dc.DrawEllipse(s.Brush, null, p, 3, 3);
             }
             dc.Pop();
+            // legend on a dark box, so a curve passing underneath never hides it
             double ly = t + 4;
+            if (Data.Count > 0) dc.DrawRoundedRectangle(LegendBg, null, new Rect(w - 196, ly - 3, 190, Data.Count * 17 + 6), 4, 4);
             foreach (var s in Data)
             {
                 dc.DrawLine(new Pen(s.Brush, 2) { DashStyle = s.Dashed ? DashStyles.Dash : DashStyles.Solid }, new Point(w - 190, ly + 8), new Point(w - 168, ly + 8));

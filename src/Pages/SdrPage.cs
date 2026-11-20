@@ -1,5 +1,7 @@
 // HDRDisplayCalibrate — SDR/HDR display calibration for Windows.
 // Copyright 2026 Andrii Orlov (DeadSue). Licensed under the Apache License, Version 2.0.
+// Modified 2026 by DMD61 (Victory61): the page switches Windows HDR off by itself (SDR calibration needs it off);
+// guided sensor dialogs (place / remove, room light).
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -59,14 +61,45 @@ namespace HDRDisplayCalibrate.Pages
             if (!double.IsNaN(rl)) _lux.Text = rl.ToString("0.#", CultureInfo.InvariantCulture);
         }
 
-        void FromRoom() => RunJob(async ct =>
+        bool _switching;
+
+        /// <summary>SDR calibration is done with Windows HDR off: the page switches it off by itself.</summary>
+        public override void OnShow()
+        {
+            var d = St.Display;
+            if (d == null || St.Job != null || _switching) return;
+            Displays.RefreshColor(d);
+            if (d.HdrOn)
+            {
+                // DMD61: say what is about to happen before the screen goes black; Cancel goes back to HDR calibration
+                string hp = null; try { hp = ColorProfiles.Default(d, true); } catch { }
+                var text = HdrOffFix.Needed(hp) ? S.T("SDR calibration is done with Windows HDR off. The program will now:\n\n1. turn Windows HDR off: the monitor may go black for a few seconds;\n2. clear the HDR colour correction that Windows keeps: if Windows asks for administrator permission, answer Yes;\n3. close and reopen itself on this page after a few seconds.\n\nDo not touch anything until the window is back.", "SDR-калібрування роблять з вимкненим HDR Windows. Зараз програма:\n\n1. вимкне HDR Windows: монітор може на кілька секунд стати чорним;\n2. скине HDR-корекцію кольору, яку залишає Windows: якщо Windows попросить дозвіл адміністратора, відповідайте «Так»;\n3. за кілька секунд закриється й знову відкриється на цій сторінці.\n\nНічого не торкайтеся, доки вікно не повернеться.") : S.T("SDR calibration is done with Windows HDR off. The program will now turn it off: the monitor may go black for a few seconds. Do not touch anything until the screen is back.", "SDR-калібрування роблять з вимкненим HDR Windows. Зараз програма його вимкне: монітор може на кілька секунд стати чорним. Нічого не торкайтеся, доки екран не повернеться.");
+                if (MessageBox.Show(text, "HDRDisplayCalibrate", MessageBoxButton.OKCancel, MessageBoxImage.Information) != MessageBoxResult.OK)
+                { MainWindow.ShowPage(3); return; }
+                TurnHdrOff(d);
+            }
+        }
+
+        async void TurnHdrOff(DisplayTarget d)
+        {
+            _switching = true;
+            St.Report(S.T("Turning Windows HDR off for the SDR calibration…", "Вимикаю Windows HDR для SDR-калібрування…"));
+            string hdrProfile = null; try { hdrProfile = ColorProfiles.Default(d, true); } catch { }
+            try { Displays.SetHdr(d, false); await System.Threading.Tasks.Task.Delay(6000); await HdrOffFix.Run(hdrProfile, 2); St.RefreshDisplays(); }   // DMD61
+            catch (Exception e) { Log.Write("HDR off: " + e.Message); }
+            finally { _switching = false; }
+            St.Report(S.T("Windows HDR is off", "Windows HDR вимкнено"), 0);
+        }
+
+        void FromRoom() { if (!ProbeGuide.Ask(ProbeGuide.Mode.Ambient)) return; RunJob(async ct =>   // DMD61: guide for the room light
         {
             var (lux, _) = await Jobs.Ambient(ct);
             _lux.Text = lux.ToString("0.#", CultureInfo.InvariantCulture);
             double sug = lux <= 2 ? 100 : lux >= 1000 ? 220 : Cm.Interp(Math.Log10(lux), new[] { Math.Log10(2), 1, Math.Log10(50), Math.Log10(150), Math.Log10(400), 3 }, new[] { 100.0, 120, 140, 160, 185, 220 });
             _nits.Text = sug.ToString("0", CultureInfo.InvariantCulture);
             St.Report(S.F("Room {0:F1} lx → {1:F0} cd/m²", "Кімната {0:F1} лк → {1:F0} кд/м²", lux, sug), 1);
-        });
+            Dispatcher.Invoke(() => MessageBox.Show(S.F("Room light measured: {0:F1} lx. Turn the diffuser aside again before measuring the screen.", "Освітлення кімнати заміряно: {0:F1} лк. Знову поверніть розсіювач убік, перш ніж міряти екран.", lux), "HDRDisplayCalibrate"));
+        }); }
 
         void Run()
         {
@@ -78,6 +111,7 @@ namespace HDRDisplayCalibrate.Pages
             string name = string.IsNullOrWhiteSpace(_name.Text) ? $"{d.Model}_{DateTime.Now:yyyy-MM-dd}" : _name.Text.Trim();
             name = string.Join("_", name.Split(Path.GetInvalidFileNameChars())).Replace(' ', '_');
             int npatch = _patches.SelectedIndex == 0 ? 0 : int.Parse((string)_patches.SelectedItem);
+            if (!ProbeGuide.Ask(ProbeGuide.Mode.Place)) return;   // DMD61: where and how to place the sensor
             RunJob(async ct =>
             {
                 var dir = Paths.Session(name);
@@ -165,6 +199,9 @@ namespace HDRDisplayCalibrate.Pages
                     });
                 }
                 St.Report(S.T("SDR calibration done", "SDR калібрування завершено") + (icc != null ? " · " + Path.GetFileName(icc) : ""), 1);
+                // DMD61: suggest the independent check by eye
+                Dispatcher.Invoke(() => _result.Children.Add(PatternsPage.Suggestion()));
+                Dispatcher.Invoke(() => ProbeGuide.Ask(ProbeGuide.Mode.Remove));   // DMD61
             });
         }
     }
